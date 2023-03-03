@@ -1,0 +1,25 @@
+.menu-item,
+.menuitem {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.menu-item {
+  flex: 1;
+  position: relative;
+  font-size: var(--font-size-sm);
+  font-family: var(--label-large-medium1);
+  color: var(--background-dark1);
+  text-align: center;
+}
+.menuitem {
+  cursor: pointer;
+  border: 0;
+  padding: var(--padding-3xs);
+  background-color: var(--background-light1);
+  height: 32px;
+  flex-shrink: 0;
+  flex-direction: row;
+  box-sizing: border-box;
+}

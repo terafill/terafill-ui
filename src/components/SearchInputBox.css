@@ -1,0 +1,21 @@
+.inputbox4,
+.inputboxinner1 {
+  border-radius: var(--br-sm);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.inputboxinner1 {
+  border: 0.2px solid var(--background-dark1);
+  font-family: var(--label-large-medium1);
+  font-size: var(--font-size-4xl);
+  background-color: var(--background-light-gray);
+  flex: 1;
+}
+.inputbox4 {
+  width: 560px;
+  height: 48px;
+  flex-shrink: 0;
+  overflow: hidden;
+}

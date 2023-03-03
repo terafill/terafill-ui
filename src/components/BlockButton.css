@@ -1,0 +1,37 @@
+.iconxsmall18 {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  object-fit: cover;
+  display: none;
+}
+.label19 {
+  position: relative;
+  font-size: var(--label-medium-medium1-size);
+  line-height: 150%;
+  text-transform: capitalize;
+  font-weight: 500;
+  font-family: var(--label-large-medium1);
+  color: var(--background-light1);
+  text-align: center;
+}
+.buttonderivativebase17,
+.buttonroot18 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.buttonroot18 {
+  cursor: pointer;
+  border: 0;
+  padding: var(--padding-3xs) var(--padding-sm);
+  background-color: var(--background-red);
+  border-radius: var(--br-md);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+  justify-content: center;
+  gap: var(--gap-xs);
+}
+.buttonderivativebase17 {
+  justify-content: flex-start;
+}

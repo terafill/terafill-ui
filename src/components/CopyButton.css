@@ -1,0 +1,38 @@
+.copy {
+  position: relative;
+  font-size: var(--label-medium-medium1-size);
+  letter-spacing: 0.03em;
+  display: flex;
+  font-family: var(--label-large-medium1);
+  color: var(--background-dark1);
+  text-align: left;
+  align-items: center;
+  width: 49px;
+  height: 14px;
+  flex-shrink: 0;
+}
+.material-symbolsfile-copy-out-icon {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.copybutton {
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+  background-color: transparent;
+  margin: 0 !important;
+  position: absolute;
+  top: 18.5px;
+  right: 13px;
+  width: 73px;
+  height: 24px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}

@@ -1,0 +1,48 @@
+.password-icon {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+.password {
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.label34 {
+  position: relative;
+  font-size: var(--label-medium-medium1-size);
+  line-height: 150%;
+  text-transform: capitalize;
+  font-weight: 500;
+  font-family: var(--label-large-medium1);
+  color: var(--background-dark1);
+  text-align: center;
+}
+.buttonderivativebase30,
+.buttonroot31 {
+  cursor: pointer;
+  border: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.buttonroot31 {
+  padding: var(--padding-3xs) var(--padding-sm);
+  background-color: var(--background-light1);
+  border-radius: var(--br-md);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+  justify-content: center;
+  gap: var(--gap-xs);
+}
+.buttonderivativebase30 {
+  padding: 0;
+  background-color: transparent;
+  position: absolute;
+  top: 46px;
+  left: calc(50% - 346px);
+  justify-content: flex-start;
+}

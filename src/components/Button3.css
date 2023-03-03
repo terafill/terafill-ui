@@ -1,0 +1,44 @@
+.label27 {
+  position: relative;
+  font-size: var(--label-medium-medium1-size);
+  line-height: 150%;
+  text-transform: capitalize;
+  font-weight: 500;
+  font-family: var(--label-large-medium1);
+  color: var(--background-light1);
+  text-align: center;
+}
+.vector-icon6 {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.iconxsmall24 {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  justify-content: center;
+}
+.buttonderivativebase24,
+.buttonroot25,
+.iconxsmall24 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.buttonroot25 {
+  border-radius: var(--br-md);
+  background-color: var(--background-dark1);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+  padding: var(--padding-3xs) var(--padding-sm);
+  justify-content: center;
+  gap: var(--gap-xs);
+}
+.buttonderivativebase24 {
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+  background-color: transparent;
+  justify-content: flex-start;
+}

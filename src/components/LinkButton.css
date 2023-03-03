@@ -1,0 +1,36 @@
+.iconxsmall1 {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  object-fit: cover;
+  display: none;
+}
+.label1 {
+  position: relative;
+  font-size: var(--label-large-medium1-size);
+  line-height: 125%;
+  text-transform: capitalize;
+  font-weight: 500;
+  font-family: var(--label-large-medium1);
+  color: var(--background-blue1);
+  text-align: center;
+}
+.buttonderivativebase1,
+.buttonroot1 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.buttonroot1 {
+  cursor: pointer;
+  border: 0;
+  padding: var(--padding-3xs) var(--padding-sm);
+  background-color: transparent;
+  border-radius: var(--br-md);
+  gap: var(--gap-xs);
+}
+.buttonderivativebase1 {
+  text-decoration: none;
+}

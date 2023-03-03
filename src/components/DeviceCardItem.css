@@ -1,0 +1,31 @@
+.amet-minim-mollit,
+.label20 {
+  position: relative;
+  letter-spacing: 0.03em;
+  font-weight: 700;
+}
+.label20 {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  width: 144px;
+  flex-shrink: 0;
+}
+.amet-minim-mollit {
+  margin: 0;
+  flex: 1;
+}
+.carditem {
+  align-self: stretch;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  padding: var(--padding-3xs);
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-2xl);
+  text-align: left;
+  font-size: var(--label-medium-medium1-size);
+  color: var(--background-dark1);
+  font-family: var(--label-large-medium1);
+}

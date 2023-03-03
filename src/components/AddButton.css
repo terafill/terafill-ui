@@ -1,0 +1,54 @@
+.icbaseline-plus-icon {
+  position: relative;
+  border-radius: var(--br-xs);
+  width: 34.13px;
+  height: 34.13px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.plus {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.label26 {
+  position: relative;
+  font-size: var(--label-xlarge-medium1-size);
+  line-height: 140%;
+  text-transform: capitalize;
+  font-weight: 500;
+  font-family: var(--label-large-medium1);
+  color: var(--background-dark1);
+  text-align: center;
+  display: none;
+}
+.buttonderivativebase23,
+.buttonroot24 {
+  cursor: pointer;
+  border: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.buttonroot24 {
+  padding: var(--padding-3xs);
+  background-color: var(--background-blue1);
+  border-radius: var(--br-md);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+  justify-content: center;
+  gap: var(--gap-xs);
+}
+.buttonderivativebase23 {
+  padding: 0;
+  background-color: transparent;
+  margin: 0 !important;
+  position: absolute;
+  top: 601px;
+  left: 273px;
+  justify-content: flex-start;
+  z-index: 2;
+}

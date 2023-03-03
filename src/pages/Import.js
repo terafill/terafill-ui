@@ -1,0 +1,195 @@
+import Navbar2 from "../components/Navbar2";
+import ImportButton from "../components/ImportButton";
+import Button from "../components/Button";
+import "./Import.css";
+
+const Import = () => {
+  return (
+    <div className="import">
+      <Navbar2 />
+      <div className="apphomeinner3">
+        <ImportButton
+          passwordIcon="../1passwordicon@2x.png"
+          label="1password"
+        />
+        <ImportButton
+          buttonDerivativeBaseTop="142px"
+          buttonDerivativeBaseLeft="calc(50% - 340.5px)"
+          buttonDerivativeBaseJustifyContent="center"
+          buttonDerivativeBaseBoxShadow="0px 0px 4px rgba(0, 0, 0, 0.25)"
+          passwordDisplay="unset"
+          passwordFlexDirection="unset"
+          passwordAlignItems="unset"
+          passwordJustifyContent="unset"
+          passwordPosition="relative"
+          passwordWidth="24px"
+          passwordHeight="24px"
+          passwordFlexShrink="0"
+          passwordIcon="../lastpassimage@2x.png"
+          passwordIconPosition="absolute"
+          passwordIconWidth="20px"
+          passwordIconHeight="20px"
+          passwordIconFlexShrink="unset"
+          passwordIconTop="2px"
+          passwordIconLeft="2px"
+          label="Lastpass"
+        />
+        <ImportButton
+          buttonDerivativeBaseTop="238px"
+          buttonDerivativeBaseJustifyContent="center"
+          buttonDerivativeBaseBoxShadow="0px 0px 4px rgba(0, 0, 0, 0.25)"
+          passwordDisplay="unset"
+          passwordFlexDirection="unset"
+          passwordAlignItems="unset"
+          passwordJustifyContent="unset"
+          passwordPosition="relative"
+          passwordWidth="24px"
+          passwordHeight="24px"
+          passwordFlexShrink="0"
+          passwordIcon="../roboformimage@2x.png"
+          passwordIconPosition="absolute"
+          passwordIconFlexShrink="unset"
+          passwordIconTop="1px"
+          passwordIconLeft="1px"
+          label="RoboForm"
+          passwordOverflow="unset"
+        />
+        <Button
+          label="iCloud passwords"
+          buttonDerivativeBaseBoxShadow="0px 0px 4px rgba(0, 0, 0, 0.25)"
+          buttonDerivativeBaseOverflow="unset"
+          buttonDerivativeBaseJustifyContent="center"
+          buttonRootBackgroundColor="#fff"
+          labelColor="#000"
+          iconXSmall="../iconxsmall50.svg"
+          buttonDerivativeBasePosition="absolute"
+          buttonDerivativeBaseTop="334px"
+          buttonDerivativeBaseLeft="calc(50% - 373.5px)"
+          iconXSmallDisplay="unset"
+          iconXSmallObjectFit="unset"
+          iconXSmallOverflow="hidden"
+        />
+        <Button
+          label="Dashlane"
+          buttonDerivativeBaseBoxShadow="0px 0px 4px rgba(0, 0, 0, 0.25)"
+          buttonDerivativeBaseOverflow="unset"
+          buttonDerivativeBaseJustifyContent="center"
+          buttonRootBackgroundColor="#fff"
+          labelColor="#000"
+          iconXSmall="../dashlane.svg"
+          buttonDerivativeBasePosition="absolute"
+          buttonDerivativeBaseTop="46px"
+          buttonDerivativeBaseLeft="calc(50% - 50.5px)"
+          iconXSmallDisplay="unset"
+          iconXSmallObjectFit="unset"
+          iconXSmallOverflow="hidden"
+        />
+        <ImportButton
+          buttonDerivativeBaseTop="143px"
+          buttonDerivativeBaseLeft="calc(50% - 48px)"
+          buttonDerivativeBaseJustifyContent="center"
+          buttonDerivativeBaseBoxShadow="0px 0px 4px rgba(0, 0, 0, 0.25)"
+          passwordDisplay="unset"
+          passwordFlexDirection="unset"
+          passwordAlignItems="unset"
+          passwordJustifyContent="unset"
+          passwordPosition="relative"
+          passwordWidth="24px"
+          passwordHeight="24px"
+          passwordFlexShrink="0"
+          passwordIcon="../keepassimage@2x.png"
+          passwordIconPosition="absolute"
+          passwordIconFlexShrink="unset"
+          passwordIconTop="1px"
+          passwordIconLeft="1px"
+          label="Keepass"
+          passwordOverflow="unset"
+        />
+        <Button
+          label="Chrome"
+          buttonDerivativeBaseBoxShadow="0px 0px 4px rgba(0, 0, 0, 0.25)"
+          buttonDerivativeBaseOverflow="unset"
+          buttonDerivativeBaseJustifyContent="center"
+          buttonRootBackgroundColor="#fff"
+          labelColor="#000"
+          iconXSmall="../iconxsmall27@2x.png"
+          buttonDerivativeBasePosition="absolute"
+          buttonDerivativeBaseTop="239px"
+          buttonDerivativeBaseLeft="calc(50% - 46.5px)"
+          iconXSmallDisplay="unset"
+        />
+        <ImportButton
+          buttonDerivativeBaseTop="335px"
+          buttonDerivativeBaseLeft="calc(50% - 37.5px)"
+          buttonDerivativeBaseJustifyContent="center"
+          buttonDerivativeBaseBoxShadow="0px 0px 4px rgba(0, 0, 0, 0.25)"
+          passwordWidth="24px"
+          passwordHeight="24px"
+          passwordFlexShrink="0"
+          passwordIcon="../vector8.svg"
+          passwordIconWidth="20px"
+          passwordIconHeight="20px"
+          label="Other"
+          passwordPadding="2px 7px"
+          passwordBoxSizing="border-box"
+          passwordIconObjectFit="unset"
+        />
+        <ImportButton
+          buttonDerivativeBaseLeft="calc(50% + 219px)"
+          buttonDerivativeBaseJustifyContent="center"
+          buttonDerivativeBaseBoxShadow="0px 0px 4px rgba(0, 0, 0, 0.25)"
+          passwordWidth="24px"
+          passwordHeight="24px"
+          passwordFlexShrink="0"
+          passwordIcon="../firefox-1@2x.png"
+          label="Firefox"
+        />
+        <ImportButton
+          buttonDerivativeBaseTop="142px"
+          buttonDerivativeBaseLeft="calc(50% + 204px)"
+          buttonDerivativeBaseJustifyContent="center"
+          buttonDerivativeBaseBoxShadow="0px 0px 4px rgba(0, 0, 0, 0.25)"
+          passwordDisplay="unset"
+          passwordFlexDirection="unset"
+          passwordAlignItems="unset"
+          passwordJustifyContent="unset"
+          passwordPosition="relative"
+          passwordWidth="24px"
+          passwordHeight="24px"
+          passwordFlexShrink="0"
+          passwordIcon="../keepassxcimage@2x.png"
+          passwordIconPosition="absolute"
+          passwordIconWidth="20px"
+          passwordIconHeight="20px"
+          passwordIconFlexShrink="unset"
+          passwordIconTop="2px"
+          passwordIconLeft="2px"
+          label="Keepassxc"
+        />
+        <ImportButton
+          buttonDerivativeBaseTop="238px"
+          buttonDerivativeBaseLeft="calc(50% + 212px)"
+          buttonDerivativeBaseJustifyContent="center"
+          buttonDerivativeBaseBoxShadow="0px 0px 4px rgba(0, 0, 0, 0.25)"
+          passwordDisplay="unset"
+          passwordFlexDirection="unset"
+          passwordAlignItems="unset"
+          passwordJustifyContent="unset"
+          passwordPosition="relative"
+          passwordWidth="24px"
+          passwordHeight="24px"
+          passwordFlexShrink="0"
+          passwordIcon="../thycoticimage@2x.png"
+          passwordIconPosition="absolute"
+          passwordIconFlexShrink="unset"
+          passwordIconTop="1px"
+          passwordIconLeft="1px"
+          label="Thycotic "
+          passwordOverflow="unset"
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Import;

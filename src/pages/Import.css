@@ -1,5 +1,10 @@
 .apphomeinner3 {
-  align-self: stretch;
+/*  align-self: center;*/
+/*  align-items: center;*/
+  display: grid;
+  grid-template-columns: repeat(4, max-content);
+  grid-template-rows: repeat(4, max-content);
+  gap: 64px;
   flex: 1;
   position: relative;
   background-color: var(--background-light1);

@@ -4,9 +4,6 @@ import "./Button.css";
 const Button = ({
   icon,
   label,
-  buttonDerivativeBaseBoxShadow,
-  buttonDerivativeBaseOverflow,
-  buttonDerivativeBaseJustifyContent,
   buttonRootBackgroundColor,
   buttonRootBoxShadow,
   buttonRootBorder,
@@ -17,45 +14,13 @@ const Button = ({
   labelColor,
   buttonDerivativeBaseHeight,
   iconXSmall,
-  buttonDerivativeBasePosition,
-  buttonDerivativeBaseWidth,
-  buttonDerivativeBaseTop,
-  buttonDerivativeBaseRight,
-  buttonDerivativeBaseLeft,
   iconXSmallDisplay,
   onButtonDerivativeBase4Click,
-  buttonDerivativeBaseFlexShrink,
   iconXSmallObjectFit,
   iconXSmallOverflow,
   buttonRootBoxSizing,
   labelDisplay,
 }) => {
-  const buttonDerivativeBaseStyle = useMemo(() => {
-    return {
-      boxShadow: buttonDerivativeBaseBoxShadow,
-      overflow: buttonDerivativeBaseOverflow,
-      justifyContent: buttonDerivativeBaseJustifyContent,
-      height: buttonDerivativeBaseHeight,
-      position: buttonDerivativeBasePosition,
-      width: buttonDerivativeBaseWidth,
-      top: buttonDerivativeBaseTop,
-      right: buttonDerivativeBaseRight,
-      left: buttonDerivativeBaseLeft,
-      flexShrink: buttonDerivativeBaseFlexShrink,
-    };
-  }, [
-    buttonDerivativeBaseBoxShadow,
-    buttonDerivativeBaseOverflow,
-    buttonDerivativeBaseJustifyContent,
-    buttonDerivativeBaseHeight,
-    buttonDerivativeBasePosition,
-    buttonDerivativeBaseWidth,
-    buttonDerivativeBaseTop,
-    buttonDerivativeBaseRight,
-    buttonDerivativeBaseLeft,
-    buttonDerivativeBaseFlexShrink,
-  ]);
-
   const buttonRootStyle = useMemo(() => {
     return {
       backgroundColor: buttonRootBackgroundColor,
@@ -88,12 +53,7 @@ const Button = ({
   }, [iconXSmallDisplay, iconXSmallObjectFit, iconXSmallOverflow]);
 
   return (
-    <button
-      className="buttonderivativebase"
-      style={buttonDerivativeBaseStyle}
-      onClick={onButtonDerivativeBase4Click}
-    >
-      <button className="buttonroot" style={buttonRootStyle}>
+      <button className="button" style={buttonRootStyle}>
         <img
           className="iconxsmall"
           alt=""
@@ -104,7 +64,6 @@ const Button = ({
           {label}
         </div>
       </button>
-    </button>
   );
 };
 

@@ -16,25 +16,17 @@
   color: var(--background-light1);
   text-align: center;
 }
-.buttonderivativebase,
-.buttonroot {
+.button {
   cursor: pointer;
   border: 0;
   display: flex;
   flex-direction: row;
   align-items: center;
-}
-.buttonroot {
+
   padding: var(--padding-3xs) var(--padding-sm);
   background-color: var(--background-dark1);
   border-radius: var(--br-md);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
   justify-content: center;
   gap: var(--gap-xs);
-}
-.buttonderivativebase {
-  padding: 0;
-  background-color: transparent;
-  overflow: hidden;
-  justify-content: flex-start;
 }

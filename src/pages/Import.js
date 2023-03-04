@@ -38,10 +38,12 @@ const Import = () => {
         importList.map(
           importItem =>
           <Button
+            key={importItem.label}
             label={importItem.label}
             iconXSmall={importItem.image}
             buttonType="light"
             iconXSmallDisplay="unset"
+            buttonPadding="16px 32px"
         />)
       }
       </div>

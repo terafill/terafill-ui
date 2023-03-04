@@ -36,11 +36,13 @@ const Navbar = ({ navbarType="landing" }) => {
           <img className="subtract-icon" alt="" src="../subtract.svg" />
           <div className="keylance">Keylance</div>
         </div>
+        { (navbarType === "landing") || ( navbarType ==="signup")?
         <div className="menuitems" id="ButtonGroup">
           <Button label="Products" buttonType="dark"/>
           <Button label="Whitepaper" buttonType="dark"/>
           <Button label="Download " buttonType="dark"/>
-        </div>
+        </div>: ""
+        }
       </div>
       {(navbarType === "landing") || ( navbarType ==="signup")?
         <div className="rightnavbar">

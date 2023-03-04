@@ -1,9 +1,42 @@
 import Navbar from "../components/Navbar";
 import SettingsPanel from "../components/SettingsPanel";
-import ProfileCard from "../components/ProfileCard";
+import Card from "../components/Card";
 import "./SettingsPersonalInfo.css";
 
 const SettingsPersonalInfo = () => {
+
+  const userProfile = [
+  {
+    profileType: "Basic Info",
+    profileAttributeList: [
+      {
+        attributeType: "Name",
+        attributeValue: "Lionardo Da Vinci"
+      },
+      {
+        attributeType: "Birthday",
+        attributeValue: "15 April 1452"
+      },
+      {
+        attributeType: "Gender",
+        attributeValue: "Male"
+      }
+    ]
+  },
+  {
+    profileType: "Contact Info",
+    profileAttributeList: [
+      {
+        attributeType: "Email",
+        attributeValue: "leonardo@keylance.in"
+      },
+      {
+        attributeType: "PhoneNo",
+        attributeValue: "00-000-0000"
+      },
+    ]
+  }]
+
   return (
     <div className="settings-personal-info">
       <Navbar navbarType="app"/>
@@ -18,8 +51,14 @@ const SettingsPersonalInfo = () => {
             />
             <b className="welcome-leonardo">Welcome, Leonardo</b>
           </div>
-          <ProfileCard cardLabel="Basic Info" />
-          <ProfileCard cardLabel="Contact Info" />
+          {userProfile.map( userProfileData =>
+            <Card
+              cardType="userProfile"
+              key={userProfileData.profileType}
+              cardLabel={userProfileData.profileType}
+              cardBodyData={userProfileData.profileAttributeList}
+            />
+          )}
         </div>
       </div>
     </div>

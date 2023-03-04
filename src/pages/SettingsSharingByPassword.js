@@ -2,10 +2,62 @@ import Navbar from "../components/Navbar";
 import SettingsPanel from "../components/SettingsPanel";
 import SearchInputBox from "../components/SearchInputBox";
 import Button from "../components/Button";
-import SharingCard2 from "../components/SharingCard2";
+import Card from "../components/Card";
 import "./SettingsSharingByPassword.css";
 
 const SettingsSharingByPassword = () => {
+
+  const passwordDataList = [
+    {
+      id: 1,
+      passwordAppName: "Netflix",
+      passwordUserName: "leonardo@keylance.in",
+      passwordIcon: "../netflix.png",
+      userList:[
+        {
+          userName: "Ram Kumar",
+          userEmail: "ram@example.com"
+        },
+        {
+          userName: "Karan Sharma",
+          userEmail: "karan@example.com"
+        }
+      ]
+    },
+    {
+      id: 2,
+      passwordAppName: "Facebook",
+      passwordUserName: "leo42",
+      passwordIcon: "../facebook.png",
+      userList:[
+        {
+          userName: "Ram Kumar",
+          userEmail: "ram@example.com"
+        },
+        {
+          userName: "Karan Sharma",
+          userEmail: "karan@example.com"
+        }
+      ]
+    },
+    {
+      id: 3,
+      passwordAppName: "Twitter",
+      passwordUserName: "davinci.leo123123",
+      passwordIcon: "../twitter.svg",
+      userList:[
+        {
+          userName: "Ram Kumar",
+          userEmail: "ram@example.com"
+        },
+        {
+          userName: "Karan Sharma",
+          userEmail: "karan@example.com"
+        }
+      ]
+    },
+  ]
+
   return (
     <div className="settings-sharing-bypassword">
       <Navbar navbarType="app"/>
@@ -25,21 +77,17 @@ const SettingsSharingByPassword = () => {
               buttonType="link"
             />
           </nav>
-          <SharingCard2
-            icon="../icon4@2x.png"
-            appLabel="Netflix"
-            username="leonardo@keylance.in"
-          />
-          <SharingCard2
-            icon="../icon5@2x.png"
-            appLabel="facebook"
-            username="leo42"
-          />
-          <SharingCard2
-            icon="../icon6@2x.png"
-            appLabel="Twitter"
-            username="davinci.leo123123"
-          />
+
+          {passwordDataList.map( passwordData =>
+            <Card
+              cardType="password"
+              key={passwordData.id}
+              icon={passwordData.passwordIcon}
+              cardLabel={passwordData.passwordAppName}
+              cardLabel2={passwordData.passwordUserName}
+              cardBodyData={passwordData.userList}
+            />
+          )}
         </div>
       </div>
     </div>

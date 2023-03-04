@@ -1,8 +1,35 @@
 import Navbar from "../components/Navbar";
 import SettingsPanel from "../components/SettingsPanel";
-import SecurityCard from "../components/SecurityCard";
-import SecurityCard2 from "../components/SecurityCard2";
+import Card from "../components/Card";
 import "./SettingsSecurity.css";
+
+const userSecurity = [
+  {
+    securityType: "Email",
+    securityAttributeList: [
+      {
+        attributeType: "Primary Email",
+        attributeValue: "leonardo@keylance.in"
+      },
+      {
+        attributeType: "Recovery Email",
+        attributeValue: "leo2@keylance.io"
+      },
+    ]
+  },
+  {
+    securityType: "Password & Encryption Keys",
+    securityAttributeList: [
+      {
+        attributeType: "Master Password",
+        attributeValue: null
+      },
+      {
+        attributeType: "Encryption Key 1",
+        attributeValue: null
+      },
+    ]
+  }]
 
 const SettingsSecurity = () => {
   return (
@@ -11,8 +38,14 @@ const SettingsSecurity = () => {
       <div className="apphomeinner6">
         <SettingsPanel activePanel="Security" />
         <div className="rightpanel4">
-          <SecurityCard />
-          <SecurityCard2 />
+          {userSecurity.map( userSecurityData =>
+            <Card
+              cardType="userSecurity"
+              key={userSecurityData.securityType}
+              cardLabel={userSecurityData.securityType}
+              cardBodyData={userSecurityData.securityAttributeList}
+            />
+          )}
         </div>
       </div>
     </div>

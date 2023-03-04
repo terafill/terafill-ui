@@ -1,28 +1,27 @@
-.amet-minim-mollit1,
-.label36 {
+.cardItemText,
+.cardItemLabel {
   position: relative;
   letter-spacing: 0.03em;
   font-weight: 700;
 }
-.label36 {
+.cardItemLabel {
   cursor: pointer;
   display: flex;
   align-items: center;
   width: 144px;
   flex-shrink: 0;
 }
-.amet-minim-mollit1 {
+.cardItemText {
   margin: 0;
   flex: 1;
 }
-.carditem1 {
+.cardItem {
   align-self: stretch;
-  overflow: hidden;
   display: flex;
   flex-direction: row;
   padding: var(--padding-3xs);
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: var(--gap-2xl);
   text-align: left;
   font-size: var(--label-medium-medium1-size);

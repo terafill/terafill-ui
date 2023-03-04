@@ -33,7 +33,7 @@ const KeylanceFooterContainer = () => {
           <b className="contact-us">CONTACT US</b>
           <div className="buttongroup3" id="ButtonGroup">
             <a className="twittericon">
-              <img className="vector-icon" alt="" src="../vector.svg" />
+              <img className="vector-icon" alt="" src="../twitter.svg" />
             </a>
             <a className="facebookicon">
               <img className="vector-icon1" alt="" src="../vector1.svg" />

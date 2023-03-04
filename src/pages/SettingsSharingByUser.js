@@ -2,10 +2,44 @@ import Navbar from "../components/Navbar";
 import SettingsPanel from "../components/SettingsPanel";
 import SearchInputBox from "../components/SearchInputBox";
 import Button from "../components/Button";
-import SharingCard from "../components/SharingCard";
+import Card from "../components/Card";
 import "./SettingsSharingByUser.css";
 
 const SettingsSharingByUser = () => {
+
+  const userDataList = [
+    {
+      id: 1,
+      userName: "Ram Kumar",
+      userEmailName: "ram@example.com",
+      passwordList:[
+        {
+          passwordAppName: "Netflix",
+          passwordUserName: "leonardo@keylance.in"
+        },
+        {
+          passwordAppName: "Facebook",
+          passwordUserName: "leo42"
+        }
+      ]
+    },
+    {
+      id: 2,
+      userName: "Karan Sharma",
+      userEmailName: "karan@example.com",
+      passwordList:[
+        {
+          passwordAppName: "Netflix",
+          passwordUserName: "leonardo@keylance.in"
+        },
+        {
+          passwordAppName: "Facebook",
+          passwordUserName: "leo42"
+        }
+      ]
+    },
+  ]
+
   return (
     <div className="settings-sharing-byuser">
       <Navbar navbarType="app"/>
@@ -25,12 +59,15 @@ const SettingsSharingByUser = () => {
               buttonBoxShadow="0px 0px 4px rgba(0, 0, 0, 0.25) inset"
             />
           </nav>
-          <SharingCard appLabel="Ram Kumar" username="ram@example.com" />
-          <SharingCard
-            cardOverflow="unset"
-            appLabel="Karan Sharma"
-            username="karan@example.com"
-          />
+          {userDataList.map( userData =>
+            <Card
+              cardType="user"
+              key={userData.id}
+              cardLabel={userData.userName}
+              cardLabel2={userData.userEmailName}
+              cardBodyData={userData.passwordList}
+            />
+          )}
         </div>
       </div>
     </div>

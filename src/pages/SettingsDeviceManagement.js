@@ -2,10 +2,46 @@ import Navbar from "../components/Navbar";
 import SettingsPanel from "../components/SettingsPanel";
 import SearchInputBox from "../components/SearchInputBox";
 import Button from "../components/Button";
-import DeviceCard from "../components/DeviceCard";
+import Card from "../components/Card";
 import "./SettingsDeviceManagement.css";
 
 const SettingsDeviceManagement = () => {
+
+  const deviceDataList = [
+    {
+      deviceId: 1,
+      deviceName: "Home McBook",
+      deviceLocation: "Delhi",
+      deviceIcon: "../appleDark.png",
+      deviceEventList:[
+        {
+          eventDate: "2020-20-20",
+          eventDescription: "Logged in into Keylance account"
+        },
+        {
+          eventDate: "2020-20-20",
+          eventDescription: "You created new password for twitter account twitter account"
+        }
+      ]
+    },
+    {
+      deviceId: 2,
+      deviceName: "Samsung Smartphone",
+      deviceLocation: "Noida",
+      deviceIcon: "../android.png",
+      deviceEventList:[
+        {
+          eventDate: "2020-20-20",
+          eventDescription: "Logged in into Keylance account"
+        },
+        {
+          eventDate: "2020-20-20",
+          eventDescription: "You created new password for twitter account twitter account"
+        }
+      ]
+    }
+  ]
+
   return (
     <div className="settings-device-management">
       <Navbar navbarType="app"/>
@@ -13,23 +49,21 @@ const SettingsDeviceManagement = () => {
         <SettingsPanel activePanel="Device Management" />
         <div className="rightpanel">
           <SearchInputBox />
-          <Button
+         <Button
             label="Sync new device"
-            buttonDerivativeBaseOverflow="unset"
-            iconXSmall="../iconxsmall27@2x.png"
+            buttonType="dark"
           />
-          <DeviceCard
-            icon="../icon@2x.png"
-            appLabel="Home McBook"
-            username="Delhi"
-          />
-          <DeviceCard
-            cardHeight="206.25px"
-            cardFlexShrink="0"
-            icon="../icon1@2x.png"
-            appLabel="Samsung Smartphone"
-            username="Noida"
-          />
+          {deviceDataList.map( deviceData =>
+            <Card
+              cardType="device"
+              key={deviceData.deviceId}
+              icon={deviceData.deviceIcon}
+              cardLabel={deviceData.deviceName}
+              cardLabel2={deviceData.deviceLocation}
+              cardBodyData={deviceData.deviceEventList}
+              cardButtonVisible={true}
+            />
+          )}
         </div>
       </div>
     </div>

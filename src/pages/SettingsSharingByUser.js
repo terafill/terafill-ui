@@ -1,4 +1,4 @@
-import Navbar2 from "../components/Navbar2";
+import Navbar from "../components/Navbar";
 import SettingsPanel from "../components/SettingsPanel";
 import SearchInputBox from "../components/SearchInputBox";
 import Button from "../components/Button";
@@ -8,7 +8,7 @@ import "./SettingsSharingByUser.css";
 const SettingsSharingByUser = () => {
   return (
     <div className="settings-sharing-byuser">
-      <Navbar2 />
+      <Navbar navbarType="app"/>
       <div className="apphomeinner4">
         <SettingsPanel activePanel="Sharing" />
         <div className="rightpanel2">

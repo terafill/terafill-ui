@@ -1,4 +1,4 @@
-import Navbar4 from "../components/Navbar4";
+import Navbar from "../components/Navbar";
 import SettingsPanel from "../components/SettingsPanel";
 import SecurityCard from "../components/SecurityCard";
 import SecurityCard2 from "../components/SecurityCard2";
@@ -7,7 +7,7 @@ import "./SettingsSecurity.css";
 const SettingsSecurity = () => {
   return (
     <div className="settings-security">
-      <Navbar4 />
+      <Navbar navbarType="app"/>
       <div className="apphomeinner6">
         <SettingsPanel activePanel="Security" />
         <div className="rightpanel4">

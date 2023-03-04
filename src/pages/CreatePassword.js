@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar5 from "../components/Navbar5";
+import Navbar from "../components/Navbar";
 import PasswordInputModalBox from "../components/PasswordInputModalBox";
 import "./CreatePassword.css";
 
@@ -17,7 +17,7 @@ const CreatePassword = () => {
 
   return (
     <div className="createpassword">
-      <Navbar5 />
+      <Navbar navbarType="signup"/>
       <div className="body2">
         <PasswordInputModalBox />
       </div>

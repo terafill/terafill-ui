@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar1 from "../components/Navbar1";
+import Navbar from "../components/Navbar";
 import EmailCodeInputModalBox from "../components/EmailCodeInputModalBox";
 import "./EmailConfirmation.css";
 
@@ -17,7 +17,7 @@ const EmailConfirmation = () => {
 
   return (
     <div className="emailconfirmation">
-      <Navbar1 />
+      <Navbar navbarType="signup"/>
       <div className="body1">
         <EmailCodeInputModalBox />
       </div>

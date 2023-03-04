@@ -1,4 +1,4 @@
-import Navbar2 from "../components/Navbar2";
+import Navbar from "../components/Navbar";
 import SettingsPanel from "../components/SettingsPanel";
 import ProfileCard from "../components/ProfileCard";
 import "./SettingsPersonalInfo.css";
@@ -6,7 +6,7 @@ import "./SettingsPersonalInfo.css";
 const SettingsPersonalInfo = () => {
   return (
     <div className="settings-personal-info">
-      <Navbar2 />
+      <Navbar navbarType="app"/>
       <div className="apphomeinner7">
         <SettingsPanel activePanel="Personal Info" />
         <div className="rightpanel5">

@@ -1,11 +1,11 @@
-import Navbar2 from "../components/Navbar2";
+import Navbar from "../components/Navbar";
 import Button from "../components/Button";
 import "./HelpSupport.css";
 
 const HelpSupport = () => {
   return (
     <div className="helpsupport">
-      <Navbar2 />
+      <Navbar navbarType="app"/>
       <div className="apphomeinner">
         <Button
           label="Request a feature"

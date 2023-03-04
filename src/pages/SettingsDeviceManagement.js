@@ -1,4 +1,4 @@
-import Navbar4 from "../components/Navbar4";
+import Navbar from "../components/Navbar";
 import SettingsPanel from "../components/SettingsPanel";
 import SearchInputBox from "../components/SearchInputBox";
 import Button from "../components/Button";
@@ -8,7 +8,7 @@ import "./SettingsDeviceManagement.css";
 const SettingsDeviceManagement = () => {
   return (
     <div className="settings-device-management">
-      <Navbar4 />
+      <Navbar navbarType="app"/>
       <div className="apphomeinner1">
         <SettingsPanel activePanel="Device Management" />
         <div className="rightpanel">

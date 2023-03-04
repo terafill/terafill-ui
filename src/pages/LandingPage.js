@@ -6,7 +6,7 @@ import "./LandingPage.css";
 const LandingPage = () => {
   return (
     <div className="landing-page">
-      <Navbar />
+      <Navbar navbarType="landing"/>
       <div className="intro-section">
         <div className="leftintrosection" id="left-Intro-section">
           <div className="introsectiontext" id="intro-section-text">

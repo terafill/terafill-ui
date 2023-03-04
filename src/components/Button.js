@@ -8,6 +8,7 @@ const Button = ({
   buttonBackgroundColor,
   buttonBoxShadow,
   buttonBorder,
+  buttonDisplay,
   buttonPadding,
   keylanceWidth,
   keylanceHeight,

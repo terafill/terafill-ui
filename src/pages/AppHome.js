@@ -1,4 +1,4 @@
-import Navbar3 from "../components/Navbar3";
+import Navbar from "../components/Navbar";
 import SearchInputBox2 from "../components/SearchInputBox2";
 import PasswordItem from "../components/PasswordItem";
 import PasswordItem1 from "../components/PasswordItem1";
@@ -8,7 +8,7 @@ import "./AppHome.css";
 const AppHome = () => {
   return (
     <div className="apphome">
-      <Navbar3 />
+      <Navbar navbarType="app"/>
       <div className="apphomeinner2">
         <div className="leftpanel">
           <div className="searchbar">

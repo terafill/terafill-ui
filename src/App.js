@@ -43,19 +43,19 @@ function App() {
         title = "";
         metaDescription = "";
         break;
-      case "/helpsupport":
+      case "/help-and-support":
         title = "";
         metaDescription = "";
         break;
-      case "/settingsdevice-management":
+      case "/settings-device-management":
         title = "";
         metaDescription = "";
         break;
-      case "/apphome":
+      case "/app-home":
         title = "";
         metaDescription = "";
         break;
-      case "/emailconfirmation":
+      case "/email-confirmation":
         title = "";
         metaDescription = "";
         break;
@@ -63,19 +63,19 @@ function App() {
         title = "";
         metaDescription = "";
         break;
-      case "/settingssharingbyuser":
+      case "/settings-sharing-by-user":
         title = "";
         metaDescription = "";
         break;
-      case "/settingssharingbypassword":
+      case "/settings-sharing-by-password":
         title = "";
         metaDescription = "";
         break;
-      case "/settingssecurity":
+      case "/settings-security":
         title = "";
         metaDescription = "";
         break;
-      case "/settingspersonal-info":
+      case "/settings-personal-info":
         title = "";
         metaDescription = "";
         break;
@@ -83,7 +83,7 @@ function App() {
         title = "";
         metaDescription = "";
         break;
-      case "/signuppage":
+      case "/signup-page":
         title = "";
         metaDescription = "";
         break;
@@ -109,36 +109,36 @@ function App() {
 
       <Route path="/recovery-kit" element={<RecoveryKit />} />
 
-      <Route path="/helpsupport" element={<HelpSupport />} />
+      <Route path="/help-and-support" element={<HelpSupport />} />
 
       <Route
-        path="/settingsdevice-management"
+        path="/settings-device-management"
         element={<SettingsDeviceManagement />}
       />
 
-      <Route path="/apphome" element={<AppHome />} />
+      <Route path="/app-home" element={<AppHome />} />
 
-      <Route path="/emailconfirmation" element={<EmailConfirmation />} />
+      <Route path="/email-confirmation" element={<EmailConfirmation />} />
 
       <Route path="/import" element={<Import />} />
 
       <Route
-        path="/settingssharingbyuser"
+        path="/settings-sharing-by-user"
         element={<SettingsSharingByUser />}
       />
 
       <Route
-        path="/settingssharingbypassword"
+        path="/settings-sharing-by-password"
         element={<SettingsSharingByPassword />}
       />
 
-      <Route path="/settingssecurity" element={<SettingsSecurity />} />
+      <Route path="/settings-security" element={<SettingsSecurity />} />
 
-      <Route path="/settingspersonal-info" element={<SettingsPersonalInfo />} />
+      <Route path="/settings-personal-info" element={<SettingsPersonalInfo />} />
 
       <Route path="/create-password" element={<CreatePassword />} />
 
-      <Route path="/signuppage" element={<SignUpPage />} />
+      <Route path="/signup-page" element={<SignUpPage />} />
     </Routes>
   );
 }

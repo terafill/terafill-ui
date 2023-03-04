@@ -1,11 +1,11 @@
-import Navbar2 from "../components/Navbar2";
+import Navbar from "../components/Navbar";
 import Button from "../components/Button";
 import "./Import.css";
 
 const Import = () => {
   return (
     <div className="import">
-      <Navbar2 />
+      <Navbar navbarType="app"/>
       <div className="apphomeinner3">
         <Button
           label="1password"

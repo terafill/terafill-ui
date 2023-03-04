@@ -2,7 +2,6 @@ import Navbar3 from "../components/Navbar3";
 import SearchInputBox2 from "../components/SearchInputBox2";
 import PasswordItem from "../components/PasswordItem";
 import PasswordItem1 from "../components/PasswordItem1";
-import AddButton from "../components/AddButton";
 import Button from "../components/Button";
 import "./AppHome.css";
 
@@ -53,7 +52,12 @@ const AppHome = () => {
               appLabelFontWeight="bold"
             />
           </div>
-          <AddButton />
+          <Button
+            iconXSmallDisplay="unset"
+            iconXSmall="../icbaselineplus.svg"
+            labelDisplay="none"
+            buttonType="add"
+          />
         </div>
         <div className="rightpanel1">
           <div className="titlebar">

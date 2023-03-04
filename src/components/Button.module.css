@@ -65,6 +65,20 @@
   background-color: var(--background-light-red);
 }
 
+/*Blue button*/
+.blueButton {
+  composes: rootButton;
+  background-color: var(--background-blue1);
+}
+.blueButton:hover {
+  background-color: var(--background-light-blue);
+}
+
+/*Add button*/
+.addButton {
+  composes: blueButton;
+  padding: var(--padding-3xs) var(--padding-3xs);
+}
 
 .lightLabel  {
   composes: rootLabel;

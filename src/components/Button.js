@@ -8,6 +8,7 @@ const Button = ({
   buttonBackgroundColor,
   buttonBoxShadow,
   buttonBorder,
+  buttonPadding,
   keylanceWidth,
   keylanceHeight,
   labelFontSize,
@@ -26,6 +27,7 @@ const Button = ({
       backgroundColor: buttonBackgroundColor,
       boxShadow: buttonBoxShadow,
       border: buttonBorder,
+      padding: buttonPadding,
     };
   }, [
     buttonBackgroundColor,
@@ -58,6 +60,12 @@ const Button = ({
       break;
     case "red":
       buttonStyleClass = styles.redButton;
+      break;
+    case "blue":
+      buttonStyleClass = styles.blueButton;
+      break;
+    case "add":
+      buttonStyleClass = styles.blueButton;
       break;
     default:
       buttonStyleClass = styles.darkButton;

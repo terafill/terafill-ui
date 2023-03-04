@@ -37,6 +37,7 @@
   gap: var(--gap-xs);
 }
 
+/*Dark button*/
 .darkButton {
   composes: rootButton;
 }
@@ -53,6 +54,17 @@
 .lightButton:hover {
   background-color: var(--background-light-gray);
 }
+
+
+/*Red button*/
+.redButton {
+  composes: rootButton;
+  background-color: var(--background-red);
+}
+.redButton:hover {
+  background-color: var(--background-light-red);
+}
+
 
 .lightLabel  {
   composes: rootLabel;

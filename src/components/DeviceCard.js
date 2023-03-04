@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import BlockButton from "../components/BlockButton";
+import Button from "../components/Button";
 import DeviceCardItem from "../components/DeviceCardItem";
 import "./DeviceCard.css";
 
@@ -26,7 +26,11 @@ const DeviceCard = ({
             <b className="app-label">{appLabel}</b>
             <b className="username">{username}</b>
           </div>
-          <BlockButton iconXSmall="../iconxsmall13@2x.png" />
+          <Button
+            label="Block"
+            iconXSmall="../iconxsmall@2x.png"
+            buttonType="red"
+          />
         </div>
       </div>
       <div className="cardbody">

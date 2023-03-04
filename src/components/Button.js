@@ -55,6 +55,9 @@ const Button = ({
     case "light":
       buttonStyleClass = styles.lightButton;
       break;
+    case "red":
+      buttonStyleClass = styles.redButton;
+      break;
     default:
       buttonStyleClass = styles.darkButton;
       // statements_def
@@ -66,6 +69,9 @@ const Button = ({
   switch(buttonType) {
     case "light":
       labelStyleClass = styles.darkLabel;
+      break;
+    case "red":
+      labelStyleClass = styles.lightLabel;
       break;
     default:
       labelStyleClass = styles.lightLabel;

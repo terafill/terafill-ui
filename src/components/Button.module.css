@@ -9,6 +9,7 @@
 
 /*Root label*/
 .rootLabel {
+  cursor: pointer;
   position: relative;
   font-size: var(--label-medium-medium1-size);
   line-height: 150%;
@@ -80,6 +81,30 @@
   padding: var(--padding-3xs) var(--padding-3xs);
 }
 
+
+/*Link Button*/
+.linkButton {
+  composes: rootButton;
+  background-color: transparent;
+  box-shadow: none;
+}
+.linkButton:hover {
+  background-color: var(--background-light-gray);
+}
+
+
+/*Link Button*/
+.inactiveLinkButton {
+  composes: linkButton;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.25) inset;
+}
+.inactiveLinkButton:hover {
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.25) inset;
+}
+
+
+
+/*Labels*/
 .lightLabel  {
   composes: rootLabel;
   color: var(--background-light1);
@@ -88,4 +113,9 @@
 .darkLabel  {
   composes: rootLabel;
   color: var(--background-dark1);
+}
+
+.blueLabel  {
+  composes: rootLabel;
+  color: var(--background-blue1);
 }

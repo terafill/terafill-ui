@@ -8,7 +8,7 @@ const SettingsPersonalInfo = () => {
     <div className="settings-personal-info">
       <Navbar2 />
       <div className="apphomeinner7">
-        <SettingsPanel />
+        <SettingsPanel activePanel="Personal Info" />
         <div className="rightpanel5">
           <div className="profileheader">
             <img

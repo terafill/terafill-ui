@@ -10,26 +10,19 @@ const SettingsSharingByPassword = () => {
     <div className="settings-sharing-bypassword">
       <Navbar2 />
       <div className="apphomeinner5">
-        <SettingsPanel />
+        <SettingsPanel activePanel="Sharing" />
         <div className="rightpanel3">
           <SearchInputBox />
           <b className="group-by1">Group By</b>
           <nav className="groupbytogglebuttons1">
             <Button
               label="By Password"
-              buttonDerivativeBaseOverflow="unset"
-              buttonBackgroundColor="#eee"
+              buttonType="link"
               buttonBoxShadow="0px 0px 4px rgba(0, 0, 0, 0.25) inset"
-              labelColor="#3f9bf1"
-              iconXSmall="../iconxsmall@2x.png"
             />
             <Button
               label="By User"
-              buttonDerivativeBaseOverflow="unset"
-              buttonBackgroundColor="transparent"
-              buttonBoxShadow="unset"
-              labelColor="#3f9bf1"
-              iconXSmall="../iconxsmall@2x.png"
+              buttonType="link"
             />
           </nav>
           <SharingCard2

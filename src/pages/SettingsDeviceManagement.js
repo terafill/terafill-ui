@@ -10,7 +10,7 @@ const SettingsDeviceManagement = () => {
     <div className="settings-device-management">
       <Navbar4 />
       <div className="apphomeinner1">
-        <SettingsPanel />
+        <SettingsPanel activePanel="Device Management" />
         <div className="rightpanel">
           <SearchInputBox />
           <Button

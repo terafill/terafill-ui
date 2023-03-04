@@ -9,7 +9,7 @@ const SettingsSecurity = () => {
     <div className="settings-security">
       <Navbar4 />
       <div className="apphomeinner6">
-        <SettingsPanel />
+        <SettingsPanel activePanel="Security" />
         <div className="rightpanel4">
           <SecurityCard />
           <SecurityCard2 />

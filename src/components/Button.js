@@ -67,6 +67,9 @@ const Button = ({
     case "add":
       buttonStyleClass = styles.blueButton;
       break;
+    case "link":
+      buttonStyleClass = styles.linkButton;
+      break;
     default:
       buttonStyleClass = styles.darkButton;
       // statements_def
@@ -81,6 +84,15 @@ const Button = ({
       break;
     case "red":
       labelStyleClass = styles.lightLabel;
+      break;
+    case "blue":
+      labelStyleClass = styles.lightLabel;
+      break;
+    case "add":
+      labelStyleClass = styles.lightLabel;
+      break;
+    case "link":
+      labelStyleClass = styles.blueLabel;
       break;
     default:
       labelStyleClass = styles.lightLabel;

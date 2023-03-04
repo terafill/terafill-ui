@@ -1,4 +1,4 @@
-import LinkButton from "../components/LinkButton";
+import Button from "../components/Button";
 import "./KeylanceFooterContainer.css";
 
 const KeylanceFooterContainer = () => {
@@ -16,11 +16,17 @@ const KeylanceFooterContainer = () => {
           <h6 className="support" id="Support">
             SUPPORT
           </h6>
-          <LinkButton iconXSmall="../iconxsmall5@2x.png" label="FAQ" />
-          <LinkButton iconXSmall="../iconxsmall6@2x.png" label="00-000-00000" />
-          <LinkButton
-            iconXSmall="../iconxsmall6@2x.png"
+          <Button
+            label="FAQ"
+            buttonType="link"
+          />
+          <Button
+            label="00-000-00000"
+            buttonType="link"
+          />
+          <Button
             label="support@keylance.in"
+            buttonType="link"
           />
         </div>
         <div className="socialmediagroup" id="contact-group">

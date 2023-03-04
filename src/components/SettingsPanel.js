@@ -1,40 +1,29 @@
 import Button from "../components/Button";
 import "./SettingsPanel.css";
 
-const SettingsPanel = () => {
+const SettingsPanel = ( { activePanel } ) => {
+  const extraBoxShadow = "0px 0px 4px rgba(0, 0, 0, 0.25) inset";
   return (
     <nav className="leftpanel1">
       <Button
         label="Personal Info"
-        buttonDerivativeBaseOverflow="unset"
-        buttonBackgroundColor="transparent"
-        buttonBoxShadow="unset"
-        labelColor="#3f9bf1"
-        iconXSmall="../iconxsmall@2x.png"
+        buttonType="link"
+        buttonBoxShadow={activePanel=="Personal Info"?extraBoxShadow:"none"}
       />
       <Button
         label="Security"
-        buttonDerivativeBaseOverflow="unset"
-        buttonBackgroundColor="transparent"
-        buttonBoxShadow="unset"
-        labelColor="#3f9bf1"
-        iconXSmall="../iconxsmall27@2x.png"
+        buttonType="link"
+        buttonBoxShadow={activePanel=="Security"?extraBoxShadow:"none"}
       />
       <Button
         label="Sharing"
-        buttonDerivativeBaseOverflow="unset"
-        buttonBackgroundColor="transparent"
-        buttonBoxShadow="unset"
-        labelColor="#3f9bf1"
-        iconXSmall="../iconxsmall@2x.png"
+        buttonType="link"
+        buttonBoxShadow={activePanel=="Sharing"?extraBoxShadow:"none"}
       />
       <Button
         label="Device Management"
-        buttonDerivativeBaseOverflow="unset"
-        buttonBackgroundColor="#eee"
-        buttonBoxShadow="0px 0px 4px rgba(0, 0, 0, 0.25) inset"
-        labelColor="#3f9bf1"
-        iconXSmall="../iconxsmall@2x.png"
+        buttonType="link"
+        buttonBoxShadow={activePanel=="Device Management"?extraBoxShadow:"none"}
       />
     </nav>
   );

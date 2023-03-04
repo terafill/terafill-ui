@@ -10,26 +10,19 @@ const SettingsSharingByUser = () => {
     <div className="settings-sharing-byuser">
       <Navbar2 />
       <div className="apphomeinner4">
-        <SettingsPanel />
+        <SettingsPanel activePanel="Sharing" />
         <div className="rightpanel2">
           <SearchInputBox />
           <b className="group-by">Group By</b>
           <nav className="groupbytogglebuttons">
             <Button
               label="By Password"
-              buttonDerivativeBaseOverflow="unset"
-              buttonBackgroundColor="transparent"
-              buttonBoxShadow="unset"
-              labelColor="#3f9bf1"
-              iconXSmall="../iconxsmall@2x.png"
+              buttonType="link"
             />
             <Button
               label="By User"
-              buttonDerivativeBaseOverflow="unset"
-              buttonBackgroundColor="#eee"
+              buttonType="link"
               buttonBoxShadow="0px 0px 4px rgba(0, 0, 0, 0.25) inset"
-              labelColor="#3f9bf1"
-              iconXSmall="../iconxsmall@2x.png"
             />
           </nav>
           <SharingCard appLabel="Ram Kumar" username="ram@example.com" />

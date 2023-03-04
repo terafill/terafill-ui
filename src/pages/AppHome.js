@@ -3,7 +3,7 @@ import SearchInputBox2 from "../components/SearchInputBox2";
 import PasswordItem from "../components/PasswordItem";
 import PasswordItem1 from "../components/PasswordItem1";
 import AddButton from "../components/AddButton";
-import Button3 from "../components/Button3";
+import Button from "../components/Button";
 import "./AppHome.css";
 
 const AppHome = () => {
@@ -75,7 +75,12 @@ const AppHome = () => {
             defaultValue="netflix.com"
             placeholder="Website"
           />
-          <Button3 />
+          <Button
+            label="View in dashboard"
+            iconXSmall="../new-window.svg"
+            iconXSmallDisplay="unset"
+            iconPosition="right"
+          />
         </div>
       </div>
     </div>

@@ -19,6 +19,7 @@ const Button = ({
   iconXSmallObjectFit,
   iconXSmallOverflow,
   labelDisplay,
+  iconPosition="left",
 }) => {
   const buttonStyle = useMemo(() => {
     return {
@@ -85,15 +86,21 @@ const Button = ({
         style={buttonStyle}
         onClick={onButtonClick}
         >
-        <img
+        {iconPosition==="left"?<img
           className={styles.iconxsmall}
           alt=""
           src={iconXSmall}
           style={iconXSmallStyle}
-        />
+        />: ""}
         <label className={labelStyleClass} style={labelStyle}>
           {label}
         </label>
+        {iconPosition==="right"?<img
+          className={styles.iconxsmall}
+          alt=""
+          src={iconXSmall}
+          style={iconXSmallStyle}
+        />: ""}
       </button>
   );
 };

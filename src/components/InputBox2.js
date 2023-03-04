@@ -1,4 +1,4 @@
-import CopyButton from "../components/CopyButton";
+import Button from "../components/Button";
 import "./InputBox2.css";
 
 const InputBox2 = () => {
@@ -10,7 +10,13 @@ const InputBox2 = () => {
           <b className="enter-your-data">asdasd-qweqwe-12312asd--asd</b>
         </p>
       </div>
-      <CopyButton />
+      <Button
+        label="COPY"
+        iconXSmall="../materialsymbolsfilecopyoutline.svg"
+        iconXSmallDisplay="unset"
+        iconPosition="right"
+        buttonType="light"
+      />
     </div>
   );
 };

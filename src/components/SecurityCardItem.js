@@ -30,11 +30,10 @@ const SecurityCardItem = ({
       </p>
       <Button
         label="Edit"
-        buttonRootBackgroundColor="transparent"
-        buttonRootBoxShadow="unset"
+        buttonBackgroundColor="transparent"
+        buttonBoxShadow="unset"
         labelColor="#3f9bf1"
         iconXSmall="../iconxsmall@2x.png"
-        buttonRootBoxSizing="unset"
         labelDisplay="unset"
       />
     </div>

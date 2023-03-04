@@ -7,7 +7,7 @@ import "./EmailCodeInputModalBox.css";
 const EmailCodeInputModalBox = () => {
   const navigate = useNavigate();
 
-  const onButtonDerivativeBase4Click = useCallback(() => {
+  const onButtonClick = useCallback(() => {
     navigate("/create-password");
   }, [navigate]);
 
@@ -34,16 +34,16 @@ const EmailCodeInputModalBox = () => {
         <Button
           label="Re-send verification code"
           buttonDerivativeBaseOverflow="unset"
-          buttonRootBackgroundColor="transparent"
-          buttonRootBoxShadow="unset"
+          buttonBackgroundColor="transparent"
+          buttonBoxShadow="unset"
           labelColor="#3f9bf1"
           iconXSmall="../iconxsmall42@2x.png"
         />
         <Button
           label="Change email address"
           buttonDerivativeBaseOverflow="unset"
-          buttonRootBackgroundColor="transparent"
-          buttonRootBoxShadow="unset"
+          buttonBackgroundColor="transparent"
+          buttonBoxShadow="unset"
           labelColor="#3f9bf1"
           iconXSmall="../iconxsmall42@2x.png"
         />
@@ -55,7 +55,7 @@ const EmailCodeInputModalBox = () => {
           buttonDerivativeBaseOverflow="unset"
           iconXSmall="../iconxsmall13@2x.png"
           buttonDerivativeBaseWidth="57px"
-          onButtonDerivativeBase4Click={onButtonDerivativeBase4Click}
+          onButtonClick={onButtonClick}
           buttonDerivativeBaseFlexShrink="0"
         />
         <Button
@@ -64,7 +64,7 @@ const EmailCodeInputModalBox = () => {
           buttonDerivativeBaseOverflow="unset"
           iconXSmall="../iconxsmall13@2x.png"
           buttonDerivativeBaseWidth="57px"
-          onButtonDerivativeBase4Click={onButtonDerivativeBase5Click}
+          onButtonClick={onButtonDerivativeBase5Click}
           buttonDerivativeBaseFlexShrink="0"
         />
       </div>

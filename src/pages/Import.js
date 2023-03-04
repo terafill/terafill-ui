@@ -9,7 +9,7 @@ const Import = () => {
       <div className="apphomeinner3">
         <Button
           label="1password"
-          buttonRootBackgroundColor="#fff"
+          buttonBackgroundColor="#fff"
           labelColor="#000"
           iconXSmall="../1passwordicon@2x.png"
           iconXSmallDisplay="unset"
@@ -19,7 +19,7 @@ const Import = () => {
         <Button
           label="Lastpass"
           iconXSmall="../lastpassimage@2x.png"
-          buttonRootBackgroundColor="#fff"
+          buttonBackgroundColor="#fff"
           labelColor="#000"
           iconXSmallDisplay="unset"
           iconXSmallObjectFit="unset"
@@ -28,7 +28,7 @@ const Import = () => {
         <Button
           label="RoboForm"
           iconXSmall="../roboformimage@2x.png"
-          buttonRootBackgroundColor="#fff"
+          buttonBackgroundColor="#fff"
           labelColor="#000"
           iconXSmallDisplay="unset"
           iconXSmallObjectFit="unset"
@@ -36,7 +36,7 @@ const Import = () => {
         />
         <Button
           label="iCloud passwords"
-          buttonRootBackgroundColor="#fff"
+          buttonBackgroundColor="#fff"
           labelColor="#000"
           iconXSmall="../iconxsmall50.svg"
           iconXSmallDisplay="unset"
@@ -45,7 +45,7 @@ const Import = () => {
         />
         <Button
           label="Dashlane"
-          buttonRootBackgroundColor="#fff"
+          buttonBackgroundColor="#fff"
           labelColor="#000"
           iconXSmall="../dashlane.svg"
           iconXSmallDisplay="unset"
@@ -54,7 +54,7 @@ const Import = () => {
         />
         <Button
           label="Keepass"
-          buttonRootBackgroundColor="#fff"
+          buttonBackgroundColor="#fff"
           labelColor="#000"
           iconXSmall="../keepassimage@2x.png"
           iconXSmallDisplay="unset"
@@ -63,7 +63,7 @@ const Import = () => {
         />
         <Button
           label="Chrome"
-          buttonRootBackgroundColor="#fff"
+          buttonBackgroundColor="#fff"
           labelColor="#000"
           iconXSmall="../iconxsmall27@2x.png"
           iconXSmallDisplay="unset"
@@ -72,7 +72,7 @@ const Import = () => {
         />
         <Button
           label="Firefox"
-          buttonRootBackgroundColor="#fff"
+          buttonBackgroundColor="#fff"
           labelColor="#000"
           iconXSmall="../firefox-1@2x.png"
           iconXSmallDisplay="unset"
@@ -81,7 +81,7 @@ const Import = () => {
         />
         <Button
           label="Keepassxc"
-          buttonRootBackgroundColor="#fff"
+          buttonBackgroundColor="#fff"
           labelColor="#000"
           iconXSmall="../keepassxcimage@2x.png"
           iconXSmallDisplay="unset"
@@ -90,7 +90,7 @@ const Import = () => {
         />
         <Button
           label="Thycotic "
-          buttonRootBackgroundColor="#fff"
+          buttonBackgroundColor="#fff"
           labelColor="#000"
           iconXSmall="../thycoticimage@2x.png"
           iconXSmallDisplay="unset"
@@ -99,7 +99,7 @@ const Import = () => {
         />
         <Button
           label="Other"
-          buttonRootBackgroundColor="#fff"
+          buttonBackgroundColor="#fff"
           labelColor="#000"
           iconXSmall="../vector8.svg"
           iconXSmallDisplay="unset"

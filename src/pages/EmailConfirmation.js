@@ -7,7 +7,7 @@ import "./EmailConfirmation.css";
 const EmailConfirmation = () => {
   const navigate = useNavigate();
 
-  const onButtonDerivativeBase4Click = useCallback(() => {
+  const onButtonClick = useCallback(() => {
     navigate("/create-password");
   }, [navigate]);
 

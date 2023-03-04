@@ -35,7 +35,7 @@ const SharingCardItem = ({
       <Button
         label="Block"
         buttonDerivativeBaseOverflow="unset"
-        buttonRootBackgroundColor="#ff0000"
+        buttonBackgroundColor="#ff0000"
         iconXSmall="../iconxsmall@2x.png"
       />
     </div>

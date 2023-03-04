@@ -19,9 +19,8 @@ const Navbar = () => {
         <Button label="Login" iconXSmall="../iconxsmall@2x.png" />
         <Button
           label="Sign Up"
-          buttonRootBackgroundColor="#fff"
-          labelColor="#000"
           iconXSmall="../iconxsmall@2x.png"
+          buttonType="light"
         />
       </div>
     </div>

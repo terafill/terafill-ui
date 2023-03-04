@@ -1,38 +1,35 @@
 import { useMemo } from "react";
-import "./Button.css";
+import styles from "./Button.module.css";
 
 const Button = ({
   icon,
   label,
-  buttonRootBackgroundColor,
-  buttonRootBoxShadow,
-  buttonRootBorder,
+  buttonType,
+  buttonBackgroundColor,
+  buttonBoxShadow,
+  buttonBorder,
   keylanceWidth,
   keylanceHeight,
   labelFontSize,
   labelLineHeight,
   labelColor,
-  buttonDerivativeBaseHeight,
   iconXSmall,
   iconXSmallDisplay,
-  onButtonDerivativeBase4Click,
+  onButtonClick,
   iconXSmallObjectFit,
   iconXSmallOverflow,
-  buttonRootBoxSizing,
   labelDisplay,
 }) => {
-  const buttonRootStyle = useMemo(() => {
+  const buttonStyle = useMemo(() => {
     return {
-      backgroundColor: buttonRootBackgroundColor,
-      boxShadow: buttonRootBoxShadow,
-      border: buttonRootBorder,
-      boxSizing: buttonRootBoxSizing,
+      backgroundColor: buttonBackgroundColor,
+      boxShadow: buttonBoxShadow,
+      border: buttonBorder,
     };
   }, [
-    buttonRootBackgroundColor,
-    buttonRootBoxShadow,
-    buttonRootBorder,
-    buttonRootBoxSizing,
+    buttonBackgroundColor,
+    buttonBoxShadow,
+    buttonBorder,
   ]);
 
   const labelStyle = useMemo(() => {
@@ -52,17 +49,45 @@ const Button = ({
     };
   }, [iconXSmallDisplay, iconXSmallObjectFit, iconXSmallOverflow]);
 
+  var buttonStyleClass = styles.darkButton;
+
+  switch(buttonType) {
+    case "light":
+      buttonStyleClass = styles.lightButton;
+      break;
+    default:
+      buttonStyleClass = styles.darkButton;
+      // statements_def
+      break;
+  }
+
+  var labelStyleClass = styles.darkLabel;
+
+  switch(buttonType) {
+    case "light":
+      labelStyleClass = styles.darkLabel;
+      break;
+    default:
+      labelStyleClass = styles.lightLabel;
+      // statements_def
+      break;
+  }
+
   return (
-      <button className="button" style={buttonRootStyle}>
+      <button
+        className={buttonStyleClass}
+        style={buttonStyle}
+        onClick={onButtonClick}
+        >
         <img
-          className="iconxsmall"
+          className={styles.iconxsmall}
           alt=""
           src={iconXSmall}
           style={iconXSmallStyle}
         />
-        <div className="label" style={labelStyle}>
+        <label className={labelStyleClass} style={labelStyle}>
           {label}
-        </div>
+        </label>
       </button>
   );
 };

@@ -7,7 +7,7 @@ import "./PasswordInputModalBox.css";
 const PasswordInputModalBox = () => {
   const navigate = useNavigate();
 
-  const onButtonDerivativeBase4Click = useCallback(() => {
+  const onButtonClick = useCallback(() => {
     navigate("/recovery-kit");
   }, [navigate]);
 
@@ -47,7 +47,7 @@ const PasswordInputModalBox = () => {
           buttonDerivativeBaseOverflow="unset"
           iconXSmall="../iconxsmall@2x.png"
           buttonDerivativeBaseWidth="57px"
-          onButtonDerivativeBase4Click={onButtonDerivativeBase4Click}
+          onButtonClick={onButtonClick}
           buttonDerivativeBaseFlexShrink="0"
         />
         <Button
@@ -55,7 +55,7 @@ const PasswordInputModalBox = () => {
           buttonDerivativeBaseOverflow="unset"
           iconXSmall="../iconxsmall@2x.png"
           buttonDerivativeBaseWidth="57px"
-          onButtonDerivativeBase4Click={onButtonDerivativeBase5Click}
+          onButtonClick={onButtonDerivativeBase5Click}
           buttonDerivativeBaseFlexShrink="0"
         />
       </div>

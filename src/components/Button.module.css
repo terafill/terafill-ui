@@ -6,7 +6,9 @@
   object-fit: cover;
   display: none;
 }
-.label {
+
+/*Root label*/
+.rootLabel {
   position: relative;
   font-size: var(--label-medium-medium1-size);
   line-height: 150%;
@@ -16,7 +18,11 @@
   color: var(--background-light1);
   text-align: center;
 }
-.button {
+
+
+/*Root Button*/
+.rootButton
+ {
   cursor: pointer;
   border: 0;
   display: flex;
@@ -29,4 +35,31 @@
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
   justify-content: center;
   gap: var(--gap-xs);
+}
+
+.darkButton {
+  composes: rootButton;
+}
+.darkButton:hover {
+  background-color: var(--color-darkslategray);
+}
+
+
+/*Light button*/
+.lightButton {
+  composes: rootButton;
+  background-color: var(--background-light1);
+}
+.lightButton:hover {
+  background-color: var(--background-light-gray);
+}
+
+.lightLabel  {
+  composes: rootLabel;
+  color: var(--background-light1);
+}
+
+.darkLabel  {
+  composes: rootLabel;
+  color: var(--background-dark1);
 }

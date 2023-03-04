@@ -1,12 +1,7 @@
 import { useMemo } from "react";
 import "./BlockButton.css";
 
-const BlockButton = ({ iconXSmall, buttonRootBoxSizing, labelDisplay }) => {
-  const buttonRoot1Style = useMemo(() => {
-    return {
-      boxSizing: buttonRootBoxSizing,
-    };
-  }, [buttonRootBoxSizing]);
+const BlockButton = ({ iconXSmall, labelDisplay }) => {
 
   const label1Style = useMemo(() => {
     return {
@@ -16,7 +11,7 @@ const BlockButton = ({ iconXSmall, buttonRootBoxSizing, labelDisplay }) => {
 
   return (
     <div className="buttonderivativebase17">
-      <button className="buttonroot18" style={buttonRoot1Style}>
+      <button className="buttonroot18">
         <img className="iconxsmall18" alt="" src={iconXSmall} />
         <div className="label19" style={label1Style}>
           Block

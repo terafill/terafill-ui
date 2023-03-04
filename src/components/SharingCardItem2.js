@@ -7,17 +7,15 @@ const SharingCardItem2 = ({ label }) => {
       <label className="label40">{label}</label>
       <Button
         label="Change Password"
-        buttonDerivativeBaseOverflow="unset"
-        buttonRootBackgroundColor="transparent"
-        buttonRootBoxShadow="unset"
+        buttonBackgroundColor="transparent"
+        buttonBoxShadow="unset"
         labelColor="#3f9bf1"
         iconXSmall="../iconxsmall@2x.png"
       />
       <Button
         label="Recovery kit"
-        buttonDerivativeBaseOverflow="unset"
-        buttonRootBackgroundColor="transparent"
-        buttonRootBoxShadow="unset"
+        buttonBackgroundColor="transparent"
+        buttonBoxShadow="unset"
         labelColor="#3f9bf1"
         iconXSmall="../iconxsmall@2x.png"
       />

@@ -7,7 +7,7 @@ import "./CreatePassword.css";
 const CreatePassword = () => {
   const navigate = useNavigate();
 
-  const onButtonDerivativeBase4Click = useCallback(() => {
+  const onButtonClick = useCallback(() => {
     navigate("/recovery-kit");
   }, [navigate]);
 

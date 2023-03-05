@@ -48,8 +48,6 @@ const Button = ({
     buttonZIndex,
   ]);
 
-  console.log(buttonStyle);
-
   const labelStyle = useMemo(() => {
     return {
       fontSize: labelFontSize,

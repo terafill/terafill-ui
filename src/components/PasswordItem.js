@@ -1,12 +1,16 @@
 import "./PasswordItem.css";
 
-const PasswordItem = () => {
+const PasswordItem = ({
+  icon,
+  appName,
+  userName,
+}) => {
   return (
-    <button className="passworditem">
-      <img className="icon2" alt="" src="../icon2@2x.png" />
-      <div className="data1">
-        <label className="app-label1">App Label</label>
-        <label className="app-label1">username</label>
+    <button className="passwordItem">
+      <img className="icon2" alt="" src={icon} />
+      <div className="passwordData">
+        <label className="appName">{appName}</label>
+        <label className="userName">{userName}</label>
       </div>
     </button>
   );

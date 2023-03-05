@@ -19,7 +19,7 @@
   z-index: 1;
 }
 .itemlist {
-  flex: 1;
+/*  flex: 1;*/
   border: 2px solid var(--background-light-gray);
   overflow-y: auto;
 }
@@ -38,12 +38,12 @@
   object-fit: cover;
 }
 .iconframe,
-.netflix {
+.passwordAppName {
   align-self: stretch;
   flex: 1;
   position: relative;
 }
-.netflix {
+.passwordAppName {
   margin: 0;
   font-size: inherit;
   line-height: 120%;
@@ -68,12 +68,12 @@
   align-items: center;
 }
 .inputbox {
-  border: 0;
+  border: 1;
+  border-color: var(--background-light-gray);
   font-family: var(--label-large-medium1);
   font-size: var(--font-size-4xl);
   background-color: transparent;
   border-radius: var(--br-sm);
-  width: 538px;
   flex-direction: row;
   padding: var(--padding-6xs) var(--padding-4xs);
   box-sizing: border-box;
@@ -84,12 +84,12 @@
   flex: 1;
   background-color: var(--background-light1);
   flex-direction: column;
-  padding: var(--padding-3xl) 112px;
-  justify-content: space-between;
+  justify-content: space-around;
   z-index: 0;
 }
 .apphome,
 .apphomeinner2 {
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -104,10 +104,28 @@
   position: relative;
   background-color: var(--background-light-gray);
   width: 100%;
-  height: 720px;
+  height: 100vh;
   flex-direction: column;
   text-align: left;
   font-size: var(--heading-heading-4-bold-size);
   color: var(--background-dark1);
   font-family: var(--label-large-medium1);
+}
+
+.dataTable {
+  gap: 96px;
+  align-items: center;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto auto;
+}
+
+.dataRowLabel {
+  cursor: pointer;
+  font-size: var(--label-medium-medium1-size);
+  text-transform: capitalize;
+  font-weight: 700;
+  font-family: var(--label-large-medium1);
+  color: var(--background-dark  );
+  text-align: center;
 }

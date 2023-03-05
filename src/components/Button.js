@@ -8,6 +8,10 @@ const Button = ({
   buttonBackgroundColor,
   buttonBoxShadow,
   buttonBorder,
+  buttonPosition,
+  buttonRight,
+  buttonBottom,
+  buttonZIndex,
   buttonDisplay,
   buttonPadding,
   keylanceWidth,
@@ -29,12 +33,22 @@ const Button = ({
       boxShadow: buttonBoxShadow,
       border: buttonBorder,
       padding: buttonPadding,
+      position: buttonPosition,
+      right: buttonRight,
+      bottom: buttonBottom,
+      zIndex: buttonZIndex,
     };
   }, [
     buttonBackgroundColor,
     buttonBoxShadow,
     buttonBorder,
+    buttonPosition,
+    buttonRight,
+    buttonBottom,
+    buttonZIndex,
   ]);
+
+  console.log(buttonStyle);
 
   const labelStyle = useMemo(() => {
     return {
@@ -113,9 +127,9 @@ const Button = ({
           src={iconXSmall}
           style={iconXSmallStyle}
         />: ""}
-        <label className={labelStyleClass} style={labelStyle}>
+        {label && <label className={labelStyleClass} style={labelStyle}>
           {label}
-        </label>
+        </label>}
         {iconPosition==="right"?<img
           className={styles.iconxsmall}
           alt=""

@@ -140,7 +140,6 @@ export const PasswordPanel = () => {
       <Button
         label="View in dashboard"
         iconXSmall="../new-window.svg"
-        iconXSmallDisplay="unset"
         iconPosition="right"
       />
   </div>
@@ -176,7 +175,6 @@ const AppHome = () => {
           }
           </div>
           <Button
-            iconXSmallDisplay="unset"
             iconXSmall="../icbaselineplus.svg"
             labelDisplay="none"
             buttonType="add"

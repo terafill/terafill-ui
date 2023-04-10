@@ -1,138 +1,80 @@
 import { useMemo } from "react";
-import styles from "./Button.module.css";
+import { useNavigate } from "react-router-dom";
 
 const Button = ({
-  icon,
-  label,
   buttonType,
-  buttonBackgroundColor,
-  buttonBoxShadow,
-  buttonBorder,
-  buttonPosition,
-  buttonRight,
-  buttonBottom,
-  buttonZIndex,
-  buttonDisplay,
-  buttonPadding,
-  keylanceWidth,
-  keylanceHeight,
-  labelFontSize,
-  labelLineHeight,
-  labelColor,
-  iconXSmall,
-  iconXSmallDisplay,
+  buttonClassName,
   onButtonClick,
-  iconXSmallObjectFit,
-  iconXSmallOverflow,
+  label,
   labelDisplay,
+  labelClassName,
+  icon,
+  iconDisplay,
   iconPosition="left",
+  iconClassName,
+  to,
 }) => {
-  const buttonStyle = useMemo(() => {
-    return {
-      backgroundColor: buttonBackgroundColor,
-      boxShadow: buttonBoxShadow,
-      border: buttonBorder,
-      padding: buttonPadding,
-      position: buttonPosition,
-      right: buttonRight,
-      bottom: buttonBottom,
-      zIndex: buttonZIndex,
-    };
-  }, [
-    buttonBackgroundColor,
-    buttonBoxShadow,
-    buttonBorder,
-    buttonPosition,
-    buttonRight,
-    buttonBottom,
-    buttonZIndex,
-  ]);
 
-  const labelStyle = useMemo(() => {
-    return {
-      fontSize: labelFontSize,
-      lineHeight: labelLineHeight,
-      color: labelColor,
-      display: labelDisplay,
-    };
-  }, [labelFontSize, labelLineHeight, labelColor, labelDisplay]);
+  const navigate = useNavigate();
+  const onLinkButtonClick = ( { to } ) => {
+    navigate(to);
+  };
 
-  const iconXSmallStyle = useMemo(() => {
-    return {
-      display: iconXSmallDisplay,
-      objectFit: iconXSmallObjectFit,
-      overflow: iconXSmallOverflow,
-    };
-  }, [iconXSmallDisplay, iconXSmallObjectFit, iconXSmallOverflow]);
 
-  var buttonStyleClass = styles.darkButton;
-
-  switch(buttonType) {
-    case "light":
-      buttonStyleClass = styles.lightButton;
-      break;
-    case "red":
-      buttonStyleClass = styles.redButton;
-      break;
-    case "blue":
-      buttonStyleClass = styles.blueButton;
-      break;
-    case "add":
-      buttonStyleClass = styles.blueButton;
-      break;
-    case "link":
-      buttonStyleClass = styles.linkButton;
-      break;
-    default:
-      buttonStyleClass = styles.darkButton;
-      // statements_def
-      break;
+  const buttonTypeClassMap = {
+    dark: "bg-black text-white font-medium text-base py-1 px-3 rounded-lg shadow-md hover:bg-gray-800 focus:outline-none transition-all",
+    panel: "text-blue-400 font-medium text-base py-1 px-3 rounded-lg hover:bg-gray-200 focus:outline-none transition-all",
+    link: "text-blue-400 font-medium text-base py-1 px-3 rounded-lg hover:bg-blue-50 focus:outline-none transition-all",
+    navbarLink: "bg-black text-white font-medium text-base py-1 px-3 rounded-lg shadow-md hover:bg-gray-800 focus:outline-none transition-all",
+    red: "bg-red-500 text-white font-medium text-base py-1 px-3 rounded-lg shadow-md hover:bg-red-600 focus:outline-none transition-all",
+    blue: "",
+    light: "bg-white text-black font-medium text-base py-1 px-3 rounded-lg shadow-all-direction hover:bg-gray-200 focus:outline-none transition-all flex flex-row items-center justify-center gap-[8px]",
+    lightOutlined: "",
   }
 
-  var labelStyleClass = styles.darkLabel;
+  const labelTypeClassMap = {
+    dark: "",
+    panel: "",
+    link: "",
+    navbarLink: "",
+    red: "",
+    blue: "",
+    light: "",
+    lightOutlined: "",
+  }
 
-  switch(buttonType) {
-    case "light":
-      labelStyleClass = styles.darkLabel;
-      break;
-    case "red":
-      labelStyleClass = styles.lightLabel;
-      break;
-    case "blue":
-      labelStyleClass = styles.lightLabel;
-      break;
-    case "add":
-      labelStyleClass = styles.lightLabel;
-      break;
-    case "link":
-      labelStyleClass = styles.blueLabel;
-      break;
-    default:
-      labelStyleClass = styles.lightLabel;
-      // statements_def
-      break;
+  const iconTypeClassMap = {
+    dark: "",
+    panel: "",
+    link: "",
+    navbarLink: "",
+    red: "",
+    blue: "",
+    light: "",
+    lightOutlined: "",
+  }
+
+  if (buttonType == undefined || buttonType == null){
+    buttonType = "dark";
   }
 
   return (
       <button
-        className={buttonStyleClass}
-        style={buttonStyle}
-        onClick={onButtonClick}
+        className={`${buttonClassName} ${buttonTypeClassMap[buttonType]}`}
+        onClick={(buttonType=="link"||buttonType=="navbarLink")?()=>{onLinkButtonClick({to});}:onButtonClick}
         >
         {iconPosition==="left"?<img
-          className={styles.iconxsmall}
+          className={`${iconTypeClassMap[buttonType]} ${iconClassName}`}
           alt=""
-          src={iconXSmall}
-          style={iconXSmallStyle}
+          src={icon}
         />: ""}
-        {label && <label className={labelStyleClass} style={labelStyle}>
+        {label && <label className={`${labelTypeClassMap} ${labelClassName}`}>
           {label}
         </label>}
         {iconPosition==="right"?<img
-          className={styles.iconxsmall}
+          className={`${iconTypeClassMap[buttonType]} ${iconClassName}`}
           alt=""
-          src={iconXSmall}
-          style={iconXSmallStyle}
+          src={icon}
         />: ""}
       </button>
   );

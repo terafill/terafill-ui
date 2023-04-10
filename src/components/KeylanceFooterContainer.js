@@ -1,6 +1,10 @@
 import Button from "../components/Button";
 import "./KeylanceFooterContainer.css";
 
+import { BsTwitter, BsFacebook, BsInstagram } from "react-icons/bs";
+import { Link } from "react-router-dom";
+
+
 const KeylanceFooterContainer = () => {
   return (
     <div className="footer" id="footer">
@@ -16,31 +20,16 @@ const KeylanceFooterContainer = () => {
           <h6 className="support" id="Support">
             SUPPORT
           </h6>
-          <Button
-            label="FAQ"
-            buttonType="link"
-          />
-          <Button
-            label="00-000-00000"
-            buttonType="link"
-          />
-          <Button
-            label="support@keylance.in"
-            buttonType="link"
-          />
+          <Button buttonType="link" to="/faq" label="FAQ" />
+          <a href="tel:+00-000-00000"><Button buttonType="link" label="00-000-00000" /></a>
+          <a href="mailto:support@keylance.in"><Button buttonType="link" label="support@keylance.in" /></a>
         </div>
         <div className="socialmediagroup" id="contact-group">
           <b className="contact-us">CONTACT US</b>
           <div className="buttongroup3" id="ButtonGroup">
-            <a className="twittericon">
-              <img className="vector-icon" alt="" src="../twitter.svg" />
-            </a>
-            <a className="facebookicon">
-              <img className="vector-icon1" alt="" src="../vector1.svg" />
-            </a>
-            <a className="instagramicon">
-              <img className="vector-icon2" alt="" src="../vector2.svg" />
-            </a>
+            <a href='https://twitter.com' target="_blank" rel="noopener noreferrer"><BsTwitter/></a>
+            <a href='https://facebook.com' target="_blank" rel="noopener noreferrer"><BsFacebook/></a>
+            <a href='https://instagram.com' target="_blank" rel="noopener noreferrer"><BsInstagram/></a>
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
-.forgot-your-password,
-.keylance-password-manager {
+
+.introsectiontext #heading,
+.introsectiontext #para {
   margin: 0;
   align-self: stretch;
   position: relative;
@@ -8,13 +9,13 @@
   align-items: center;
   flex-shrink: 0;
 }
-.forgot-your-password {
+.introsectiontext #heading {
   font-size: inherit;
   line-height: 120%;
   font-family: inherit;
-  height: 73px;
+  height: 72px;
 }
-.keylance-password-manager {
+.introsectiontext #para {
   font-size: var(--font-size-2xl);
   text-align: justify;
   height: 117px;

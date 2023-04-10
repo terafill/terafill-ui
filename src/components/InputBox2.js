@@ -13,7 +13,6 @@ const InputBox2 = () => {
       <Button
         label="COPY"
         iconXSmall="../materialsymbolsfilecopyoutline.svg"
-        iconXSmallDisplay="unset"
         iconPosition="right"
         buttonType="light"
       />

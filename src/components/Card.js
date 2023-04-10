@@ -24,7 +24,7 @@ const CardItem = ({
       {text && <p className="cardItemText">{text}</p>}
       {blockButton && <Button label="Block" buttonType="red" />}
       {editButton && <Button label="Edit" buttonType="link" />}
-      {recoveryButton && <Button label="Recovery Kit" buttonType="blue" />}
+      {recoveryButton && <Button label="Recovery Kit" buttonType="link" />}
     </div>
   );
 };
@@ -54,10 +54,7 @@ const Card = ({
             <b className="cardLabel">{cardLabel}</b>
             <b className="cardLabel2">{cardLabel2}</b>
           </div>
-          {cardButtonVisible && <Button
-            label="Block"
-            buttonType="red"
-          />}
+          {cardButtonVisible && <Button label="Block" buttonType="red" />}
       </div>
       <div className="cardBody">
         {cardBodyData.map(cardItemData=>{

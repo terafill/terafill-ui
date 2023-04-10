@@ -2,7 +2,10 @@ import InputBox2 from "../components/InputBox2";
 import Button from "../components/Button";
 import "./InputModalBox.css";
 
+
+
 const InputModalBox = () => {
+
   return (
     <form className="inputmodalbox">
       <h4 className="download-account-recovery">
@@ -14,18 +17,8 @@ const InputModalBox = () => {
         recover your account in case you lose your master password.
       </p>
       <div className="buttongroup4">
-        <Button
-          label="Download Kit"
-          buttonDerivativeBaseBoxShadow="0px 0px 4px rgba(0, 0, 0, 0.25)"
-          buttonDerivativeBaseOverflow="unset"
-          iconXSmall="../iconxsmall13@2x.png"
-        />
-        <Button
-          label="Finish Setup"
-          buttonDerivativeBaseBoxShadow="0px 0px 4px rgba(0, 0, 0, 0.25)"
-          buttonDerivativeBaseOverflow="unset"
-          iconXSmall="../iconxsmall13@2x.png"
-        />
+        <Button buttonType="dark" label="Download Kit"/>
+        <Button buttonType="navbarLink" to="/app-home" label="Finish Setup"/>
       </div>
     </form>
   );

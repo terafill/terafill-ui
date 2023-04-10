@@ -8,7 +8,7 @@ const PasswordInputModalBox = () => {
   const navigate = useNavigate();
 
   const onButtonClick = useCallback(() => {
-    navigate("/recovery-kit");
+    navigate("/email-confirmation");
   }, [navigate]);
 
   const onButtonDerivativeBase5Click = useCallback(() => {
@@ -42,22 +42,8 @@ const PasswordInputModalBox = () => {
         Note: Memorise this password and keep it safe.
       </p>
       <div className="buttonderivativebase-parent">
-        <Button
-          label="Back"
-          buttonDerivativeBaseOverflow="unset"
-          iconXSmall="../iconxsmall@2x.png"
-          buttonDerivativeBaseWidth="57px"
-          onButtonClick={onButtonClick}
-          buttonDerivativeBaseFlexShrink="0"
-        />
-        <Button
-          label="Next"
-          buttonDerivativeBaseOverflow="unset"
-          iconXSmall="../iconxsmall@2x.png"
-          buttonDerivativeBaseWidth="57px"
-          onButtonClick={onButtonDerivativeBase5Click}
-          buttonDerivativeBaseFlexShrink="0"
-        />
+        <Button buttonType="navbarLink" to="/email-confirmation" label="Back"/>
+        <Button buttonType="navbarLink" to="/recovery-kit" label="Next"/>
       </div>
     </form>
   );

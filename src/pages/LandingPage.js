@@ -1,7 +1,7 @@
 import Navbar from "../components/Navbar";
-import Button from "../components/Button";
 import KeylanceFooterContainer from "../components/KeylanceFooterContainer";
 import "./LandingPage.css";
+import Button  from '../components/Button';
 
 const LandingPage = () => {
   return (
@@ -10,30 +10,18 @@ const LandingPage = () => {
       <div className="intro-section">
         <div className="leftintrosection" id="left-Intro-section">
           <div className="introsectiontext" id="intro-section-text">
-            <h4 className="forgot-your-password" id="heading">
+            <h4 className="heading" id="heading">
               Forgot your password again?
             </h4>
-            <p className="keylance-password-manager" id="para">
+            <p className="para" id="para">
               Keylance Password Manager can help you store all your passwords
               effortlessly. Enjoy a fast and secure login experience with
               Keylance Login Manager.
             </p>
           </div>
           <div className="buttongroup" id="button-group">
-            <Button
-              label="Use Keylance for free"
-              buttonDerivativeBaseOverflow="unset"
-              buttonDerivativeBaseJustifyContent="center"
-              buttonDerivativeBaseHeight="37px"
-              iconXSmall="../iconsmall.svg"
-            />
-            <Button
-              label="Learn more"
-              buttonDerivativeBaseBoxShadow="0px 4px 4px rgba(0, 0, 0, 0.25)"
-              buttonDerivativeBaseOverflow="unset"
-              buttonDerivativeBaseJustifyContent="center"
-              iconXSmall="../iconsmall.svg"
-            />
+            <Button buttonType="navbarLink" to="/signup" label="Use Keylance for free" buttonClassName="py-2 px-4"/>
+            <Button buttonType="navbarLink" to="/" label="Learn more" buttonClassName="py-2 px-4 bg-white py-2 px-4 hover:bg-gray-100 ring-1 ring-black" labelClassName="text-black"/>
           </div>
         </div>
         <img
@@ -80,29 +68,13 @@ const LandingPage = () => {
       <div className="loginfastersection" id="login-faster-section">
         <div className="buttonmesh" id="ButtonMesh">
           <div className="buttongroup1" id="ButtonGroup">
-            <Button
-              buttonDerivativeBaseOverflow="unset"
-              iconXSmall="../iconsmall2.svg"
-            />
-            <Button
-              buttonDerivativeBaseOverflow="unset"
-              iconXSmall="../iconsmall3.svg"
-            />
-            <Button
-              buttonDerivativeBaseOverflow="unset"
-              iconXSmall="../iconsmall2.svg"
-            />
+          <Button buttonType="dark" label="Desktop" buttonClassName="py-2 px-4"/>
+          <Button buttonType="dark" label="Android" buttonClassName="py-2 px-4"/>
+          <Button buttonType="dark" label="iOS" buttonClassName="py-2 px-4"/>
           </div>
           <div className="buttongroup2" id="ButtonGroup">
-            <Button
-              buttonDerivativeBaseBoxShadow="0px 2px 4px rgba(51, 51, 51, 0.25)"
-              buttonDerivativeBaseOverflow="unset"
-              iconXSmall="../iconsmall2.svg"
-            />
-            <Button
-              buttonDerivativeBaseOverflow="unset"
-              iconXSmall="../iconsmall2.svg"
-            />
+            <Button buttonType="dark" label="WearOS" buttonClassName="py-2 px-4"/>
+            <Button buttonType="dark" label="WatchOS" buttonClassName="py-2 px-4"/>
           </div>
         </div>
         <div className="loginfasterinfographic" id="LoginFasterInfographic">

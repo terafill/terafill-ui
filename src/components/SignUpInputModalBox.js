@@ -26,11 +26,7 @@ const SignUpInputModalBox = () => {
         inputBoxInnerWidth="unset"
         inputBoxInnerAlignSelf="stretch"
       />
-      <Button
-        label="Create Account"
-        buttonDerivativeBaseOverflow="unset"
-        iconXSmall="../iconxsmall@2x.png"
-      />
+      <Button buttonType="navbarLink" to="/email-confirmation" label="Create Account"/>
     </form>
   );
 };

@@ -39,12 +39,13 @@ const Import = () => {
           importItem =>
           <Button
             key={importItem.label}
-            label={importItem.label}
-            iconXSmall={importItem.image}
             buttonType="light"
-            iconXSmallDisplay="unset"
-            buttonPadding="16px 32px"
-        />)
+            buttonClassName="gap-[8px] px-8 py-4"
+            label={importItem.label}
+            icon={importItem.image}
+            iconClassName="relative w-6 h-6 shrink-0"
+        />
+        )
       }
       </div>
     </div>

@@ -58,6 +58,8 @@ const SettingsSharingByPassword = () => {
     },
   ]
 
+  const activePanel = "By Password";
+
   return (
     <div className="settings-sharing-bypassword">
       <Navbar navbarType="app"/>
@@ -67,15 +69,8 @@ const SettingsSharingByPassword = () => {
           <SearchInputBox />
           <b className="group-by1">Group By</b>
           <nav className="groupbytogglebuttons1">
-            <Button
-              label="By Password"
-              buttonType="link"
-              buttonBoxShadow="0px 0px 4px rgba(0, 0, 0, 0.25) inset"
-            />
-            <Button
-              label="By User"
-              buttonType="link"
-            />
+            <Button buttonType="panel" label="By Password" buttonClassName={`${activePanel=="By Password" ? 'bg-gray-100' : ''}`}/>
+            <Button buttonType="panel" label="By User" buttonClassName={`${activePanel=="By User" ? 'bg-gray-100' : ''}`}/>
           </nav>
 
           {passwordDataList.map( passwordData =>

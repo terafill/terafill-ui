@@ -49,10 +49,7 @@ const SettingsDeviceManagement = () => {
         <SettingsPanel activePanel="Device Management" />
         <div className="rightpanel">
           <SearchInputBox />
-         <Button
-            label="Sync new device"
-            buttonType="dark"
-          />
+          <Button buttonType="dark" label="Sync new device"/>
           {deviceDataList.map( deviceData =>
             <Card
               cardType="device"

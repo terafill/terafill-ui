@@ -6,20 +6,38 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+import { useEffect } from "react";
+
+
+
+// Landing Page
 import LandingPage from "./pages/LandingPage";
-import RecoveryKit from "./pages/RecoveryKit";
-import HelpSupport from "./pages/HelpSupport";
-import SettingsDeviceManagement from "./pages/SettingsDeviceManagement";
-import AppHome, { PasswordPanel, PasswordPanelIndex, passwordDataLoader } from "./pages/AppHome";
+import ProductsPage from "./pages/ProductsPage";
+import PricingPage from "./pages/PricingPage";
+import WhitepaperPage from "./pages/WhitepaperPage";
+import FaqPage from "./pages/FaqPage";
+
+// Login and Signup
+import LoginPage from "./pages/LoginPage";
+import SignUpPage from "./pages/SignUpPage";
 import EmailConfirmation from "./pages/EmailConfirmation";
-import Import from "./pages/Import";
+import CreatePassword from "./pages/CreatePassword";
+import RecoveryKit from "./pages/RecoveryKit";
+
+// App Home
+import AppHome, { PasswordPanel, PasswordPanelIndex, passwordDataLoader } from "./pages/AppHome";
+
+// Settings
+import SettingsPersonalInfo from "./pages/SettingsPersonalInfo";
+import SettingsDeviceManagement from "./pages/SettingsDeviceManagement";
+import SettingsSecurity from "./pages/SettingsSecurity";
 import SettingsSharingByUser from "./pages/SettingsSharingByUser";
 import SettingsSharingByPassword from "./pages/SettingsSharingByPassword";
-import SettingsSecurity from "./pages/SettingsSecurity";
-import SettingsPersonalInfo from "./pages/SettingsPersonalInfo";
-import CreatePassword from "./pages/CreatePassword";
-import SignUpPage from "./pages/SignUpPage";
-import { useEffect } from "react";
+
+// Others
+import Import from "./pages/Import";
+import HelpSupport from "./pages/HelpSupport";
+
 
 
 const router = createBrowserRouter([
@@ -44,20 +62,40 @@ const router = createBrowserRouter([
 
   },
   {
-    path: "/help-and-support",
-    element: <HelpSupport />
+    path: "/products",
+    element: <ProductsPage />
+  },
+  {
+    path: "/pricing",
+    element: <PricingPage />
+  },
+  {
+    path: "/whitepaper",
+    element: <WhitepaperPage />
   },
   {
     path: "/recovery-kit",
     element: < RecoveryKit/>
   },
   {
+    path: "/faq",
+    element: <FaqPage />
+  },
+  {
+    path: "/login",
+    element: <LoginPage />
+  },
+  {
+    path: "/signup",
+    element: <SignUpPage />
+  },
+  {
     path: "/email-confirmation",
     element: <EmailConfirmation />
   },
   {
-    path: "/import",
-    element: <Import />
+    path: "/create-password",
+    element: <CreatePassword />
   },
   {
     path: "/settings-device-management",
@@ -80,15 +118,13 @@ const router = createBrowserRouter([
     element: <SettingsPersonalInfo />
   },
   {
-    path: "/create-password",
-    element: <CreatePassword />
+    path: "/import",
+    element: <Import />
   },
   {
-    path: "/signup-page",
-    element: <SignUpPage />
+    path: "/help-and-support",
+    element: <HelpSupport />
   },
-
-
 ]);
 
 function App() {

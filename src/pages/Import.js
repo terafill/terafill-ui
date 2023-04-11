@@ -1,6 +1,5 @@
 import Navbar from "../components/Navbar";
 import Button from "../components/Button";
-import "./Import.css";
 
 const Import = () => {
 
@@ -31,22 +30,22 @@ const Import = () => {
   ];
 
   return (
-    <div className="import">
+    <div className="relative w-screen h-screen flex flex-col items-center justify-start">
       <Navbar navbarType="app"/>
-      <div className="apphomeinner3">
-      {
-        importList.map(
-          importItem =>
-          <Button
-            key={importItem.label}
-            buttonType="light"
-            buttonClassName="gap-[8px] px-8 py-4"
-            label={importItem.label}
-            icon={importItem.image}
-            iconClassName="relative w-6 h-6 shrink-0"
-        />
-        )
-      }
+      <div className="flex-1 grid grid-cols-4 gap-12 justify-center items-center content-center" >
+        {
+          importList.map(
+            importItem =>
+            <Button
+              key={importItem.label}
+              buttonType="light"
+              buttonClassName="gap-[8px] px-8 py-4"
+              label={importItem.label}
+              icon={importItem.image}
+              iconClassName="relative w-6 h-6 shrink-0"
+          />
+          )
+        }
       </div>
     </div>
   );

@@ -1,9 +1,8 @@
-import Navbar from "../components/Navbar";
-import SettingsPanel from "../components/SettingsPanel";
-import SearchInputBox from "../components/SearchInputBox";
-import Button from "../components/Button";
-import Card from "../components/Card";
-import "./SettingsSharingByPassword.css";
+import Navbar from "../../components/Navbar";
+import SettingsPanel from "../../components/SettingsPanel";
+import SearchInputBox from "../../components/SearchInputBox";
+import Button from "../../components/Button";
+import Card from "../../components/Card";
 
 const SettingsSharingByPassword = () => {
 
@@ -61,14 +60,10 @@ const SettingsSharingByPassword = () => {
   const activePanel = "By Password";
 
   return (
-    <div className="settings-sharing-bypassword">
-      <Navbar navbarType="app"/>
-      <div className="apphomeinner5">
-        <SettingsPanel activePanel="Sharing" />
-        <div className="rightpanel3">
+        <div className="self-stretch flex-1 overflow-y-auto flex flex-col py-8 px-40 items-center justify-start gap-[32px] z-[0]">
           <SearchInputBox />
-          <b className="group-by1">Group By</b>
-          <nav className="groupbytogglebuttons1">
+          <b className="relative leading-[120%] text-3xl">Group By</b>
+          <nav className="flex flex-row items-start justify-start gap-[4px]">
             <Button buttonType="panel" label="By Password" buttonClassName={`${activePanel=="By Password" ? 'bg-gray-100' : ''}`}/>
             <Button buttonType="panel" label="By User" buttonClassName={`${activePanel=="By User" ? 'bg-gray-100' : ''}`}/>
           </nav>
@@ -84,8 +79,6 @@ const SettingsSharingByPassword = () => {
             />
           )}
         </div>
-      </div>
-    </div>
   );
 };
 

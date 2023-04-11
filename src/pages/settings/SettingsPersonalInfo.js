@@ -1,7 +1,6 @@
-import Navbar from "../components/Navbar";
-import SettingsPanel from "../components/SettingsPanel";
-import Card from "../components/Card";
-import "./SettingsPersonalInfo.css";
+import Navbar from "../../components/Navbar";
+import SettingsPanel from "../../components/SettingsPanel";
+import Card from "../../components/Card";
 
 const SettingsPersonalInfo = () => {
 
@@ -38,18 +37,14 @@ const SettingsPersonalInfo = () => {
   }]
 
   return (
-    <div className="settings-personal-info">
-      <Navbar navbarType="app"/>
-      <div className="apphomeinner7">
-        <SettingsPanel activePanel="Personal Info" />
-        <div className="rightpanel5">
-          <div className="profileheader">
+        <div className="self-stretch flex-1 bg-font-light overflow-y-auto flex flex-col py-8 px-40 items-center justify-start gap-[32px] z-[0]">
+          <div className="flex flex-col items-center justify-center">
             <img
-              className="iconoirprofile-circle"
+              className="relative w-32 h-32 shrink-0 overflow-hidden"
               alt=""
               src="../iconoirprofilecircle.svg"
             />
-            <b className="welcome-leonardo">Welcome, Leonardo</b>
+            <b className="relative leading-[120%] flex items-center justify-center w-[444px] h-[77px] shrink-0">Welcome, Leonardo</b>
           </div>
           {userProfile.map( userProfileData =>
             <Card
@@ -60,8 +55,6 @@ const SettingsPersonalInfo = () => {
             />
           )}
         </div>
-      </div>
-    </div>
   );
 };
 

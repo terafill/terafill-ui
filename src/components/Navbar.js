@@ -75,7 +75,7 @@ const Navbar = ({ navbarType="landing" }) => {
               <img
                 className="relative w-6 h-6 shrink-0"
                 alt=""
-                src="../bell.svg"
+                src="/bell.svg"
               />
             </button>
           </button>
@@ -88,7 +88,7 @@ const Navbar = ({ navbarType="landing" }) => {
               <img
                 className="relative w-6 h-6 shrink-0"
                 alt=""
-                src="../profile.svg"
+                src="/profile.svg"
               />
             </button>
           </button>

@@ -26,11 +26,11 @@ import { CreateAccountForm, EmailConfirmationForm, CreatePasswordForm, RecoveryK
 import AppHome, { PasswordPanel, PasswordPanelIndex, passwordDataLoader } from "./pages/AppHome";
 
 // Settings
-import SettingsPersonalInfo from "./pages/SettingsPersonalInfo";
-import SettingsDeviceManagement from "./pages/SettingsDeviceManagement";
-import SettingsSecurity from "./pages/SettingsSecurity";
-import SettingsSharingByUser from "./pages/SettingsSharingByUser";
-import SettingsSharingByPassword from "./pages/SettingsSharingByPassword";
+import Settings from './pages/settings/Settings';
+import SettingsPersonalInfo from "./pages/settings/SettingsPersonalInfo";
+import SettingsDeviceManagement from "./pages/settings/SettingsDeviceManagement";
+import SettingsSecurity from "./pages/settings/SettingsSecurity";
+import SettingsSharing, { SettingsSharingByUser, SettingsSharingByPassword } from "./pages/settings/SettingsSharing";
 
 // Others
 import Import from "./pages/Import";
@@ -102,16 +102,41 @@ const router = createBrowserRouter([
     ]
   },
   {
+    path: "/settings",
+    element: <Settings />,
+    children: [
+      {
+        index: true,
+        element: <SettingsPersonalInfo />
+      },
+      {
+        path: "security",
+        element: <SettingsSecurity />
+      },
+      {
+        path: "sharing",
+        element: <SettingsSharing />,
+        children: [
+          {
+            index: true,
+            path: "by-password",
+            element: <SettingsSharingByPassword />
+          },
+          {
+            path: "by-user",
+            element: <SettingsSharingByUser />
+          },
+        ]
+      },
+      {
+        path: "device-management",
+        element: <SettingsDeviceManagement />
+      },
+    ]
+  },
+  {
     path: "/settings-device-management",
     element: <SettingsDeviceManagement />
-  },
-  {
-    path: "/settings-sharing-by-user",
-    element: <SettingsSharingByUser />
-  },
-  {
-    path: "/settings-sharing-by-password",
-    element: <SettingsSharingByPassword />
   },
   {
     path: "/settings-security",

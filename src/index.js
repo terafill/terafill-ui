@@ -4,17 +4,13 @@ import { createRoot } from "react-dom/client";
 import reportWebVitals from "./reportWebVitals";
 import "./global.css";
 
-import { ChakraProvider } from '@chakra-ui/react'
-
 const container = document.getElementById("root");
 const root = createRoot(container);
 
 
 root.render(
   <React.StrictMode>
-    <ChakraProvider>
-      <App />
-    </ChakraProvider>
+    <App />
  </React.StrictMode>
 );
 

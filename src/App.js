@@ -20,9 +20,7 @@ import FaqPage from "./pages/FaqPage";
 // Login and Signup
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
-import EmailConfirmation from "./pages/EmailConfirmation";
-import CreatePassword from "./pages/CreatePassword";
-import RecoveryKit from "./pages/RecoveryKit";
+import { CreateAccountForm, EmailConfirmationForm, CreatePasswordForm, RecoveryKitForm } from "./pages/SignUpPage";
 
 // App Home
 import AppHome, { PasswordPanel, PasswordPanelIndex, passwordDataLoader } from "./pages/AppHome";
@@ -74,10 +72,6 @@ const router = createBrowserRouter([
     element: <WhitepaperPage />
   },
   {
-    path: "/recovery-kit",
-    element: < RecoveryKit/>
-  },
-  {
     path: "/faq",
     element: <FaqPage />
   },
@@ -87,15 +81,25 @@ const router = createBrowserRouter([
   },
   {
     path: "/signup",
-    element: <SignUpPage />
-  },
-  {
-    path: "/email-confirmation",
-    element: <EmailConfirmation />
-  },
-  {
-    path: "/create-password",
-    element: <CreatePassword />
+    element: <SignUpPage />,
+    children: [
+      {
+        index: true,
+        element: <CreateAccountForm />
+      },
+      {
+        path: "email-confirmation",
+        element: <EmailConfirmationForm />
+      },
+      {
+        path: "create-password",
+        element: <CreatePasswordForm />
+      },
+      {
+        path: "recovery-kit",
+        element: <RecoveryKitForm />
+      },
+    ]
   },
   {
     path: "/settings-device-management",

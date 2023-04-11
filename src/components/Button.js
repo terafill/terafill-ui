@@ -33,14 +33,14 @@ const Button = ({
   }
 
   const labelTypeClassMap = {
-    dark: "",
-    panel: "",
-    link: "",
-    navbarLink: "",
-    red: "",
-    blue: "",
-    light: "",
-    lightOutlined: "",
+    dark: "cursor-pointer",
+    panel: "cursor-pointer",
+    link: "cursor-pointer",
+    navbarLink: "cursor-pointer",
+    red: "cursor-pointer",
+    blue: "cursor-pointer",
+    light: "cursor-pointer",
+    lightOutlined: "cursor-pointer",
   }
 
   const iconTypeClassMap = {
@@ -68,7 +68,7 @@ const Button = ({
           alt=""
           src={icon}
         />: ""}
-        {label && <label className={`${labelTypeClassMap} ${labelClassName}`}>
+        {label && <label className={`${labelTypeClassMap[buttonType]} ${labelClassName}`}>
           {label}
         </label>}
         {iconPosition==="right"?<img

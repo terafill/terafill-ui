@@ -1,10 +1,9 @@
 import Navbar from "../components/Navbar";
 import Button from "../components/Button";
-import "./HelpSupport.css";
 
 const HelpSupport = () => {
   return (
-    <div className="relative bg-background-light-gray w-full h-[720px] flex flex-col items-center justify-center">
+    <div className="relative bg-background-light-gray w-full h-screen flex flex-col items-center justify-start">
       <Navbar navbarType="app"/>
       <div className="self-stretch flex-1 relative bg-font-light overflow-hidden flex flex-row items-center justify-center gap-8">
         <Button

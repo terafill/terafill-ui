@@ -1,8 +1,12 @@
 import Navbar from "../components/Navbar";
 import KeylanceFooterContainer from "../components/KeylanceFooterContainer";
 import Button  from '../components/Button';
+import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
+
+  const navigate = useNavigate();
+
   return (
     <div className="relative w-screen h-screen overflow-y-auto flex flex-col items-center justify-start text-center">
       <div className="w-full h-screen" id="intro-section-wrapper">
@@ -20,8 +24,8 @@ const LandingPage = () => {
               </p>
             </div>
             <div className="self-stretch flex flex-row items-center justify-start gap-[16px]" id="button-group">
-              <Button buttonType="navbarLink" to="/signup" label="Use Keylance for free" buttonClassName="py-2 px-4"/>
-              <Button buttonType="navbarLink" to="/" label="Learn more" buttonClassName="py-2 px-4 bg-white py-2 px-4 hover:bg-gray-100 ring-1 ring-black" labelClassName="text-black"/>
+              <Button buttonType="dark" label="Use Keylance for free" buttonClassName="py-2 px-4" onClick={()=>navigate("/signup")}/>
+              <Button buttonType="dark" to="/" label="Learn more" buttonClassName="py-2 px-4 bg-white py-2 px-4 hover:bg-gray-100 ring-1 ring-black" labelClassName="text-black" onClick={()=>navigate("/")}/>
             </div>
           </div>
           <img

@@ -2,10 +2,11 @@ import Button from "../components/Button";
 import "./KeylanceFooterContainer.css";
 
 import { BsTwitter, BsFacebook, BsInstagram } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 
 const KeylanceFooterContainer = () => {
+  const navigate = useNavigate();
   return (
     <div className="footer" id="footer">
       <div className="logo">
@@ -20,7 +21,7 @@ const KeylanceFooterContainer = () => {
           <h6 className="support" id="Support">
             SUPPORT
           </h6>
-          <Button buttonType="link" to="/faq" label="FAQ" />
+          <Button buttonType="link" label="FAQ" onClick={()=>navigate("/faq")}/>
           <a href="tel:+00-000-00000"><Button buttonType="link" label="00-000-00000" /></a>
           <a href="mailto:support@keylance.in"><Button buttonType="link" label="support@keylance.in" /></a>
         </div>

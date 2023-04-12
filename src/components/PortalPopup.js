@@ -1,7 +1,6 @@
 import { useMemo, useCallback, useState, useRef, useEffect } from "react";
 
 import { createPortal } from "react-dom";
-import "./PortalPopup.css";
 
 const PortalPopup = ({
   children,
@@ -16,7 +15,7 @@ const PortalPopup = ({
   relativeLayerRef,
 }) => {
   const relContainerRef = useRef(null);
-  const [relativeStyle, setRelativeStyle] = useState({});
+  const [relativeStyle, setRelativeStyle] = useState({ visibility: "hidden" });
   const popupStyle = useMemo(() => {
     const style = {};
     style.zIndex = zIndex;
@@ -87,11 +86,12 @@ const PortalPopup = ({
           style.left = relativeX + relativeW - containerW - right;
           break;
       }
-
+      style.visibility = "visible";
       setRelativeStyle(style);
     } else {
       style.maxWidth = "90%";
       style.maxHeight = "90%";
+      style.visibility = "visible";
       setRelativeStyle(style);
     }
   }, [
@@ -129,7 +129,7 @@ const PortalPopup = ({
   return (
     <Portal>
       <div
-        className={"portalPopupOverlay"}
+        className={"flex flex-col fixed inset-0 portalPopupOverlay"}
         style={popupStyle}
         onClick={onOverlayClick}
       >

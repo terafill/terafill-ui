@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import InputBox from "../components/InputBox";
 import InputBox2 from "../components/InputBox2";
 import { NavLink, Outlet, useParams, useLoaderData } from "react-router-dom";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { useState, useEffect } from 'react';
 
 
@@ -50,7 +50,7 @@ export const EmailConfirmationForm = () => {
         />
         <div className="flex flex-col items-center justify-center">
             <Button buttonType="link" label="Re-send verification code" />
-            <NavLink to="/signup" onClick={stepBackward} ><Button buttonType="link" to="/signup" label="Change email address" /></NavLink>
+            <NavLink to="/signup" onClick={stepBackward} ><Button buttonType="link" label="Change email address" /></NavLink>
         </div>
         <div className="flex flex-row items-center justify-center gap-[16px]">
           <NavLink to="/signup/create-password" onClick={stepForward}><Button  label="Submit"/></NavLink>
@@ -87,6 +87,7 @@ export const CreatePasswordForm = () => {
 
 
 export const RecoveryKitForm = () => {
+  const navigate = useNavigate();
   return (
         <form className="bg-white rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[32px]">
           <h4 className="m-0 relative text-4xl leading-[120%] font-bold text-black text-center">
@@ -99,7 +100,7 @@ export const RecoveryKitForm = () => {
           </p>
           <div className="flex flex-row py-4 px-0 items-start justify-start gap-[32px]">
             <Button buttonType="dark" label="Download Kit"/>
-            <Button buttonType="navbarLink" to="/app-home" label="Finish Setup"/>
+            <Button buttonType="dark" label="Finish Setup" onClick={()=>navigate("/app-home")}/>
           </div>
         </form>
   );

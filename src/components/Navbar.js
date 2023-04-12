@@ -1,16 +1,17 @@
-import { useState, useRef, useCallback } from "react";
-import NotificationsPopup from "../components/NotificationsPopup";
+import { memo, useState, useRef, useCallback } from "react";
+import NotificationsMenu from "../components/NotificationsMenu";
 import PortalPopup from "../components/PortalPopup";
-import ProfilePopup from "../components/ProfilePopup";
+import ProfileMenu from "../components/ProfileMenu";
 import Button from "../components/Button";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
-const Navbar = ({ navbarType="landing" }) => {
+const Navbar = memo(({ navbarType="landing" }) => {
 
-  const buttonDerivativeBase3Ref = useRef(null);
+  const navigate = useNavigate();
+  const profileMenuButtonRef = useRef(null);
   const [isNotificationsPopupOpen, setNotificationsPopupOpen] = useState(false);
-  const buttonDerivativeBase4Ref = useRef(null);
+  const notificationsMenuButtonRef = useRef(null);
   const [isProfilePopupOpen, setProfilePopupOpen] = useState(false);
 
   const openNotificationsPopup = useCallback(() => {
@@ -47,9 +48,9 @@ const Navbar = ({ navbarType="landing" }) => {
         </div>
         { (navbarType === "landing") || ( navbarType ==="signup")?
         <div className="flex flex-row items-center justify-center gap-[16px] lg:items-center lg:justify-start lg:pl-[7%] lg:box-border" id="ButtonGroup">
-          <Button buttonType="navbarLink" to="/products" label="Products" />
-          <Button buttonType="navbarLink" to="/pricing" label="Pricing" />
-          <Button buttonType="navbarLink" to="/whitepaper" label="Whitepaper" />
+          <Button buttonType="dark" label="Products" onClick={()=>navigate("/products")}/>
+          <Button buttonType="dark" label="Pricing" onClick={()=>navigate("/pricing")}/>
+          <Button buttonType="dark" label="Whitepaper" onClick={()=>navigate("/whitepaper")}/>
         </div>
 
         : ""
@@ -57,9 +58,9 @@ const Navbar = ({ navbarType="landing" }) => {
       </div>
       {(navbarType === "landing") || ( navbarType ==="signup")?
         <div className="flex flex-row px-4 items-center justify-center gap-[8px]">
-          <Button buttonType="navbarLink" to="/login" label="Login" />
+          <Button buttonType="dark" label="Login" onClick={()=>navigate("/login")}/>
           {navbarType === "signup" ? "":
-            <Button buttonType="navbarLink" to="/signup" label="Sign Up" buttonClassName="bg-white hover:bg-gray-300" labelClassName="text-black"/>
+            <Button buttonType="dark" to="/signup" label="Sign Up" buttonClassName="bg-white hover:bg-gray-300" labelClassName="text-black" onClick={()=>navigate("/signup")}/>
                   }
         </div>
         : ""
@@ -67,30 +68,26 @@ const Navbar = ({ navbarType="landing" }) => {
       {navbarType === "app"?
         <div className="box-border flex flex-row px-4 items-center justify-center gap-[8px] border-l-[0.8px]">
           <button
-            className="cursor-pointer [border:none] p-0 bg-[transparent] flex flex-row items-center justify-start"
-            // ref={buttonDerivativeBase3Ref}
+            className="cursor-pointer [border:none] py-2 px-2 bg-gray hover:bg-gray-800 rounded-xl shadow-[0px_0px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-start gap-[8px]"
+            ref={notificationsMenuButtonRef}
             onClick={openNotificationsPopup}
           >
-            <button className="cursor-pointer [border:none] py-2 px-2 bg-gray hover:bg-gray-800 rounded-xl shadow-[0px_0px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-center gap-[8px]">
               <img
                 className="relative w-6 h-6 shrink-0"
                 alt=""
                 src="/bell.svg"
               />
-            </button>
           </button>
           <button
-            className="cursor-pointer [border:none] p-0 bg-[transparent] flex flex-row items-center justify-start"
-            // ref={buttonDerivativeBase3Ref}
+            className="cursor-pointer [border:none] py-2 px-2 bg-gray hover:bg-gray-800 rounded-xl shadow-[0px_0px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-start gap-[8px]"
+            ref={profileMenuButtonRef}
             onClick={openProfilePopup}
           >
-            <button className="cursor-pointer [border:none] py-2 px-2 bg-gray hover:bg-gray-800 rounded-xl shadow-[0px_0px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-center gap-[8px]">
               <img
                 className="relative w-6 h-6 shrink-0"
                 alt=""
                 src="/profile.svg"
               />
-            </button>
           </button>
         </div>
         : ""
@@ -98,30 +95,30 @@ const Navbar = ({ navbarType="landing" }) => {
     </div>
      {isNotificationsPopupOpen && (
         <PortalPopup
-          overlayColor="rgba(113, 113, 113, 0.3)"
+          // overlayColor="rgba(113, 113, 113, 0.1)"
           placement="Bottom right"
           right={8}
-          bottom={24}
-          relativeLayerRef={buttonDerivativeBase3Ref}
+          bottom={16}
+          relativeLayerRef={notificationsMenuButtonRef}
           onOutsideClick={closeNotificationsPopup}
         >
-          <NotificationsPopup onClose={closeNotificationsPopup} />
+          <NotificationsMenu onClose={closeNotificationsPopup} />
         </PortalPopup>
       )}
       {isProfilePopupOpen && (
         <PortalPopup
-          overlayColor="rgba(113, 113, 113, 0.3)"
+          // overlayColor="rgba(113, 113, 113, 0.1)"
           placement="Bottom right"
           right={8}
-          bottom={24}
-          relativeLayerRef={buttonDerivativeBase4Ref}
+          bottom={16}
+          relativeLayerRef={profileMenuButtonRef}
           onOutsideClick={closeProfilePopup}
         >
-          <ProfilePopup onClose={closeProfilePopup} />
+          <ProfileMenu onClose={closeProfilePopup} />
         </PortalPopup>
       )}
     </>
   );
-};
+});
 
 export default Navbar;

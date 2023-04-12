@@ -1,6 +1,5 @@
 import Navbar from "../../components/Navbar";
 import SettingsPanel from "../../components/SettingsPanel";
-import SearchInputBox from "../../components/SearchInputBox";
 import Button from "../../components/Button";
 import Card from "../../components/Card";
 
@@ -43,7 +42,11 @@ const SettingsDeviceManagement = () => {
 
   return (
     <div className="self-stretch flex-1 overflow-y-auto flex flex-col py-8 px-40 items-center justify-start gap-[32px] z-[0]">
-      <SearchInputBox />
+      <input
+        className={"[border:none] px-4 py-2 flex text-[23.04px] bg-gray-200 rounded-xl h- 100 h-[4rem] w-2/3 flex-row items-center justify-center"}
+        type="text"
+        placeholder=" 🔎 Quick Search"
+      />
       <Button buttonType="dark" label="Sync new device"/>
       {deviceDataList.map( deviceData =>
         <Card

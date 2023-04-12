@@ -19,7 +19,7 @@ const Button = ({
     link: "text-blue-400 font-medium text-base py-1 px-3 rounded-lg hover:bg-blue-50 focus:outline-none transition-all",
     red: "bg-red-500 text-white font-medium text-base py-1 px-3 rounded-lg shadow-md hover:bg-red-600 focus:outline-none transition-all",
     blue: "",
-    light: "bg-white text-black font-medium text-base py-1 px-3 rounded-lg shadow-all-direction hover:bg-gray-200 focus:outline-none transition-all flex flex-row items-center justify-center gap-[8px]",
+    light: "bg-white text-black font-medium text-base py-1 px-3 rounded-lg shadow-all-direction hover:bg-gray-300 focus:outline-none transition-all flex flex-row items-center justify-center",
     lightOutlined: "",
   }
 
@@ -46,7 +46,6 @@ const Button = ({
   if (buttonType == undefined || buttonType == null){
     buttonType = "dark";
   }
-
   return (
       <button
         className={`${buttonClassName} ${buttonTypeClassMap[buttonType]}`}

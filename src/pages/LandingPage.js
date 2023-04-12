@@ -25,7 +25,7 @@ const LandingPage = () => {
             </div>
             <div className="self-stretch flex flex-row items-center justify-start gap-[16px]" id="button-group">
               <Button buttonType="dark" label="Use Keylance for free" buttonClassName="py-2 px-4" onClick={()=>navigate("/signup")}/>
-              <Button buttonType="dark" to="/" label="Learn more" buttonClassName="py-2 px-4 bg-white py-2 px-4 hover:bg-gray-100 ring-1 ring-black" labelClassName="text-black" onClick={()=>navigate("/")}/>
+              <Button buttonType="light" label="Learn more" buttonClassName="py-2 px-4 hover:bg-gray-100 border-[1px] border-black" onClick={()=>navigate("/")}/>
             </div>
           </div>
           <img

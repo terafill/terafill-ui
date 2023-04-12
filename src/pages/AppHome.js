@@ -1,5 +1,4 @@
 import Navbar from "../components/Navbar";
-import SearchInputBox2 from "../components/SearchInputBox2";
 import PasswordItem from "../components/PasswordItem";
 import Button from "../components/Button";
 import "./AppHome.css";
@@ -95,7 +94,7 @@ export async function passwordDataLoader({ params }) {
 
 export const PasswordPanelIndex = () => {
   return (
-    <div className="rightpanel1">
+    <div className="self-stretch flex-1 overflow-hidden flex flex-col py-[32px] px-[16px] h-1/1 items-center justify-center z-[0] text-4xl">
       <h1>Good Morning!</h1>
     </div>
   );
@@ -108,30 +107,28 @@ export const PasswordPanel = () => {
   const { icon, passwordAppName, passwordUserName, website } = passwordData;
 
   return (
-    <div className="rightpanel1">
-      <div className="titlebar">
-        <div className="iconframe">
-          <img className="icon" alt="" src={icon} />
+    <div className="self-stretch flex-1 overflow-hidden flex flex-col py-[32px] px-[16px] h-1/1 items-center justify-between z-[0]" id="right-panel">
+      <div className="grid grid-cols-2 grid-rows-4 items-center justify-center justify-items-center gap-4">
+        <div className="self-stretch flex-1" id="iconframe">
+          <img className="w-[88px] h-[88px] overflow-hidden object-cover" alt="" src={icon} />
         </div>
-        <h4 className="passwordAppName">{passwordAppName}</h4>
-      </div>
-      <div className="dataTable">
-        <label className="dataRowLabel">USERNAME</label>
+        <h4 className="[border:none] flex self-stretch flex-1 relative text-4xl leading-[120%] font-bold font-inherit flex items-center">{passwordAppName}</h4>
+        <label className="text-center font-medium">USERNAME</label>
         <input
-          className="inputbox"
+          className="[border:none] flex text-[23.04px] bg-[transparent] rounded-3xs w-2/3 overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center"
           type="text"
           value={passwordUserName}
           placeholder="Username"
         />
-        <label className="dataRowLabel">PASSWORD</label>
+        <label className="text-center font-medium">PASSWORD</label>
         <input
-          className="inputbox"
+          className="[border:none] flex text-[23.04px] bg-[transparent] rounded-3xs w-2/3 overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center"
           type="password"
           value="Password"
           placeholder="Password" />
-        <label className="dataRowLabel">WEBSITE</label>
+        <label className="text-center font-medium">WEBSITE</label>
         <input
-          className="inputbox"
+          className="[border:none] flex text-[23.04px] bg-[transparent] rounded-3xs w-2/3 overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center"
           type="text"
           value={website}
           placeholder="Website"
@@ -139,8 +136,9 @@ export const PasswordPanel = () => {
       </div>
       <Button
         label="View in dashboard"
-        iconXSmall="../new-window.svg"
+        icon="../new-window.svg"
         iconPosition="right"
+        buttonClassName="flex flex-row items-center gap-2"
       />
   </div>
   );
@@ -149,20 +147,25 @@ export const PasswordPanel = () => {
 
 const AppHome = () => {
   return (
-    <div className="apphome">
+    // <div className="apphome">
+      <div className="relative w-full h-screen flex flex-col items-center justify-center text-left">
       <Navbar navbarType="app"/>
-      <div className="apphomeinner2">
-        <div className="leftpanel">
-          <div className="searchbar">
-            <SearchInputBox2 />
+      <div className="self-stretch flex-1 overflow-hidden flex flex-row items-center justify-center" id="apphome-inner">
+        <div className="self-stretch shadow-[1px_0px_4px_rgba(0,_0,_0,_0.25)] w-3/12 flex flex-col grow-0 shrink-0 items-center justify-start relative z-[1]" id="left-panel">
+          <div className="self-stretch overflow-hidden flex flex-col p-2 items-center justify-center z-[0] border-[1px]">
+          <input
+            className="[border:none] rounded-lg px-2 py-2 flex text-[23.04px] bg-gray-200 w-full overflow-hidden flex-row items-center justify-center"
+            type="text"
+            placeholder=" 🔎 Quick Search"
+          />
           </div>
-          <div className="itemlist">
+          <div className="self-stretch flex-1 overflow-y-auto px-2 flex flex-col items-center justify-start z-[1] border-[2px] border-solid" id="item-list">
           {
            passwordDataList.map( passwordData =>
             <NavLink
               to={`${passwordData.id}`}
               key={passwordData.id}
-              style={{ textDecoration: 'none' }}
+              className={({ isActive }) => isActive? "bg-gray-200 mt-1 mb-1 px-[16px] rounded-lg hover:bg-gray-200": "mt-1 mb-1 px-[16px] rounded-lg hover:bg-gray-100"}
             >
               <PasswordItem
                 key={passwordData.id}
@@ -175,14 +178,9 @@ const AppHome = () => {
           }
           </div>
           <Button
-            iconXSmall="../icbaselineplus.svg"
-            labelDisplay="none"
-            buttonType="add"
-            buttonPosition="absolute"
-            buttonRight="24px"
-            buttonBottom="24px"
-            buttonZIndex="3"
-            buttonPadding="var(--padding-2xs) var(--padding-2xs)"
+            buttonType="dark"
+            icon="/icbaselineplus.svg"
+            buttonClassName="absolute bottom-[1.2rem] right-[1.2rem] bg-blue-500 hover:bg-blue-400 h-[3rem] w-[3rem] z-[100] rounded-3xl"
           />
         </div>
         <Outlet />

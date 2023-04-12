@@ -1,10 +1,10 @@
 import Button from "../components/Button";
 import Navbar from "../components/Navbar";
-import InputBox from "../components/InputBox";
-import InputBox2 from "../components/InputBox2";
 import { NavLink, Outlet, useParams, useLoaderData } from "react-router-dom";
 import { useNavigate, useOutletContext } from "react-router-dom";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+
+import { ChevronDownIcon } from "@heroicons/react/24/solid";
 
 
 export const CreateAccountForm = () => {
@@ -12,18 +12,60 @@ export const CreateAccountForm = () => {
   const [stepIdx, steps, stepForward, stepBackward] = useOutletContext();
 
   return (
-      <form className="bg-white rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[32px]">
-        <h4 className="m-0 relative text-4xl leading-[120%] font-bold text-black text-center">Create Account</h4>
-        <InputBox
-          key="Name"
-          label="Name"
-          inputBoxInnerPlaceholder="Enter your full name ..."
-        />
-        <InputBox
-          key="Email"
-          label="Email"
-          inputBoxInnerPlaceholder="Enter your email address ..."
-        />
+      <form className="bg-white w-2/3 rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[32px]">
+        <h4 className="m-0 relative text-3xl leading-[120%] font-bold text-black text-center">Create Account</h4>
+
+        <div className="relative w-2/3">
+          <label
+            htmlFor="name"
+            className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
+          >
+            Name
+          </label>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            className="w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+            placeholder="Jane Smith"
+          />
+        </div>
+        <div className="relative w-2/3">
+          <label
+            htmlFor="name"
+            className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
+          >
+            Email
+          </label>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            className="w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+            placeholder="jane@example.com"
+          />
+        </div>
+
+        <div className="relative w-2/3">
+          <label htmlFor="location" className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700">
+            Country
+          </label>
+          <select
+            id="location"
+            name="location"
+            className="w-full bg-white rounded-md px-2 py-2.5 shadow-sm text-gray-900 ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6 appearance-none" // Add the appearance-none class
+            defaultValue="Canada"
+          >
+            <option>United States</option>
+            <option>Canada</option>
+            <option>Mexico</option>
+            <option>India</option>
+          </select>
+          <div className="absolute top-0 right-0 h-full pr-3 flex items-center pointer-events-none">
+            <ChevronDownIcon className="h-4 w-4 text-gray-500" />
+          </div>
+        </div>
+
         <NavLink to="email-confirmation" onClick={stepForward}> <Button buttonType="dark" label="Create Account"/> </NavLink>
 
       </form>
@@ -32,6 +74,21 @@ export const CreateAccountForm = () => {
 
 export const EmailConfirmationForm = () => {
   const [stepIdx, steps, stepForward, stepBackward] = useOutletContext();
+
+  const pinInputRefs = [
+    useRef(null),
+    useRef(null),
+    useRef(null),
+    useRef(null),
+    useRef(null),
+  ];
+
+  const handleInput = (e, index) => {
+    const { value } = e.target;
+    if (value.length === 1 && index < pinInputRefs.length - 1) {
+      pinInputRefs[index + 1].current.focus();
+    }
+  };
 
   return (
       <form className="bg-white rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[32px]">
@@ -44,10 +101,23 @@ export const EmailConfirmationForm = () => {
             <b> harshitsaini@keylance.in</b>
           </span>
         </p>
-        <InputBox
-          label="Verification Code"
-          inputBoxInnerPlaceholder="Enter verification code here ..."
-        />
+        <div className="w-full flex flex-row justify-evenly">
+          {
+            pinInputRefs.map((_, index)=>(
+              <input
+                key={index}
+                type="number"
+                ref={pinInputRefs[index]}
+                name={`pin-${index}`}
+                id={`pin-${index}`}
+                maxLength="1"
+                className="h-[4rem] w-[4rem] rounded-md px-2 py-2 overflow-hidden resize-none appearance-none text-3xl text-center text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
+                placeholder="0"
+                onInput={(e) => handleInput(e, index)}
+              />
+            ))
+          }
+        </div>
         <div className="flex flex-col items-center justify-center">
             <Button buttonType="link" label="Re-send verification code" />
             <NavLink to="/signup" onClick={stepBackward} ><Button buttonType="link" label="Change email address" /></NavLink>
@@ -66,15 +136,37 @@ export const CreatePasswordForm = () => {
         <h4 className="m-0 relative text-4xl leading-[120%] font-bold text-black text-center">
           Create your master password
         </h4>
-        <InputBox
-          label="Master Password"
-          inputBoxInnerPlaceholder="Enter master password here ..."
-        />
-        <InputBox
-          label="Re-enter passowrd"
-          inputBoxInnerPlaceholder="Re-enter password here ..."
-        />
-        <p className="m-0 relative text-xl font-bold text-center flex items-center justify-center w-[538px] h-12 shrink-0">
+        <div className="relative w-2/3">
+          <label
+            htmlFor="name"
+            className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
+          >
+            Password
+          </label>
+          <input
+            type="password"
+            name="name"
+            id="name"
+            className="w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+            placeholder="*********"
+          />
+        </div>
+        <div className="relative w-2/3">
+          <label
+            htmlFor="name"
+            className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
+          >
+            Re-enter Password
+          </label>
+          <input
+            type="password"
+            name="name"
+            id="name"
+            className="w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+            placeholder="*********"
+          />
+        </div>
+        <p className="m-0 relative text-1xl text-red-500 font-bold text-center flex items-center justify-center w-[538px] h-12 shrink-0">
           Note: Memorise this password and keep it safe.
         </p>
         <div className="flex flex-row items-center justify-center gap-[32px]">
@@ -93,8 +185,26 @@ export const RecoveryKitForm = () => {
           <h4 className="m-0 relative text-4xl leading-[120%] font-bold text-black text-center">
             Download account recovery kit
           </h4>
-          <InputBox2 />
-          <p className="m-0 relative text-base font-bold text-center flex items-center w-[538px] h-[78px] shrink-0">
+          <div className="relative w-full flex flex-row gap-2">
+            <label
+              htmlFor="name"
+              className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
+            >
+              Security Key
+            </label>
+            <input
+              type="texd"
+              name="name"
+              id="name"
+              value="pall-brau-cump-cub-SPIY-stif-def-hoff"
+              className="w-full rounded-md px-2 py-2 text-lg font-medium text-gray-900 text-center shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100"
+            />
+            <Button
+              label="COPY"
+              buttonType="light"
+            />
+          </div>
+          <p className="m-0 relative text-1xl text-red-500 font-bold text-center flex items-center w-[538px] h-[78px] shrink-0">
             Note: Copy this secret key and keep it somewhere safe. It can help you
             recover your account in case you lose your master password.
           </p>

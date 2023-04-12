@@ -60,7 +60,7 @@ const Navbar = memo(({ navbarType="landing" }) => {
         <div className="flex flex-row px-4 items-center justify-center gap-[8px]">
           <Button buttonType="dark" label="Login" onClick={()=>navigate("/login")}/>
           {navbarType === "signup" ? "":
-            <Button buttonType="dark" to="/signup" label="Sign Up" buttonClassName="bg-white hover:bg-gray-300" labelClassName="text-black" onClick={()=>navigate("/signup")}/>
+            <Button buttonType="light" label="Sign Up" onClick={()=>navigate("/signup")}/>
                   }
         </div>
         : ""

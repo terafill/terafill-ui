@@ -46,7 +46,7 @@ const Navbar = memo(({ navbarType="landing" }) => {
             Keylance
           </Link>
         </div>
-        { (navbarType === "landing") || ( navbarType ==="signup")?
+        { (navbarType === "landing") || ( navbarType ==="signup") || ( navbarType ==="login")?
         <div className="flex flex-row items-center justify-center gap-[16px] lg:items-center lg:justify-start lg:pl-[7%] lg:box-border" id="ButtonGroup">
           <Button buttonType="dark" label="Products" onClick={()=>navigate("/products")}/>
           <Button buttonType="dark" label="Pricing" onClick={()=>navigate("/pricing")}/>
@@ -56,12 +56,10 @@ const Navbar = memo(({ navbarType="landing" }) => {
         : ""
         }
       </div>
-      {(navbarType === "landing") || ( navbarType ==="signup")?
+      {(navbarType === "landing") || ( navbarType ==="signup") || ( navbarType ==="login")?
         <div className="flex flex-row px-4 items-center justify-center gap-[8px]">
-          <Button buttonType="dark" label="Login" onClick={()=>navigate("/login")}/>
-          {navbarType === "signup" ? "":
-            <Button buttonType="light" label="Sign Up" onClick={()=>navigate("/signup")}/>
-                  }
+          {navbarType === "login" ? "":  <Button buttonType="dark" label="Login" onClick={()=>navigate("/login")}/>}
+          {navbarType === "signup" ? "": <Button buttonType="light" label="Sign Up" onClick={()=>navigate("/signup")}/>}
         </div>
         : ""
       }

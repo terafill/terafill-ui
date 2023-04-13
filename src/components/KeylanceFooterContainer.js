@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 const KeylanceFooterContainer = () => {
   const navigate = useNavigate();
   return (
-    <div className="m-8 flex flex-row items-center self-stretch justify-start" id="footer">
+    <div className="p-8 bg-gray-50 flex flex-row items-center self-stretch justify-start" id="footer">
       <div className="pl-4 flex-1 flex flex-col gap-2">
         <div className="flex flex-row items-center gap-3" id="keylance-logo">
           <img className="h-[3rem]" id="keylance-icon" alt="" src="/subtract1.svg" />

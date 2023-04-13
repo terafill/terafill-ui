@@ -128,7 +128,7 @@ export const PasswordPanel = () => {
           placeholder="Password" />
         <label className="text-center font-medium">WEBSITE</label>
         <input
-          className="[border:none] flex text-[23.04px] bg-[transparent] rounded-3xs w-2/3 overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center"
+          className="[border:none] flex text-[23.04px] bg-[transparent] rounded-3xs w-2/3 overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center "
           type="text"
           value={website}
           placeholder="Website"
@@ -159,7 +159,7 @@ const AppHome = () => {
             placeholder=" 🔎 Quick Search"
           />
           </div>
-          <div className="self-stretch flex-1 overflow-y-auto px-2 flex flex-col items-center justify-start z-[1] border-[2px] border-solid" id="item-list">
+          <div className="self-stretch flex-1 overflow-y-auto px-2 py-2 flex flex-col items-center justify-start z-[1] border-[2px] border-solid" id="item-list">
           {
            passwordDataList.map( passwordData =>
             <NavLink
@@ -178,9 +178,9 @@ const AppHome = () => {
           }
           </div>
           <Button
-            buttonType="dark"
+            buttonType="blue"
             icon="/icbaselineplus.svg"
-            buttonClassName="absolute bottom-[1.2rem] right-[1.2rem] bg-blue-500 hover:bg-blue-400 h-[3rem] w-[3rem] z-[100] rounded-3xl"
+            buttonClassName="absolute bottom-[1.2rem] right-[1.2rem] h-[3rem] w-[3rem] z-[100] rounded-[rem]"
           />
         </div>
         <Outlet />

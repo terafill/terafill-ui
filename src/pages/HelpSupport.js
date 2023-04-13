@@ -1,5 +1,7 @@
 import Navbar from "../components/Navbar";
 import Button from "../components/Button";
+import { HiLightBulb, HiBugAnt } from "react-icons/hi2";
+import { RiLightbulbFlashFill, RiCustomerService2Fill } from "react-icons/ri";
 
 const HelpSupport = () => {
   return (
@@ -9,23 +11,23 @@ const HelpSupport = () => {
         <Button
           label="Request a feature"
           buttonType="light"
-          buttonClassName="gap-[8px] px-8 py-4"
-          icon="../iconxsmall21@2x.png"
-          iconClassName="relative w-6 h-6 shrink-0"
+          buttonClassName="group gap-[8px] px-8 py-4"
+          iconComponent={<RiLightbulbFlashFill />}
+          iconClassName="relative shrink-0 text-green-500"
         />
         <Button
           label="Submit a bug"
           buttonType="light"
           buttonClassName="gap-[8px] px-8 py-4"
-          icon="../iconxsmall21@2x.png"
-          iconClassName="relative w-6 h-6 shrink-0"
+          iconComponent={<HiBugAnt />}
+          iconClassName="relative shrink-0 text-red-500"
         />
         <Button
           label="Contact customer care"
           buttonType="light"
           buttonClassName="gap-[8px] px-8 py-4"
-          icon="../iconxsmall21@2x.png"
-          iconClassName="relative w-6 h-6 shrink-0"
+          iconComponent={<RiCustomerService2Fill />}
+          iconClassName="relative shrink-0 text-blue-600"
         />
       </div>
     </div>

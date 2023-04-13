@@ -65,7 +65,7 @@ export const SettingsSharingByPassword = () => {
       id: 1,
       passwordAppName: "Netflix",
       passwordUserName: "leonardo@keylance.in",
-      passwordIcon: "../../netflix.png",
+      passwordIcon: "/netflix2.png",
       userList:[
         {
           userName: "Ram Kumar",
@@ -81,7 +81,7 @@ export const SettingsSharingByPassword = () => {
       id: 2,
       passwordAppName: "Facebook",
       passwordUserName: "leo42",
-      passwordIcon: "../../facebook.png",
+      passwordIcon: "/facebook2.png",
       userList:[
         {
           userName: "Ram Kumar",
@@ -97,7 +97,7 @@ export const SettingsSharingByPassword = () => {
       id: 3,
       passwordAppName: "Twitter",
       passwordUserName: "davinci.leo123123",
-      passwordIcon: "../../twitter.svg",
+      passwordIcon: "/twitter3.png",
       userList:[
         {
           userName: "Ram Kumar",

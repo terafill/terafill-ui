@@ -8,17 +8,18 @@ const Button = ({
   labelDisplay,
   labelClassName,
   icon,
+  iconComponent,
   iconDisplay,
   iconPosition="left",
   iconClassName,
 }) => {
 
   const buttonTypeClassMap = {
-    dark: "bg-black text-white font-medium text-base py-1 px-3 rounded-lg shadow-md hover:bg-gray-800 focus:outline-none transition-all",
-    panel: "text-blue-400 font-medium text-base py-1 px-3 rounded-lg hover:bg-gray-200 focus:outline-none transition-all",
-    link: "text-blue-400 font-medium text-base py-1 px-3 rounded-lg hover:bg-blue-50 focus:outline-none transition-all",
-    red: "bg-red-500 text-white font-medium text-base py-1 px-3 rounded-lg shadow-md hover:bg-red-600 focus:outline-none transition-all",
-    blue: "",
+    dark: "bg-black text-white font-medium text-base py-1 px-3 rounded-lg shadow-md hover:bg-gray-800 focus:outline-none transition-all flex flex-row items-center justify-center",
+    panel: "text-blue-400 font-medium text-base py-1 px-3 rounded-lg hover:bg-gray-200 focus:outline-none transition-all flex flex-row items-center justify-center",
+    link: "text-blue-400 font-medium text-base py-1 px-3 rounded-lg hover:bg-blue-50 focus:outline-none transition-all flex flex-row items-center justify-center",
+    red: "bg-red-500 text-white font-medium text-base py-1 px-3 rounded-lg shadow-md hover:bg-red-600 focus:outline-none transition-all flex flex-row items-center justify-center",
+    blue: "bg-blue-500 text-white font-medium text-base py-1 px-3 rounded-lg shadow-md hover:bg-blue-400 focus:outline-none transition-all flex flex-row items-center justify-center",
     light: "bg-white text-black font-medium text-base py-1 px-3 rounded-lg shadow-all-direction hover:bg-gray-300 focus:outline-none transition-all flex flex-row items-center justify-center",
     lightOutlined: "",
   }
@@ -47,24 +48,26 @@ const Button = ({
     buttonType = "dark";
   }
   return (
-      <button
-        className={`${buttonClassName} ${buttonTypeClassMap[buttonType]}`}
-        onClick={onClick}
-        >
-        {iconPosition==="left"?<img
-          className={`${iconTypeClassMap[buttonType]} ${iconClassName}`}
-          alt=""
-          src={icon}
-        />: ""}
-        {label && <label className={`${labelTypeClassMap[buttonType]} ${labelClassName}`}>
-          {label}
-        </label>}
-        {iconPosition==="right"?<img
-          className={`${iconTypeClassMap[buttonType]} ${iconClassName}`}
-          alt=""
-          src={icon}
-        />: ""}
-      </button>
+  <button
+    className={`${buttonTypeClassMap[buttonType]} ${buttonClassName}`}
+    onClick={onClick}
+  >
+    {iconPosition === "left" && (icon || iconComponent) && (
+      <span className={`${iconTypeClassMap[buttonType]} ${iconClassName}`}>
+        {icon ? <img alt="" src={icon} /> : iconComponent}
+      </span>
+    )}
+    {label && (
+      <label className={`${labelTypeClassMap[buttonType]} ${labelClassName}`}>
+        {label}
+      </label>
+    )}
+    {iconPosition === "right" && (icon || iconComponent) && (
+      <span className={`${iconTypeClassMap[buttonType]} ${iconClassName}`}>
+        {icon ? <img alt="" src={icon} /> : iconComponent}
+      </span>
+    )}
+  </button>
   );
 };
 

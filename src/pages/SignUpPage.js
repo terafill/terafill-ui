@@ -1,48 +1,150 @@
-import Button from "../components/Button";
-import Navbar from "../components/Navbar";
 import { NavLink, Outlet, useParams, useLoaderData } from "react-router-dom";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { useState, useEffect, useRef } from 'react';
 
+import axios from "axios";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
+
+import Button from "../components/Button";
+import Navbar from "../components/Navbar";
+import Errors, { SuccessAlert } from "../components/Alerts";
+
+const countries = [
+  'India',
+  'China',
+  'United States',
+  'Indonesia',
+  'Pakistan',
+  'Brazil',
+  'Nigeria',
+  'Bangladesh',
+  'Russia',
+  'Mexico',
+  'Japan',
+  'Ethiopia',
+  'Philippines',
+  'Egypt',
+  'Vietnam',
+  'DR Congo',
+  'Turkey',
+  'Iran',
+  'Germany',
+  'Thailand',
+];
 
 
 export const CreateAccountForm = () => {
 
-  const [stepIdx, steps, stepForward, stepBackward] = useOutletContext();
+  const [stepIdx, steps, stepForward, stepBackward, userData, setUserData] = useOutletContext();
+  const navigate = useNavigate();
+  const [errorList, setErrorList] = useState([]);
+  const [isErrorListVisible, setErrorListVisibility] = useState(false);
+
+  const initateSignupProcess = () => {
+    var data = JSON.stringify({
+      email: userData.email,
+      first_name: userData.firstName,
+      last_name: userData.lastName,
+    });
+
+    console.log(`http://localhost:8000/api/v1/auth/signup`);
+
+    var config = {
+      method: 'post',
+      url: `http://localhost:8000/api/v1/auth/signup`,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      data : data
+    };
+
+    return axios(config);
+
+  }
+
 
   return (
-      <form className="bg-white w-2/3 rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[32px]">
+      <form
+        className="bg-white w-2/3 rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[32px]"
+          onSubmit={(e)=>{
+              e.preventDefault();
+              setErrorListVisibility(false);
+              initateSignupProcess().then(function (response) {
+                  console.log(response)
+                  stepForward();
+                  navigate("email-confirmation");
+                })
+                .catch(function (error) {
+                  console.log(error);
+                  if (error.response.status === 409){
+                    console.log("There is a conflict.")
+                    setErrorList([`User with email id: ${userData.email} is already registered.`]);
+                    setErrorListVisibility(true);
+                  }
+                });
+          }}
+          >
         <h4 className="m-0 relative text-3xl leading-[120%] font-bold text-black text-center">Create Account</h4>
+
+        <span className="relative w-2/3 flex-auto flex flex-row justify-center gap-2">
+          <div className="relative">
+            <label
+              htmlFor="firstName"
+              className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
+            >
+              First Name
+            </label>
+            <input
+              // ref={firstName}
+              type="text"
+              name="firstName"
+              id="firstName"
+              className="w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+              placeholder="Jane"
+              onChange={ (e) =>{setUserData(prevState => ({...prevState, firstName: e.target.value}))} }
+              value={userData.firstName}
+              required
+              title="Please enter first name"
+            />
+          </div>
+
+          <div className="relative">
+            <label
+              htmlFor="lastName"
+              className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
+            >
+              Last Name
+            </label>
+            <input
+              type="text"
+              name="lastName"
+              id="lastName"
+              className="w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+              placeholder="Smith"
+              value={userData.lastName}
+              onChange={ (e) =>{setUserData(prevState => ({...prevState, lastName: e.target.value}))} }
+            />
+          </div>
+        </span>
 
         <div className="relative w-2/3">
           <label
-            htmlFor="name"
-            className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
-          >
-            Name
-          </label>
-          <input
-            type="text"
-            name="name"
-            id="name"
-            className="w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
-            placeholder="Jane Smith"
-          />
-        </div>
-        <div className="relative w-2/3">
-          <label
-            htmlFor="name"
+            htmlFor="email"
             className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
           >
             Email
           </label>
           <input
-            type="text"
-            name="name"
-            id="name"
+            type="email"
+            name="email"
+            id="email"
             className="w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
             placeholder="jane@example.com"
+            value={userData.email}
+            onChange={ (e) =>{setUserData(prevState => ({...prevState, email: e.target.value}))} }
+            required
+            title="Please enter email"
           />
         </div>
 
@@ -54,26 +156,48 @@ export const CreateAccountForm = () => {
             id="location"
             name="location"
             className="w-full bg-white rounded-md px-2 py-2.5 shadow-sm text-gray-900 ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6 appearance-none" // Add the appearance-none class
-            defaultValue="Canada"
+            // defaultValue="Canada"
+            value={userData.country}
+            onChange={ (e) =>{setUserData(prevState => ({...prevState, country: e.target.value}))} }
           >
-            <option>United States</option>
-            <option>Canada</option>
-            <option>Mexico</option>
-            <option>India</option>
+            {
+            countries.map((country) =>
+              <option key={country} value={country}>
+                {country}
+              </option>
+              )
+            }
           </select>
           <div className="absolute top-0 right-0 h-full pr-3 flex items-center pointer-events-none">
             <ChevronDownIcon className="h-4 w-4 text-gray-500" />
           </div>
         </div>
 
-        <NavLink to="email-confirmation" onClick={stepForward}> <Button buttonType="dark" label="Create Account"/> </NavLink>
+        { isErrorListVisible &&
+          <Errors
+            errorList={errorList}
+            showAlert={isErrorListVisible}
+            setAlertVisibilty={setErrorListVisibility}
+            />
+        }
+
+        <Button
+          id="submit-button"
+          buttonType="dark"
+          label="Create Account"
+          type="submit"
+          />
 
       </form>
   )
 }
 
 export const EmailConfirmationForm = () => {
-  const [stepIdx, steps, stepForward, stepBackward] = useOutletContext();
+  const [stepIdx, steps, stepForward, stepBackward, userData, setUserData] = useOutletContext();
+  const navigate = useNavigate();
+  const [isSuccessAlertVisible, setSuccessAlertVisibility] = useState(false);
+  const [errorList, setErrorList] = useState([]);
+  const [isErrorListVisible, setErrorListVisibility] = useState(false);
 
   const pinInputRefs = [
     useRef(null),
@@ -81,24 +205,162 @@ export const EmailConfirmationForm = () => {
     useRef(null),
     useRef(null),
     useRef(null),
+    useRef(null),
   ];
 
-  const handleInput = (e, index) => {
-    const { value } = e.target;
-    if (value.length === 1 && index < pinInputRefs.length - 1) {
-      pinInputRefs[index + 1].current.focus();
+  const [pinState, setPinState] = useState(['','','','','','']);
+  const [pinIdx, setPinIdx] = useState(0);
+
+  const submitButtonRef = useRef(null);
+
+  useEffect(()=>{
+    pinInputRefs[pinIdx].current.focus();
+  }, [pinIdx])
+
+  useEffect(()=>{
+    console.log(pinState);
+    // for(let i=0;i<pinInputRefs.length;i+=1){
+    //   console.log(pinInputRefs[i].current.value);
+    // }
+  }, [pinState])
+
+  const handleFocus = (e, index) => {
+      if(pinIdx!=index){
+        setPinIdx(index);
+      }
+      else{
+        // Do nothing
+      }
+  }
+
+  const handleKeyDown = (e) => {
+    const { key } = e;
+    let tempPin = [...pinState];
+    if (e.keyCode === 37 || e.keyCode === 8){
+      if (e.keyCode === 8){
+        tempPin[pinIdx] = '';
+        setPinState(tempPin);
+        // setPinState(prevItems => [...prevItems.slice(0, pinIdx), '', ...prevItems.slice(pinIdx + 1)]);
+
+      }
+      // setPinIdx(pinIdx=>(pinIdx - 1 + pinInputRefs.length)%pinInputRefs.length);
+      setPinIdx(pinIdx=>Math.max(0, pinIdx - 1));
     }
-  };
+    else if (e.keyCode === 39){
+      // setPinIdx(pinIdx=>(pinIdx + 1)%pinInputRefs.length);
+      setPinIdx(pinIdx=>Math.min(pinIdx + 1, pinInputRefs.length-1));
+    }
+    else if (event.keyCode >= 48 && event.keyCode <= 57){
+        tempPin[pinIdx] = key[0];
+        setPinState(tempPin);
+      // setPinState(prevItems => [...prevItems.slice(0, pinIdx), key[0], ...prevItems.slice(pinIdx + 1)]);
+      // setPinIdx(pinIdx=>(pinIdx + 1)%pinInputRefs.length);
+      setPinIdx(pinIdx=>Math.min(pinIdx + 1, pinInputRefs.length-1));
+    }
+  }
+
+  const handleOnPaste = (e) => {
+    const text = e.clipboardData.getData('Text')
+    let textIdx = 0;
+    let curPinIdx = pinIdx;
+    let tempPin = [...pinState];
+    while(textIdx<text.length && curPinIdx<pinInputRefs.length){
+      let char = text[textIdx];
+      if (char >='0' && char <= '9'){
+        tempPin[curPinIdx] = char;
+        textIdx+=1;
+        curPinIdx+=1;
+      }else{
+        textIdx+=1;
+      }
+    }
+    setPinState(tempPin);
+
+    if (curPinIdx!=pinIdx){
+      setPinIdx(Math.min(curPinIdx, pinInputRefs.length-1));
+    }
+  }
+
+  const initateSignupProcess = () => {
+    var data = JSON.stringify({
+      email: userData.email,
+      first_name: userData.firstName,
+      last_name: userData.lastName,
+    });
+
+    console.log(`http://localhost:8000/api/v1/auth/signup`);
+
+    var config = {
+      method: 'post',
+      url: `http://localhost:8000/api/v1/auth/signup`,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      data : data
+    };
+
+    return axios(config);
+
+  }
+
+  const completeSignupProcess = () => {
+    console.log(typeof(pinState), {...pinState});
+    var data = JSON.stringify({
+      email: userData.email,
+      verification_code: [...pinState].join('')
+    });
+
+    console.log(`http://localhost:8000/api/v1/auth/email-verification`);
+
+    var config = {
+      method: 'post',
+      url: `http://localhost:8000/api/v1/auth/email-verification`,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      data : data
+    };
+
+    return axios(config);
+
+  }
+
 
   return (
-      <form className="bg-white rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[32px]">
+      <form
+        className="bg-white rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[32px]"
+          onSubmit={(e)=>{
+              e.preventDefault();
+              setErrorListVisibility(false);
+              setSuccessAlertVisibility(false);
+              completeSignupProcess().then(function (response) {
+                  console.log(response)
+                  stepForward();
+                  navigate("/signup/create-password");
+                })
+                .catch(function (error) {
+                  console.log(error);
+                  if (error.response.data.hasOwnProperty('detail')){
+                    const error_msg = error.response.data.detail;
+                    console.log(error_msg);
+                    setErrorList([error_msg]);
+                  }
+                  else{
+                    setErrorList([`Something went wrong: ${error}.`]);
+                  }
+                  setErrorListVisibility(true);
+                });
+          }}
+      >
         <h4 className="m-0 relative text-4xl leading-[120%] font-bold text-black text-center">Verify your email address</h4>
         <p className="m-0 relative text-xl text-background-dark text-center flex items-center w-[538px] h-12 shrink-0">
           <span className="w-full">
             <span>
               Enter verification code sent to email address
             </span>
-            <b> harshitsaini@keylance.in</b>
+            <b> {userData.email}</b>
           </span>
         </p>
         <div className="w-full flex flex-row justify-evenly">
@@ -110,45 +372,161 @@ export const EmailConfirmationForm = () => {
                 ref={pinInputRefs[index]}
                 name={`pin-${index}`}
                 id={`pin-${index}`}
-                maxLength="1"
+                value={pinState[index]}
+                maxLength={1}
                 className="h-[4rem] w-[4rem] rounded-md px-2 py-2 overflow-hidden resize-none appearance-none text-3xl text-center text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
                 placeholder="0"
-                onInput={(e) => handleInput(e, index)}
+                onKeyDown={handleKeyDown}
+                // onChange={(e)=>{console.log(`Change ${e.target.value}, id: ${event.target.id}`);}}
+                onFocus={(e)=>handleFocus(e, index)}
+                onPaste={handleOnPaste}
+                required
               />
             ))
           }
         </div>
         <div className="flex flex-col items-center justify-center">
-            <Button buttonType="link" label="Re-send verification code" />
-            <NavLink to="/signup" onClick={stepBackward} ><Button buttonType="link" label="Change email address" /></NavLink>
+            <Button
+              buttonType="link"
+              label="Re-send verification code"
+              onClick={()=>{
+                setPinState(['','','','','','']);
+                setSuccessAlertVisibility(false);
+                initateSignupProcess().then(function (response) {
+                    console.log(response);
+                    setSuccessAlertVisibility(true);
+                  })
+                  .catch(function (error) {
+                    console.log(error);
+                    if (error.response.status === 409){
+                      console.log("There is a conflict.")
+                      alert("There is a conflict.");
+                      // setErrorList([`User with email id: ${userData.email} is already registered.`]);
+                      // setErrorListVisibility(true);
+                    }
+                    alert(error.response);
+                  });
+              }}
+              type="reset"
+              />
+            <Button
+              buttonType="link"
+              label="Change email address"
+              onClick={
+                ()=>{navigate("/signup");stepBackward();}
+              }/>
         </div>
+        { isSuccessAlertVisible &&
+          <SuccessAlert
+            alertList={["New Verification code is sent to email!"]}
+            showAlert={isSuccessAlertVisible}
+            setAlertVisibilty={setSuccessAlertVisibility}
+            />
+        }
+        { isErrorListVisible &&
+          <Errors
+            errorList={errorList}
+            showAlert={isErrorListVisible}
+            setAlertVisibilty={setErrorListVisibility}
+            />
+        }
         <div className="flex flex-row items-center justify-center gap-[16px]">
-          <NavLink to="/signup/create-password" onClick={stepForward}><Button  label="Submit"/></NavLink>
+            <Button
+              id="submit-button"
+              ref={submitButtonRef}
+              label="Submit"
+              type="submit"
+            />
         </div>
       </form>
   )
 }
 
 export const CreatePasswordForm = () => {
-  const [stepIdx, steps, stepForward, stepBackward] = useOutletContext();
+  const [stepIdx, steps, stepForward, stepBackward, userData, setUserData] = useOutletContext();
+  const [errorList, setErrorList] = useState([]);
+  const [isErrorListVisible, setErrorListVisibility] = useState(false);
+
+  const navigate = useNavigate();
+  const passwordRef = useRef(null);
+  const passwordRepeatRef = useRef(null);
+
+  const registerMasterPassword = () => {
+    var data = JSON.stringify({
+      email: userData.email,
+      master_password: userData.password
+    });
+
+    console.log(`http://localhost:8000/api/v1/auth/create-password`);
+
+    var config = {
+      method: 'post',
+      url: `http://localhost:8000/api/v1/auth/create-password`,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      data : data
+    };
+
+    return axios(config);
+  }
+
+  useEffect(()=>{
+    // console.log(`isErrorListVisible ${isErrorListVisible}`);
+  }, [isErrorListVisible])
+
   return (
-      <form className="bg-white rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[32px]">
+      <form className="bg-white rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[32px]"
+        id="submit"
+        onSubmit={(e)=>{
+          e.preventDefault();
+          setErrorListVisibility(prevState => (false));
+
+          if(passwordRef.current.value != passwordRepeatRef.current.value){
+            setErrorList(["Passwords don't match!"]);
+            setErrorListVisibility(prevState => (true));
+          }
+          else{
+          registerMasterPassword().then(function (response) {
+              console.log(response);
+              stepForward();
+              navigate("/signup/recovery-kit");
+            })
+            .catch(function (error) {
+              console.log(error);
+              if (error.response.data.hasOwnProperty('detail')){
+                const error_msg = error.response.data.detail;
+                console.log(error_msg);
+                setErrorList([error_msg]);
+              }
+              else{
+                setErrorList([`Something went wrong: ${error}.`]);
+              }
+              setErrorListVisibility(prevState => (false));
+            });
+          }
+        }}>
         <h4 className="m-0 relative text-4xl leading-[120%] font-bold text-black text-center">
           Create your master password
         </h4>
         <div className="relative w-2/3">
           <label
-            htmlFor="name"
+            htmlFor="password"
             className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
           >
             Password
           </label>
           <input
+            ref={passwordRef}
             type="password"
-            name="name"
-            id="name"
+            name="password"
+            id="password"
             className="w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
             placeholder="*********"
+            onChange={ (e) =>{setUserData(prevState => ({...prevState, password: e.target.value}))} }
+
+            required
           />
         </div>
         <div className="relative w-2/3">
@@ -159,24 +537,36 @@ export const CreatePasswordForm = () => {
             Re-enter Password
           </label>
           <input
+            ref={passwordRepeatRef}
             type="password"
-            name="name"
-            id="name"
+            name="passwordRepeat"
+            id="passwordRepeat"
             className="w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
             placeholder="*********"
+            required
           />
         </div>
+        { isErrorListVisible &&
+          <Errors
+            errorList={errorList}
+            showAlert={isErrorListVisible}
+            setAlertVisibilty={setErrorListVisibility}
+            />
+        }
         <p className="m-0 relative text-1xl text-red-500 font-bold text-center flex items-center justify-center w-[538px] h-12 shrink-0">
           Note: Memorise this password and keep it safe.
         </p>
         <div className="flex flex-row items-center justify-center gap-[32px]">
-          <NavLink to="/signup/recovery-kit" onClick={stepForward}><Button buttonType="dark"  label="Submit"/> </ NavLink>
+          <Button
+            buttonType="dark"
+            label="Submit"
+            id="submit-button"
+            type="submit"
+          />
         </div>
       </form>
     )
 }
-
-
 
 export const RecoveryKitForm = () => {
   const navigate = useNavigate();
@@ -218,6 +608,14 @@ export const RecoveryKitForm = () => {
 
 const SignUpPage = () => {
 
+  const [userData, setUserData] = useState({
+    email: "",
+    firstName: "",
+    lastName: "",
+    country: countries[0],
+    password: "",
+  });
+
   const [stepIdx, setStepIdx] = useState(1);
 
   const [steps, setSteps] = useState({
@@ -238,6 +636,10 @@ const SignUpPage = () => {
   useEffect(()=>{
     console.log(steps);
   }, [steps])
+
+  useEffect(()=>{
+    console.log(userData);
+  }, [userData])
 
   const stepForward = () => {
     try {
@@ -305,7 +707,7 @@ const SignUpPage = () => {
           ))}
         </ol>
       </nav>
-      <Outlet context={[stepIdx, steps, stepForward, stepBackward]}/>
+      <Outlet context={[stepIdx, steps, stepForward, stepBackward, userData, setUserData]}/>
       </div>
     </div>
   );

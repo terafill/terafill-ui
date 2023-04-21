@@ -12,6 +12,7 @@ const Button = ({
   iconDisplay,
   iconPosition="left",
   iconClassName,
+  ...props
 }) => {
 
   const buttonTypeClassMap = {
@@ -49,8 +50,10 @@ const Button = ({
   }
   return (
   <button
+    id={props.id}
     className={`${buttonTypeClassMap[buttonType]} ${buttonClassName}`}
     onClick={onClick}
+    {...props}
   >
     {iconPosition === "left" && (icon || iconComponent) && (
       <span className={`${iconTypeClassMap[buttonType]} ${iconClassName}`}>
@@ -58,9 +61,9 @@ const Button = ({
       </span>
     )}
     {label && (
-      <label className={`${labelTypeClassMap[buttonType]} ${labelClassName}`}>
+      <div className={`${labelTypeClassMap[buttonType]} ${labelClassName}`}>
         {label}
-      </label>
+      </div>
     )}
     {iconPosition === "right" && (icon || iconComponent) && (
       <span className={`${iconTypeClassMap[buttonType]} ${iconClassName}`}>

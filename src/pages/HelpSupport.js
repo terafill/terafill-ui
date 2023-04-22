@@ -3,7 +3,13 @@ import Button from "../components/Button";
 import { HiLightBulb, HiBugAnt } from "react-icons/hi2";
 import { RiLightbulbFlashFill, RiCustomerService2Fill } from "react-icons/ri";
 
+import { useTokenExpiration } from '../components/TokenTools';
+
+
 const HelpSupport = () => {
+
+  useTokenExpiration();
+
   return (
     <div className="relative bg-background-light-gray w-full h-screen flex flex-col items-center justify-start">
       <Navbar navbarType="app"/>

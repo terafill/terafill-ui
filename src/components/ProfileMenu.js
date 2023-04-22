@@ -4,12 +4,53 @@ import PortalPopup from "../components/PortalPopup";
 import { MenuItem } from "../components/Menu";
 import { useNavigate } from "react-router-dom";
 
+import Cookies from 'js-cookie';
+import axios from 'axios';
+
 const ProfileMenu = memo(({ onClose }) => {
   const [isSignoutPopupOpen, setSignoutPopupOpen] = useState(false);
   const navigate = useNavigate();
 
+  const logoutUser = () => {
+    var data = JSON.stringify({
+      access_token: Cookies.get("accessToken"),
+    });
+
+    console.log(`http://localhost:8000/api/v1/auth/logout`);
+
+    var config = {
+      method: 'post',
+      url: `http://localhost:8000/api/v1/auth/logout`,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      data : data
+    };
+
+    return axios(config);
+ }
+
   const onSignoutConfirm = useCallback(() => {
         // Signout
+        logoutUser().then(function (response) {
+            Cookies.remove('accessToken');
+            Cookies.remove('idToken');
+            Cookies.remove('refreshToken');
+            console.log("Session cleaned up!");
+
+            })
+            .catch(function (error) {
+              console.log(error);
+              if (error.response.data.hasOwnProperty('detail')){
+                const error_msg = error.response.data.detail;
+                console.log(error_msg);
+                alert([error_msg]);
+              }
+              else{
+                alert([`Something went wrong: ${error}.`]);
+              }
+            });
         navigate("/");
   }, []);
 

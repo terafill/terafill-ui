@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 
 import axios from "axios";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
+import Cookies from 'js-cookie';
 
 import Button from "../components/Button";
 import Navbar from "../components/Navbar";
@@ -490,6 +491,9 @@ export const CreatePasswordForm = () => {
           else{
           registerMasterPassword().then(function (response) {
               console.log(response);
+              Cookies.set(`accessToken`, response.data.accessToken, { expires: 7 });
+              Cookies.set(`refreshToken`, response.data.refreshToken, { expires: 7 });
+              Cookies.set(`idToken`, response.data.idToken, { expires: 7 });
               stepForward();
               navigate("/signup/recovery-kit");
             })
@@ -503,7 +507,7 @@ export const CreatePasswordForm = () => {
               else{
                 setErrorList([`Something went wrong: ${error}.`]);
               }
-              setErrorListVisibility(prevState => (false));
+              setErrorListVisibility(prevState => (true));
             });
           }
         }}>
@@ -571,7 +575,10 @@ export const CreatePasswordForm = () => {
 export const RecoveryKitForm = () => {
   const navigate = useNavigate();
   return (
-        <form className="bg-white rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[32px]">
+        <form
+          className="bg-white rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[32px]"
+          onSubmit={()=>navigate("/app-home")}
+        >
           <h4 className="m-0 relative text-4xl leading-[120%] font-bold text-black text-center">
             Download account recovery kit
           </h4>
@@ -600,7 +607,7 @@ export const RecoveryKitForm = () => {
           </p>
           <div className="flex flex-row py-4 px-0 items-start justify-start gap-[32px]">
             <Button buttonType="dark" label="Download Kit"/>
-            <Button buttonType="dark" label="Finish Setup" onClick={()=>navigate("/app-home")}/>
+            <Button buttonType="dark" label="Finish Setup" id="submit-button" type="submit"/>
           </div>
         </form>
   );

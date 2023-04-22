@@ -1,8 +1,10 @@
 import Navbar from "../components/Navbar";
 import PasswordItem from "../components/PasswordItem";
 import Button from "../components/Button";
+import { useTokenExpiration } from '../components/TokenTools';
 import "./AppHome.css";
-import { NavLink, Outlet, useParams, useLoaderData } from "react-router-dom";
+import { NavLink, Outlet, useParams, useLoaderData, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 
 const passwordDataList = [
@@ -146,6 +148,9 @@ export const PasswordPanel = () => {
 
 
 const AppHome = () => {
+
+  useTokenExpiration();
+
   return (
     // <div className="apphome">
       <div className="relative w-full h-screen flex flex-col items-center justify-center text-left">

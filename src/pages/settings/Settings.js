@@ -1,9 +1,13 @@
-import Navbar from "../../components/Navbar";
-import SettingsPanel from "../../components/SettingsPanel";
 import { Outlet } from "react-router-dom";
 import { useState } from "react";
 
+import Navbar from "../../components/Navbar";
+import SettingsPanel from "../../components/SettingsPanel";
+import { useTokenExpiration } from '../../components/TokenTools';
+
 const Settings = () => {
+
+  useTokenExpiration();
 
   const [activeSettingsPanel, setActiveSettingsPanel] = useState("Personal Info");
 

@@ -23,7 +23,7 @@ import SignUpPage from "./pages/SignUpPage";
 import { CreateAccountForm, EmailConfirmationForm, CreatePasswordForm, RecoveryKitForm } from "./pages/SignUpPage";
 
 // App Home
-import AppHome, { PasswordPanel, PasswordPanelIndex, passwordDataLoader } from "./pages/AppHome";
+import AppHome, { PasswordPanel, PasswordPanelIndex, itemDataLoader } from "./pages/AppHome";
 
 // Settings
 import Settings from './pages/settings/Settings';
@@ -50,7 +50,7 @@ const router = createBrowserRouter([
       {
         path: ":id",
         element: <PasswordPanel/>,
-        loader: passwordDataLoader,
+        // loader: itemDataLoader,
       },
       {
         index: true,

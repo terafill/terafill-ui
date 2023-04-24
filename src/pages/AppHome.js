@@ -1,177 +1,16 @@
+import { useEffect, useState, useRef } from "react";
+
+import { NavLink, Outlet, useParams, useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+
 import Navbar from "../components/Navbar";
 import PasswordItem from "../components/PasswordItem";
 import Button from "../components/Button";
 import { useTokenExpiration } from '../components/TokenTools';
+import { getDefaultVaultItems, updateVaultItem } from '../data';
 import "./AppHome.css";
-import { NavLink, Outlet, useParams, useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
-import { useEffect, useState } from "react";
 
-
-import axios from 'axios';
-import Cookies from 'js-cookie';
-
-
-// const passwordDataList = [
-//     {
-//       id: 1,
-//       passwordAppName: "Netflix",
-//       passwordUserName: "ram@keyelance.in",
-//       icon: "../netflix2.png",
-//       website: "netflix.com",
-//     },
-//     {
-//       id: 2,
-//       passwordAppName: "Facebook",
-//       passwordUserName: "ram123",
-//       icon: "../facebook2.png",
-//       website: "facebook.com",
-//     },
-//     {
-//       id: 3,
-//       passwordAppName: "Twitter",
-//       passwordUserName: "leo@3423",
-//       icon: "../twitter3.png",
-//       website: "twitter.com",
-//     },
-//     {
-//       id: 4,
-//       passwordAppName: "LinkedIn",
-//       passwordUserName: "leo@3423",
-//       icon: "../linkedin.png",
-//       website: "linkedin.com",
-//     },
-//     {
-//       id: 5,
-//       passwordAppName: "Pinterest",
-//       passwordUserName: "leo@3423",
-//       icon: "../pinterest.png",
-//       website: "pinterest.com",
-//     },
-//     {
-//       id: 6,
-//       passwordAppName: "Google",
-//       passwordUserName: "leo@3423",
-//       icon: "../google.png",
-//       website: "google.com",
-//     },
-//     {
-//       id: 7,
-//       passwordAppName: "Paypal",
-//       passwordUserName: "leo@3423",
-//       icon: "../paypal.png",
-//       website: "paypal.com",
-//     },
-//     {
-//       id: 8,
-//       passwordAppName: "Reddit",
-//       passwordUserName: "leo@3423",
-//       icon: "../reddit.png",
-//       website: "reddit.com",
-//     },
-//     {
-//       id: 9,
-//       passwordAppName: "Skype",
-//       passwordUserName: "leo@3423",
-//       icon: "../skype.png",
-//       website: "skype.com",
-//     },
-//     {
-//       id: 10,
-//       passwordAppName: "Yahoo",
-//       passwordUserName: "leo@3423",
-//       icon: "../yahoo.png",
-//       website: "yahoo.com",
-//     },
-// ]
-
-async function getVaults(){
-  //   var data = JSON.stringify({
-  //   email: userData.email,
-  //   master_password: userData.password
-  // });
-
-  console.log(`http://localhost:8000/api/v1/users/me/vaults/`);
-
-  var config = {
-    method: 'get',
-    url: `http://localhost:8000/api/v1/users/me/vaults/`,
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': `Bearer ${Cookies.get("accessToken")}`
-    }
-  };
-
-  try {
-    let response = await axios(config);
-    return response.data
-  } catch (error) {
-    console.log(error);
-  }
-
-  return null;
-
-}
-
-async function getVaultItems(vault_id){
-  console.log(`http://localhost:8000/api/v1/users/me/vaults/${vault_id}/items/`);
-
-  var config = {
-    method: 'get',
-    url: `http://localhost:8000/api/v1/users/me/vaults/${vault_id}/items/`,
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': `Bearer ${Cookies.get("accessToken")}`
-    }
-  };
-
-  let default_vault_id = null;
-
-  try {
-    let response = await axios(config);
-    return response.data
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export async function passwordDataListLoader(){
-
-  const vaults = await getVaults();
-  const default_vault = vaults[0];
-  const vault_id = default_vault.id;
-  const vault_items = await getVaultItems(vault_id);
-  console.log("vault_items", vault_items);
-
-  return vault_items;
-}
-
-
-// export async function itemDataLoader({ params }) {
-//   console.log(`http://localhost:8000/api/v1/users/me/vaults/${vault_id}/items/`);
-
-//   var config = {
-//     method: 'get',
-//     url: `http://localhost:8000/api/v1/users/me/vaults/${vault_id}/items/`,
-//     headers: {
-//       'Content-Type': 'application/json',
-//       'Accept': 'application/json',
-//       'Authorization': `Bearer ${Cookies.get("accessToken")}`
-//     }
-//   };
-
-//   let default_vault_id = null;
-
-//   try {
-//     let response = await axios(config);
-//     return response.data
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
-
-export const PasswordPanelIndex = () => {
+export const ItemPanelIndex = () => {
   return (
     <div className="self-stretch flex-1 overflow-hidden flex flex-col py-[32px] px-[16px] h-1/1 items-center justify-center z-[0] text-4xl">
       <h1>Good Morning!</h1>
@@ -179,8 +18,7 @@ export const PasswordPanelIndex = () => {
   );
 }
 
-
-export const PasswordPanel = () => {
+export const ItemPanel = () => {
 
   const [itemData, setItemData] = useState({
     icon : "../subtract1.svg",
@@ -190,53 +28,101 @@ export const PasswordPanel = () => {
     password: ""
   });
 
-  const [ passwordDataList ] = useOutletContext();
-  const { id } = useParams();
+  const [itemFormDisabled, setItemFormDisability] = useState(true);
+  const [showPassword, setPasswordVisibility] = useState(false);
 
-  console.log(id, passwordDataList);
+  const [ itemDataList ] = useOutletContext();
+  const { id } = useParams();
+  // const default_vault_id = getDefaultVaultId();
 
   useEffect(()=>{
-    for(let i=0;i<passwordDataList.length;i+=1){
-      if(id === passwordDataList[i].id){
+    for(let i=0;i<itemDataList.length;i+=1){
+      if(id === itemDataList[i].id){
         setItemData(prevItem=>({
             ...prevItem,
-            title : passwordDataList[i].title,
-            username : passwordDataList[i].username,
-            website : passwordDataList[i].website,
-            password: passwordDataList[i].password
+            title : itemDataList[i].title,
+            username : itemDataList[i].username,
+            website : itemDataList[i].website,
+            password: itemDataList[i].password
           })
         );
       }
     }
-  }, [ passwordDataList ]);
+  }, [ itemDataList ]);
 
 
   return (
     <div className="self-stretch flex-1 overflow-hidden flex flex-col py-[32px] px-[16px] h-1/1 items-center justify-between z-[0]" id="right-panel">
+      <div className="self-end flex flex-row">
+        <Button
+          onClick={() => {
+            if(!itemFormDisabled){
+              updateVaultItem(id, itemData.title, itemData.website, itemData.password, itemData.username);
+            }
+            setItemFormDisability(!itemFormDisabled);
+          }}
+          label={itemFormDisabled?"Edit":"Save"}
+          buttonType="link"
+          buttonClassName="relative top-[0rem] right-[0rem] z-[100]"
+          labelClassName="text-xl"
+        />
+        <Button
+          label="Share"
+          buttonType="link"
+          buttonClassName="relative top-[0rem] right-[0rem] z-[100]"
+          labelClassName="text-xl"
+        />
+      </div>
       <div className="grid grid-cols-2 grid-rows-4 items-center justify-center justify-items-center gap-4">
         <div className="self-stretch flex-1" id="iconframe">
           <img className="w-[88px] h-[88px] overflow-hidden object-cover" alt="" src={itemData.icon} />
         </div>
-        <h4 className="[border:none] flex self-stretch flex-1 relative text-4xl leading-[120%] font-bold font-inherit flex items-center">{itemData.title}</h4>
+        <input
+          className={`flex self-stretch flex-1 relative rounded-lg w-8/12 text-5xl font-medium bg-[transparent] rounded-3xs w-11/12 overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center ${itemFormDisabled ? '' : 'border-2 border-blue-100 bg-blue-50 bg-opacity-40'}`}
+          value={itemData.title}
+          placeholder="title"
+          onChange={(e)=>{setItemData(prevItem=>({...prevItem, title: e.target.value}))}}
+          disabled={itemFormDisabled}
+        />
         <label className="text-center font-medium">USERNAME</label>
         <input
-          className="[border:none] flex text-[23.04px] bg-[transparent] rounded-3xs w-2/3 overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center"
+          className={`flex text-[23.04px] bg-[transparent] rounded w-8/12 overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center ${itemFormDisabled ? '' : 'border-2 border-blue-100 bg-blue-50 bg-opacity-40'}`}
           type="text"
           value={itemData.username}
           placeholder="Username"
+          onChange={(e)=>{setItemData(prevItem=>({...prevItem, username: e.target.value}))}}
+          disabled={itemFormDisabled}
         />
         <label className="text-center font-medium">PASSWORD</label>
-        <input
-          className="[border:none] flex text-[23.04px] bg-[transparent] rounded-3xs w-2/3 overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center"
-          type="password"
-          value={itemData.password}
-          placeholder="Password" />
+        <div className="w-8/12 flex-1 flex flex-row box-border items-stretch justify-items-stretch">
+          <input
+            className={`w-full flex text-[23.04px] bg-[transparent] rounded overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center ${itemFormDisabled ? '' : 'border-2 border-blue-100 bg-blue-50 bg-opacity-40'}`}
+            type={showPassword?"text":"password"}
+            value={itemData.password}
+            placeholder="Password"
+            onChange={(e)=>{setItemData(prevItem=>({...prevItem, password: e.target.value}))}}
+            disabled={itemFormDisabled}
+            />
+            <button
+              className="relative inset-y-0 right-0 pl-3 text-gray-500 hover:text-gray-800"
+              onClick={() => setPasswordVisibility(!showPassword)}
+            >
+              {showPassword ? (
+                <AiFillEyeInvisible className="w-5 h-5" aria-hidden="true" />
+              ) : (
+                <AiFillEye className="w-5 h-5" aria-hidden="true" />
+              )}
+            </button>
+          </div>
+
         <label className="text-center font-medium">WEBSITE</label>
         <input
-          className="[border:none] flex text-[23.04px] bg-[transparent] rounded-3xs w-2/3 overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center "
+          className={`flex text-[23.04px] bg-[transparent] rounded w-8/12 overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center ${itemFormDisabled ? '' : 'border-2 border-blue-100 bg-blue-50 bg-opacity-40'}`}
           type="text"
           value={itemData.website}
           placeholder="Website"
+          onChange={(e)=>{setItemData(prevItem=>({...prevItem, website: e.target.value}))}}
+          disabled={itemFormDisabled}
         />
       </div>
       <Button
@@ -252,16 +138,20 @@ export const PasswordPanel = () => {
 
 const AppHome = () => {
 
-  const [passwordDataList, setPasswordDataList] = useState([]);
+  const [itemDataList, setItemDataList] = useState([]);
+  const shouldLoad = useRef(true);
 
   useTokenExpiration();
 
   useEffect(() => {
-    async function loadData() {
-      const data = await passwordDataListLoader();
-      setPasswordDataList(data);
+    if(shouldLoad.current){
+      (async () => {
+        console.log("Data loading!")
+        const data = await getDefaultVaultItems();
+        setItemDataList(data);
+      })();
+      shouldLoad.current = false;
     }
-    loadData();
   }, []);
 
 
@@ -280,18 +170,18 @@ const AppHome = () => {
           </div>
           <div className="self-stretch flex-1 overflow-y-auto px-2 py-2 flex flex-col items-center justify-start z-[1] border-[2px] border-solid" id="item-list">
           {
-           passwordDataList.map( passwordData =>
+           itemDataList.map( itemData =>
             <NavLink
-              to={`${passwordData.id}`}
-              key={passwordData.id}
+              to={`${itemData.id}`}
+              key={itemData.id}
               className={({ isActive }) => isActive? "bg-gray-200 mt-1 mb-1 px-[16px] rounded-lg hover:bg-gray-200": "mt-1 mb-1 px-[16px] rounded-lg hover:bg-gray-100"}
             >
               <PasswordItem
-                key={passwordData.id}
+                key={itemData.id}
                 icon = "../subtract1.svg"
-                // icon={passwordData.icon}
-                appName={passwordData.title}
-                userName={passwordData.username}
+                // icon={itemData.icon}
+                appName={itemData.title}
+                userName={itemData.username}
               />
             </NavLink>
            )
@@ -303,7 +193,7 @@ const AppHome = () => {
             buttonClassName="absolute bottom-[1.2rem] right-[1.2rem] h-[3rem] w-[3rem] z-[100] rounded-[rem]"
           />
         </div>
-        <Outlet context={[ passwordDataList ]}/>
+        <Outlet context={[ itemDataList ]}/>
       </div>
     </div>
   );

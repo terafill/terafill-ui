@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
 import Cookies from 'js-cookie';
@@ -43,7 +43,6 @@ export async function isUserSessionValid(){
 }
 
 export async function checkUserSession(navigate) {
-  const data = await isUserSessionValid();
   if(!await isUserSessionValid()){
     cleanupUserSession(navigate);
   }
@@ -51,10 +50,14 @@ export async function checkUserSession(navigate) {
 
 
 export function useTokenExpiration() {
+  const shouldCheck = useRef(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    checkUserSession(navigate);
+    if(shouldCheck.current){
+      checkUserSession(navigate);
+      shouldCheck.current = false;
+    }
     const intervalId = setInterval(() => {
       checkUserSession(navigate);
     }, 60000);

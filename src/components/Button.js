@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { memo } from "react";
 
 const Button = ({
   buttonType,
@@ -74,4 +74,4 @@ const Button = ({
   );
 };
 
-export default Button;
+export default memo(Button);

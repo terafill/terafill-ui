@@ -55,6 +55,7 @@ const Button = ({
     onClick={onClick}
     {...props}
   >
+    {props.children}
     {iconPosition === "left" && (icon || iconComponent) && (
       <span className={`${iconTypeClassMap[buttonType]} ${iconClassName}`}>
         {icon ? <img alt="" src={icon} /> : iconComponent}

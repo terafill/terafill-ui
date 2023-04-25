@@ -91,8 +91,10 @@ export async function updateVaultItem(id, title, website, password, username){
   try {
     let response = await axios(config);
     console.log("Item updated !")
-    return response.data
+    return response
   } catch (error) {
     console.log(error);
   }
+
+  return {}
 }

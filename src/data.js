@@ -98,3 +98,62 @@ export async function updateVaultItem(id, title, website, password, username){
 
   return {}
 }
+
+export async function createVaultItem(title, website, password, username){
+  const vault_id = await getDefaultVaultId();
+  const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}/items/`;
+  console.log(requestUrl);
+
+  var config = {
+    method: 'post',
+    url: requestUrl,
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${Cookies.get("accessToken")}`
+    },
+    data: {
+      title: title,
+      website: website,
+      password: password,
+      username: username,
+      type: "PASSWORD"
+    }
+  };
+
+  try {
+    let response = await axios(config);
+    console.log("Item created successfully !")
+    return response
+  } catch (error) {
+    console.log(error);
+  }
+
+  return {}
+}
+
+export async function deleteVaultItem(id){
+  const vault_id = await getDefaultVaultId();
+  const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}/items/${id}`;
+  console.log(requestUrl);
+
+  var config = {
+    method: 'delete',
+    url: requestUrl,
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${Cookies.get("accessToken")}`
+    },
+  };
+
+  try {
+    let response = await axios(config);
+    console.log("Item deleted successfully !")
+    return response
+  } catch (error) {
+    console.log(error);
+  }
+
+  return {}
+}

@@ -1,16 +1,15 @@
 import { useEffect, useState, useRef } from "react";
 
-import { NavLink, Outlet, useParams, useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
+import { NavLink, Outlet, useParams, useLoaderData, useNavigate, useOutletContext, withRouter, useLocation } from "react-router-dom";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import MoonLoader from "react-spinners/MoonLoader";
 
 import Navbar from "../components/Navbar";
-import PasswordItem from "../components/PasswordItem";
 import Button from "../components/Button";
 import { useTokenExpiration } from '../components/TokenTools';
-import { getDefaultVaultItems, updateVaultItem } from '../data';
+import { getDefaultVaultItems, updateVaultItem, createVaultItem, deleteVaultItem } from '../data';
 import "./AppHome.css";
 
 export const ItemPanelIndex = () => {
@@ -23,19 +22,39 @@ export const ItemPanelIndex = () => {
 
 export const ItemPanel = () => {
 
+  const { id } = useParams();
   const [itemFormDisabled, setItemFormDisability] = useState(true);
+  const [shareButtonVisible, setShareButtonVisible] = useState(true);
   const [showPassword, setPasswordVisibility] = useState(false);
   const [itemUpdating, setItemUpdating] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
 
   const [ itemDataList, updateItem ] = useOutletContext();
-  const { id } = useParams();
 
   useEffect(()=>{
+    console.log("id", id);
+      if(id === "new"){
+        itemDataList[id] = {
+          title: '',
+          icon: null,
+          password: '',
+          website: '',
+          username: '',
+        }
+        console.log("itemFormDisabled", itemFormDisabled);
+        setItemFormDisability(prevState=>false);
+        setShareButtonVisible(prevState=>false);
+      }
+      else{
+        setItemFormDisability(prevState=>true);
+        setShareButtonVisible(prevState=>true);
+      }
     if(itemDataList[id] === undefined){
       navigate('/app-home');
     }
-  }, []);
+  }, [location]);
 
 
   return (
@@ -47,6 +66,10 @@ export const ItemPanel = () => {
         {!itemFormDisabled && !itemUpdating && <Button
           onClick={() => {
             setItemFormDisability(!itemFormDisabled);
+            if(id === "new"){
+              // console.log(location.location.state?.previousPath);
+              navigate(-1);
+            }
           }}
           label="Cancel"
           buttonType="link"
@@ -57,14 +80,27 @@ export const ItemPanel = () => {
           onClick={async () => {
             if(!itemFormDisabled){
               setItemUpdating(true);
-              const response = await updateVaultItem(id, itemDataList[id].title, itemDataList[id].website, itemDataList[id].password, itemDataList[id].username);
-              setItemUpdating(false);
-              if (response.status == 200){
-                toast.success("Vault item updated successfully!");
+              if (id === "new"){
+                const response = await createVaultItem(itemDataList[id].title, itemDataList[id].website, itemDataList[id].password, itemDataList[id].username);
+                  if (response.status == 200){
+                    toast.success("Vault item created successfully!");
+                      navigate(`/app-home/${response.data.id}`);
+                  }
+                  else{
+                    toast.error("Something went wrong!");
+                  }
               }
               else{
-                toast.error("Something went wrong!");
+                const response = await updateVaultItem(id, itemDataList[id].title, itemDataList[id].website, itemDataList[id].password, itemDataList[id].username);
+                if (response.status == 200){
+                  updateItem(id, "icon", `https://cool-rose-moth.faviconkit.com/${itemDataList[id].website}/256`);
+                  toast.success("Vault item updated successfully!");
+                }
+                else{
+                  toast.error("Something went wrong!");
+                }
               }
+              setItemUpdating(false);
             }
             setItemFormDisability(!itemFormDisabled);
           }}
@@ -74,22 +110,38 @@ export const ItemPanel = () => {
           labelClassName="text-xl"
           children={<MoonLoader loading={itemUpdating && true} size={15}/>}
         />
-        <Button
+        {itemFormDisabled && shareButtonVisible && <Button
           label="Share"
           buttonType="link"
           buttonClassName="relative top-[0rem] right-[0rem] z-[100]"
           labelClassName="text-xl"
-        />
+        />}
+       {itemFormDisabled && !itemUpdating && id!="new" && <Button
+          onClick={async () => {
+            const response = await deleteVaultItem(id);
+              if (response.status == 204){
+                toast.success("Vault item deleted successfully!");
+                  navigate(-1);
+              }
+              else{
+                toast.error("Something went wrong!");
+              }
+            navigate(-1);
+          }}
+          label="Delete"
+          buttonType="link"
+          buttonClassName="relative top-[0rem] right-[0rem] z-[100] hover:bg-red-50"
+          labelClassName="text-xl text-red-500"
+        />}
       </div>
       <div className="grid grid-cols-2 grid-rows-4 items-center justify-center justify-items-center gap-4">
         <div className="self-stretch flex-1" id="iconframe">
-          <img className="w-[88px] h-[88px] overflow-hidden object-cover" alt="" src={itemDataList[id] && itemDataList[id].icon} />
+          <img className="w-[88px] h-[88px] overflow-hidden object-cover" alt="" src={itemDataList[id]?itemDataList[id].icon:null} />
         </div>
         <input
           className={`flex self-stretch flex-1 relative rounded-lg w-8/12 text-5xl font-medium bg-[transparent] rounded-3xs w-11/12 overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center ${itemFormDisabled ? '' : 'border-2 border-blue-100 bg-blue-50 bg-opacity-40'}`}
-          value={itemDataList[id] && itemDataList[id].title}
+          value={itemDataList[id]?itemDataList[id].title:''}
           placeholder="title"
-          // onChange={(e)=>{setItemData(prevItem=>({...prevItem, title: e.target.value}))}}
           onChange={(e)=>{updateItem(id, "title", e.target.value)}}
           disabled={itemFormDisabled}
         />
@@ -97,9 +149,8 @@ export const ItemPanel = () => {
         <input
           className={`flex text-[23.04px] bg-[transparent] rounded w-8/12 overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center ${itemFormDisabled ? '' : 'border-2 border-blue-100 bg-blue-50 bg-opacity-40'}`}
           type="text"
-          value={itemDataList[id] &&  itemDataList[id].username}
+          value={itemDataList[id]?itemDataList[id].username:''}
           placeholder="Username"
-          // onChange={(e)=>{setItemData(prevItem=>({...prevItem, username: e.target.value}))}}
           onChange={(e)=>{updateItem(id, "username", e.target.value)}}
           disabled={itemFormDisabled}
         />
@@ -108,9 +159,8 @@ export const ItemPanel = () => {
           <input
             className={`w-full flex text-[23.04px] bg-[transparent] rounded overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center ${itemFormDisabled ? '' : 'border-2 border-blue-100 bg-blue-50 bg-opacity-40'}`}
             type={showPassword?"text":"password"}
-            value={itemDataList[id] && itemDataList[id].password}
+            value={itemDataList[id]?itemDataList[id].password:''}
             placeholder="Password"
-            // onChange={(e)=>{setItemData(prevItem=>({...prevItem, password: e.target.value}))}}
             onChange={(e)=>{updateItem(id, "password", e.target.value)}}
             disabled={itemFormDisabled}
             />
@@ -130,9 +180,8 @@ export const ItemPanel = () => {
         <input
           className={`flex text-[23.04px] bg-[transparent] rounded w-8/12 overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center ${itemFormDisabled ? '' : 'border-2 border-blue-100 bg-blue-50 bg-opacity-40'}`}
           type="text"
-          value={itemDataList[id] && itemDataList[id].website}
+          value={itemDataList[id]?itemDataList[id].website:''}
           placeholder="Website"
-          // onChange={(e)=>{setItemData(prevItem=>({...prevItem, website: e.target.value}))}}
           onChange={(e)=>{updateItem(id, "website", e.target.value)}}
           disabled={itemFormDisabled}
         />
@@ -150,6 +199,7 @@ export const ItemPanel = () => {
 
 const AppHome = () => {
 
+  const navigate = useNavigate();
   const [itemDataList, setItemDataList] = useState([]);
   const shouldLoad = useRef(true);
 
@@ -201,17 +251,18 @@ const AppHome = () => {
           <div className="self-stretch flex-1 overflow-y-auto px-2 py-2 flex flex-col items-center justify-start z-[1] border-[2px] border-solid" id="item-list">
           {
            Object.entries(itemDataList).map( ([id, itemData]) =>
-            <NavLink
+            (id!="new") && <NavLink
               to={`${itemData.id}`}
               key={itemData.id}
               className={({ isActive }) => isActive? "bg-gray-200 mt-1 mb-1 px-[16px] rounded-lg hover:bg-gray-200": "mt-1 mb-1 px-[16px] rounded-lg hover:bg-gray-100"}
             >
-              <PasswordItem
-                key={itemData.id}
-                icon={itemData.icon}
-                appName={itemData.title}
-                userName={itemData.username}
-              />
+              <button className="cursor-pointer rounded-lg [border:none] overflow-hidden flex flex-row items-center justify-start">
+                <img className="relative w-[40px] h-[40px] shrink-0 overflow-hidden object-cover" alt="" src={itemData.icon} />
+                <div className="flex flex-col text-left px-[8px] py-[8px]">
+                  <label className="cursor-pointer relative text-xl tracking-[0.03em] font-bold w-[230px] h-[23px] shrink-0 truncate overflow-hidden line-clamp-2">{itemData.title}</label>
+                  <label className="cursor-pointer relative text-base tracking-[0.03em] w-[230px] h-[23px] shrink-0 truncate overflow-hidden line-clamp-2">{itemData.username}</label>
+                </div>
+              </button>
             </NavLink>
            )
           }
@@ -220,6 +271,7 @@ const AppHome = () => {
             buttonType="blue"
             icon="/icbaselineplus.svg"
             buttonClassName="absolute bottom-[1.2rem] right-[1.2rem] h-[3rem] w-[3rem] z-[100] rounded-[rem]"
+            onClick={()=>navigate("new")}
           />
         </div>
         <Outlet context={[ itemDataList, updateItem ]}/>

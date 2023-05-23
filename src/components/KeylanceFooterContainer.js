@@ -1,46 +1,35 @@
 import Button from "../components/Button";
-import "./KeylanceFooterContainer.css";
+
+import { BsTwitter, BsFacebook, BsInstagram } from "react-icons/bs";
+import { Link, useNavigate } from "react-router-dom";
+
 
 const KeylanceFooterContainer = () => {
+  const navigate = useNavigate();
   return (
-    <div className="footer" id="footer">
-      <div className="logo">
-        <div className="betalogo1">
-          <img className="subtract-icon1" alt="" src="../subtract1.svg" />
-          <div className="keylance1">Keylance</div>
+    <div className="p-8 bg-gray-50 flex flex-row items-center self-stretch justify-start" id="footer">
+      <div className="pl-4 flex-1 flex flex-col gap-2">
+        <div className="flex flex-row items-center gap-3" id="keylance-logo">
+          <img className="h-[3rem]" id="keylance-icon" alt="" src="/subtract1.svg" />
+          <div className="text-5xl">Keylance</div>
         </div>
-        <i className="login-faster">login faster</i>
+        <i className="text-6xl" id="login-faster">login faster</i>
       </div>
-      <div className="rightfooter" id="right-footer">
-        <div className="supportgroup" id="support-group">
-          <h6 className="support" id="Support">
+      <div className="flex-1 flex flex-row justify-around" id="right-footer">
+        <div className="flex flex-col items-center" id="support-group">
+          <h6 className="text-lg font-bold" id="Support">
             SUPPORT
           </h6>
-          <Button
-            label="FAQ"
-            buttonType="link"
-          />
-          <Button
-            label="00-000-00000"
-            buttonType="link"
-          />
-          <Button
-            label="support@keylance.in"
-            buttonType="link"
-          />
+          <Button buttonType="link" label="FAQ" onClick={()=>navigate("/faq")}/>
+          <a href="tel:+00-000-00000"><Button buttonType="link" label="00-000-00000" /></a>
+          <a href="mailto:support@keylance.in"><Button buttonType="link" label="support@keylance.in" /></a>
         </div>
-        <div className="socialmediagroup" id="contact-group">
-          <b className="contact-us">CONTACT US</b>
-          <div className="buttongroup3" id="ButtonGroup">
-            <a className="twittericon">
-              <img className="vector-icon" alt="" src="../twitter.svg" />
-            </a>
-            <a className="facebookicon">
-              <img className="vector-icon1" alt="" src="../vector1.svg" />
-            </a>
-            <a className="instagramicon">
-              <img className="vector-icon2" alt="" src="../vector2.svg" />
-            </a>
+        <div className="flex flex-col" id="contact-group">
+          <h6 className="text-lg font-bold">CONTACT US</h6>
+          <div className="flex flex-row justify-between" id="button-group">
+            <a href='https://twitter.com' target="_blank" rel="noopener noreferrer"><BsTwitter size={24}/></a>
+            <a href='https://facebook.com' target="_blank" rel="noopener noreferrer"><BsFacebook size={24}/></a>
+            <a href='https://instagram.com' target="_blank" rel="noopener noreferrer"><BsInstagram size={24}/></a>
           </div>
         </div>
       </div>

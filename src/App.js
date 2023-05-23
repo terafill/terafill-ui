@@ -6,20 +6,36 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import LandingPage from "./pages/LandingPage";
-import RecoveryKit from "./pages/RecoveryKit";
-import HelpSupport from "./pages/HelpSupport";
-import SettingsDeviceManagement from "./pages/SettingsDeviceManagement";
-import AppHome, { PasswordPanel, PasswordPanelIndex, passwordDataLoader } from "./pages/AppHome";
-import EmailConfirmation from "./pages/EmailConfirmation";
-import Import from "./pages/Import";
-import SettingsSharingByUser from "./pages/SettingsSharingByUser";
-import SettingsSharingByPassword from "./pages/SettingsSharingByPassword";
-import SettingsSecurity from "./pages/SettingsSecurity";
-import SettingsPersonalInfo from "./pages/SettingsPersonalInfo";
-import CreatePassword from "./pages/CreatePassword";
-import SignUpPage from "./pages/SignUpPage";
 import { useEffect } from "react";
+
+
+
+// Landing Page
+import LandingPage from "./pages/LandingPage";
+import ProductsPage from "./pages/ProductsPage";
+import PricingPage from "./pages/PricingPage";
+import WhitepaperPage from "./pages/WhitepaperPage";
+import FaqPage from "./pages/FaqPage";
+
+// Login and Signup
+import LoginPage from "./pages/LoginPage";
+import SignUpPage from "./pages/SignUpPage";
+import { CreateAccountForm, EmailConfirmationForm, CreatePasswordForm, RecoveryKitForm } from "./pages/SignUpPage";
+
+// App Home
+import AppHome, { ItemPanel, ItemPanelIndex, itemDataLoader } from "./pages/AppHome";
+
+// Settings
+import Settings from './pages/settings/Settings';
+import SettingsPersonalInfo from "./pages/settings/SettingsPersonalInfo";
+import SettingsDeviceManagement from "./pages/settings/SettingsDeviceManagement";
+import SettingsSecurity from "./pages/settings/SettingsSecurity";
+import SettingsSharing, { SettingsSharingByUser, SettingsSharingByPassword } from "./pages/settings/SettingsSharing";
+
+// Others
+import Import from "./pages/Import";
+import HelpSupport from "./pages/HelpSupport";
+
 
 
 const router = createBrowserRouter([
@@ -33,43 +49,94 @@ const router = createBrowserRouter([
     children: [
       {
         path: ":id",
-        element: <PasswordPanel/>,
-        loader: passwordDataLoader,
+        element: <ItemPanel/>,
+        // loader: itemDataLoader,
       },
       {
         index: true,
-        element: <PasswordPanelIndex />
+        element: <ItemPanelIndex />
       },
     ],
 
   },
   {
-    path: "/help-and-support",
-    element: <HelpSupport />
+    path: "/products",
+    element: <ProductsPage />
   },
   {
-    path: "/recovery-kit",
-    element: < RecoveryKit/>
+    path: "/pricing",
+    element: <PricingPage />
   },
   {
-    path: "/email-confirmation",
-    element: <EmailConfirmation />
+    path: "/whitepaper",
+    element: <WhitepaperPage />
   },
   {
-    path: "/import",
-    element: <Import />
+    path: "/faq",
+    element: <FaqPage />
+  },
+  {
+    path: "/login",
+    element: <LoginPage />
+  },
+  {
+    path: "/signup",
+    element: <SignUpPage />,
+    children: [
+      {
+        index: true,
+        element: <CreateAccountForm />
+      },
+      {
+        path: "email-confirmation",
+        element: <EmailConfirmationForm />
+      },
+      {
+        path: "create-password",
+        element: <CreatePasswordForm />
+      },
+      {
+        path: "recovery-kit",
+        element: <RecoveryKitForm />
+      },
+    ]
+  },
+  {
+    path: "/settings",
+    element: <Settings />,
+    children: [
+      {
+        index: true,
+        element: <SettingsPersonalInfo />
+      },
+      {
+        path: "security",
+        element: <SettingsSecurity />
+      },
+      {
+        path: "sharing",
+        element: <SettingsSharing />,
+        children: [
+          {
+            index: true,
+            path: "by-password",
+            element: <SettingsSharingByPassword />
+          },
+          {
+            path: "by-user",
+            element: <SettingsSharingByUser />
+          },
+        ]
+      },
+      {
+        path: "device-management",
+        element: <SettingsDeviceManagement />
+      },
+    ]
   },
   {
     path: "/settings-device-management",
     element: <SettingsDeviceManagement />
-  },
-  {
-    path: "/settings-sharing-by-user",
-    element: <SettingsSharingByUser />
-  },
-  {
-    path: "/settings-sharing-by-password",
-    element: <SettingsSharingByPassword />
   },
   {
     path: "/settings-security",
@@ -80,15 +147,13 @@ const router = createBrowserRouter([
     element: <SettingsPersonalInfo />
   },
   {
-    path: "/create-password",
-    element: <CreatePassword />
+    path: "/import",
+    element: <Import />
   },
   {
-    path: "/signup-page",
-    element: <SignUpPage />
+    path: "/help-and-support",
+    element: <HelpSupport />
   },
-
-
 ]);
 
 function App() {

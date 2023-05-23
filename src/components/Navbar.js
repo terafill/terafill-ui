@@ -1,15 +1,17 @@
-import { useState, useRef, useCallback } from "react";
-import NotificationsPopup from "../components/NotificationsPopup";
+import { memo, useState, useRef, useCallback } from "react";
+import NotificationsMenu from "../components/NotificationsMenu";
 import PortalPopup from "../components/PortalPopup";
-import ProfilePopup from "../components/ProfilePopup";
+import ProfileMenu from "../components/ProfileMenu";
 import Button from "../components/Button";
-import "./Navbar.css";
+import { Link, useNavigate } from 'react-router-dom';
 
-const Navbar = ({ navbarType="landing" }) => {
 
-  const buttonDerivativeBase3Ref = useRef(null);
+const Navbar = memo(({ navbarType="landing" }) => {
+
+  const navigate = useNavigate();
+  const profileMenuButtonRef = useRef(null);
   const [isNotificationsPopupOpen, setNotificationsPopupOpen] = useState(false);
-  const buttonDerivativeBase4Ref = useRef(null);
+  const notificationsMenuButtonRef = useRef(null);
   const [isProfilePopupOpen, setProfilePopupOpen] = useState(false);
 
   const openNotificationsPopup = useCallback(() => {
@@ -30,76 +32,91 @@ const Navbar = ({ navbarType="landing" }) => {
 
   return (
   <>
-    <div className="navbar" id="navbar">
-      <div className="leftnavbar" id="LeftNavBar">
-        <div className="betalogo">
-          <img className="subtract-icon" alt="" src="../subtract.svg" />
-          <div className="keylance">Keylance</div>
+    <div
+      className="self-stretch bg-black shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-between text-center text-[33.18px] text-font-light font-dm-serif-display"
+      id="navbar">
+      <div className="flex flex-row items-center justify-start gap-[24px]" id="left-navbar">
+        <div className="relative w-[200px] h-12 shrink-0">
+          <img
+            className="absolute top-[8px] left-[8px] w-7 h-7"
+            alt=""
+            src="/subtract.svg"
+          />
+          <Link to="/" className="text-white absolute top-[8px] left-[44px] flex items-center justify-center w-[136px] h-7">
+            Keylance
+          </Link>
         </div>
-        { (navbarType === "landing") || ( navbarType ==="signup")?
-        <div className="menuitems" id="ButtonGroup">
-          <Button label="Products" buttonType="dark"/>
-          <Button label="Whitepaper" buttonType="dark"/>
-          <Button label="Download " buttonType="dark"/>
-        </div>: ""
+        { (navbarType === "landing") || ( navbarType ==="signup") || ( navbarType ==="login")?
+        <div className="flex flex-row items-center justify-center gap-[16px] lg:items-center lg:justify-start lg:pl-[7%] lg:box-border" id="ButtonGroup">
+          <Button buttonType="dark" label="Products" onClick={()=>navigate("/products")}/>
+          <Button buttonType="dark" label="Pricing" onClick={()=>navigate("/pricing")}/>
+          <Button buttonType="dark" label="Whitepaper" onClick={()=>navigate("/whitepaper")}/>
+        </div>
+
+        : ""
         }
       </div>
-      {(navbarType === "landing") || ( navbarType ==="signup")?
-        <div className="rightnavbar">
-          <Button label="Login" buttonType="dark"/>
-          {navbarType === "signup" ? "":
-            <Button label="Sign Up" buttonType="light"/>}
+      {(navbarType === "landing") || ( navbarType ==="signup") || ( navbarType ==="login")?
+        <div className="flex flex-row px-4 items-center justify-center gap-[8px]">
+          {navbarType === "login" ? "":  <Button buttonType="dark" label="Login" onClick={()=>navigate("/login")}/>}
+          {navbarType === "signup" ? "": <Button buttonType="light" label="Sign Up" onClick={()=>navigate("/signup")}/>}
         </div>
         : ""
       }
       {navbarType === "app"?
-        <div className="rightnavbar">
-          <Button
-            buttonType="dark"
-            iconXSmall="../bell.svg"
-            iconXSmallDisplay="unset"
-            labelDisplay="none"
-            // ref={buttonDerivativeBase3Ref}
-            onButtonClick={openNotificationsPopup}
-          />
-          <Button
-            buttonType="dark"
-            iconXSmall="../profile.svg"
-            iconXSmallDisplay="unset"
-            labelDisplay="none"
-            // ref={buttonDerivativeBase4Ref}
-            onButtonClick={openProfilePopup}
-          />
+        <div className="box-border flex flex-row px-4 items-center justify-center gap-[8px] border-l-[0.8px]">
+          <button
+            className="cursor-pointer [border:none] py-2 px-2 bg-gray hover:bg-gray-800 rounded-xl shadow-[0px_0px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-start gap-[8px]"
+            ref={notificationsMenuButtonRef}
+            onClick={openNotificationsPopup}
+          >
+              <img
+                className="relative w-6 h-6 shrink-0"
+                alt=""
+                src="/bell.svg"
+              />
+          </button>
+          <button
+            className="cursor-pointer [border:none] py-2 px-2 bg-gray hover:bg-gray-800 rounded-xl shadow-[0px_0px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-start gap-[8px]"
+            ref={profileMenuButtonRef}
+            onClick={openProfilePopup}
+          >
+              <img
+                className="relative w-6 h-6 shrink-0"
+                alt=""
+                src="/profile.svg"
+              />
+          </button>
         </div>
         : ""
       }
     </div>
      {isNotificationsPopupOpen && (
         <PortalPopup
-          overlayColor="rgba(113, 113, 113, 0.3)"
+          // overlayColor="rgba(113, 113, 113, 0.1)"
           placement="Bottom right"
           right={8}
-          bottom={24}
-          relativeLayerRef={buttonDerivativeBase3Ref}
+          bottom={16}
+          relativeLayerRef={notificationsMenuButtonRef}
           onOutsideClick={closeNotificationsPopup}
         >
-          <NotificationsPopup onClose={closeNotificationsPopup} />
+          <NotificationsMenu onClose={closeNotificationsPopup} />
         </PortalPopup>
       )}
       {isProfilePopupOpen && (
         <PortalPopup
-          overlayColor="rgba(113, 113, 113, 0.3)"
+          // overlayColor="rgba(113, 113, 113, 0.1)"
           placement="Bottom right"
           right={8}
-          bottom={24}
-          relativeLayerRef={buttonDerivativeBase4Ref}
+          bottom={16}
+          relativeLayerRef={profileMenuButtonRef}
           onOutsideClick={closeProfilePopup}
         >
-          <ProfilePopup onClose={closeProfilePopup} />
+          <ProfileMenu onClose={closeProfilePopup} />
         </PortalPopup>
       )}
     </>
   );
-};
+});
 
 export default Navbar;

@@ -1,41 +1,17 @@
-import { useState, useCallback } from "react";
-import SignoutPopup from "../components/SignoutPopup";
-import PortalPopup from "../components/PortalPopup";
-import MenuItem from "../components/MenuItem";
-import "./Menu.css";
-
-const Menu = () => {
-  const [isSignoutPopupOpen, setSignoutPopupOpen] = useState(false);
-
-  const openSignoutPopup = useCallback(() => {
-    setSignoutPopupOpen(true);
-  }, []);
-
-  const closeSignoutPopup = useCallback(() => {
-    setSignoutPopupOpen(false);
-  }, []);
-
+export const MenuItem = ({ menuItem, onClick }) => {
   return (
-    <>
-      <div className="menu">
-        <MenuItem menuItem="Home" />
-        <MenuItem menuItem="Settings" />
-        <MenuItem menuItem="Download App" />
-        <MenuItem menuItem="Import" />
-        <MenuItem menuItem={`Help & Support`} />
-        <MenuItem menuItem="Sign Out" openSignoutPopup={openSignoutPopup} />
-      </div>
-      {isSignoutPopupOpen && (
-        <PortalPopup
-          overlayColor="rgba(113, 113, 113, 0.3)"
-          placement="Centered"
-          onOutsideClick={closeSignoutPopup}
-        >
-          <SignoutPopup onClose={closeSignoutPopup} />
-        </PortalPopup>
-      )}
-    </>
+    <button className="cursor-pointer rounded [border:none] p-2 bg-font-light self-stretch h-8 shrink-0 flex flex-row box-border items-center justify-center hover:bg-gray-100" onClick={onClick}>
+      <b className="self-stretch flex-1 relative text-xs flex font-label-xlarge-bold text-background-dark text-center items-center justify-center">{menuItem}</b>
+    </button>
   );
 };
 
-export default Menu;
+// const Menu = () => {
+
+//   return (
+//     <>
+//     </>
+//   );
+// };
+
+// export default Menu;

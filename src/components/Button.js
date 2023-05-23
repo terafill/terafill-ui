@@ -1,141 +1,78 @@
-import { useMemo } from "react";
-import styles from "./Button.module.css";
+import { memo } from "react";
 
 const Button = ({
-  icon,
-  label,
   buttonType,
-  buttonBackgroundColor,
-  buttonBoxShadow,
-  buttonBorder,
-  buttonPosition,
-  buttonRight,
-  buttonBottom,
-  buttonZIndex,
-  buttonDisplay,
-  buttonPadding,
-  keylanceWidth,
-  keylanceHeight,
-  labelFontSize,
-  labelLineHeight,
-  labelColor,
-  iconXSmall,
-  iconXSmallDisplay,
-  onButtonClick,
-  iconXSmallObjectFit,
-  iconXSmallOverflow,
+  buttonClassName,
+  onClick,
+  label,
   labelDisplay,
+  labelClassName,
+  icon,
+  iconComponent,
+  iconDisplay,
   iconPosition="left",
+  iconClassName,
+  ...props
 }) => {
-  const buttonStyle = useMemo(() => {
-    return {
-      backgroundColor: buttonBackgroundColor,
-      boxShadow: buttonBoxShadow,
-      border: buttonBorder,
-      padding: buttonPadding,
-      position: buttonPosition,
-      right: buttonRight,
-      bottom: buttonBottom,
-      zIndex: buttonZIndex,
-    };
-  }, [
-    buttonBackgroundColor,
-    buttonBoxShadow,
-    buttonBorder,
-    buttonPosition,
-    buttonRight,
-    buttonBottom,
-    buttonZIndex,
-  ]);
 
-  const labelStyle = useMemo(() => {
-    return {
-      fontSize: labelFontSize,
-      lineHeight: labelLineHeight,
-      color: labelColor,
-      display: labelDisplay,
-    };
-  }, [labelFontSize, labelLineHeight, labelColor, labelDisplay]);
-
-  const iconXSmallStyle = useMemo(() => {
-    return {
-      display: iconXSmallDisplay,
-      objectFit: iconXSmallObjectFit,
-      overflow: iconXSmallOverflow,
-    };
-  }, [iconXSmallDisplay, iconXSmallObjectFit, iconXSmallOverflow]);
-
-  var buttonStyleClass = styles.darkButton;
-
-  switch(buttonType) {
-    case "light":
-      buttonStyleClass = styles.lightButton;
-      break;
-    case "red":
-      buttonStyleClass = styles.redButton;
-      break;
-    case "blue":
-      buttonStyleClass = styles.blueButton;
-      break;
-    case "add":
-      buttonStyleClass = styles.blueButton;
-      break;
-    case "link":
-      buttonStyleClass = styles.linkButton;
-      break;
-    default:
-      buttonStyleClass = styles.darkButton;
-      // statements_def
-      break;
+  const buttonTypeClassMap = {
+    dark: "bg-black text-white font-medium text-base py-1 px-3 rounded-lg shadow-md hover:bg-gray-800 focus:outline-none transition-all flex flex-row items-center justify-center",
+    panel: "text-blue-400 font-medium text-base py-1 px-3 rounded-lg hover:bg-gray-200 focus:outline-none transition-all flex flex-row items-center justify-center",
+    link: "text-blue-400 font-medium text-base py-1 px-3 rounded-lg hover:bg-blue-50 focus:outline-none transition-all flex flex-row items-center justify-center",
+    red: "bg-red-500 text-white font-medium text-base py-1 px-3 rounded-lg shadow-md hover:bg-red-600 focus:outline-none transition-all flex flex-row items-center justify-center",
+    blue: "bg-blue-500 text-white font-medium text-base py-1 px-3 rounded-lg shadow-md hover:bg-blue-400 focus:outline-none transition-all flex flex-row items-center justify-center",
+    light: "bg-white text-black font-medium text-base py-1 px-3 rounded-lg shadow-all-direction hover:bg-gray-300 focus:outline-none transition-all flex flex-row items-center justify-center",
+    lightOutlined: "",
   }
 
-  var labelStyleClass = styles.darkLabel;
-
-  switch(buttonType) {
-    case "light":
-      labelStyleClass = styles.darkLabel;
-      break;
-    case "red":
-      labelStyleClass = styles.lightLabel;
-      break;
-    case "blue":
-      labelStyleClass = styles.lightLabel;
-      break;
-    case "add":
-      labelStyleClass = styles.lightLabel;
-      break;
-    case "link":
-      labelStyleClass = styles.blueLabel;
-      break;
-    default:
-      labelStyleClass = styles.lightLabel;
-      // statements_def
-      break;
+  const labelTypeClassMap = {
+    dark: "cursor-pointer",
+    panel: "cursor-pointer",
+    link: "cursor-pointer",
+    red: "cursor-pointer",
+    blue: "cursor-pointer",
+    light: "cursor-pointer",
+    lightOutlined: "cursor-pointer",
   }
 
+  const iconTypeClassMap = {
+    dark: "",
+    panel: "",
+    link: "",
+    red: "",
+    blue: "",
+    light: "",
+    lightOutlined: "",
+  }
+
+  if (buttonType == undefined || buttonType == null){
+    buttonType = "dark";
+  }
   return (
-      <button
-        className={buttonStyleClass}
-        style={buttonStyle}
-        onClick={onButtonClick}
-        >
-        {iconPosition==="left"?<img
-          className={styles.iconxsmall}
-          alt=""
-          src={iconXSmall}
-          style={iconXSmallStyle}
-        />: ""}
-        {label && <label className={labelStyleClass} style={labelStyle}>
-          {label}
-        </label>}
-        {iconPosition==="right"?<img
-          className={styles.iconxsmall}
-          alt=""
-          src={iconXSmall}
-          style={iconXSmallStyle}
-        />: ""}
-      </button>
+  <button
+    id={props.id}
+    className={`${buttonTypeClassMap[buttonType]} ${buttonClassName}`}
+    onClick={onClick}
+    {...props}
+  >
+    {props.children}
+    {iconPosition === "left" && (icon || iconComponent) && (
+      <span className={`${iconTypeClassMap[buttonType]} ${iconClassName}`}>
+        {icon ? <img alt="" src={icon} /> : iconComponent}
+      </span>
+    )}
+    {label && (
+      <div className={`${labelTypeClassMap[buttonType]} ${labelClassName}`}>
+        {label}
+      </div>
+    )}
+    {iconPosition === "right" && (icon || iconComponent) && (
+      <span className={`${iconTypeClassMap[buttonType]} ${iconClassName}`}>
+        {icon ? <img alt="" src={icon} /> : iconComponent}
+      </span>
+    )}
+  </button>
   );
 };
 
-export default Button;
+export default memo(Button);

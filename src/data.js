@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 
 const baseUrl = "http://localhost:8000/api/v1"
 
-async function getVaults(){
+export async function getVaults(){
 
   const requestUrl =  `${baseUrl}/users/me/vaults/`;
   console.log(requestUrl);
@@ -29,7 +29,7 @@ async function getVaults(){
 
 }
 
-async function getVaultItems(vault_id){
+export async function getVaultItems(vault_id){
   const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}/items/`;
   console.log(requestUrl);
 
@@ -67,8 +67,7 @@ export async function getDefaultVaultItems(){
 }
 
 
-export async function updateVaultItem(id, title, website, password, username){
-  const vault_id = await getDefaultVaultId();
+export async function updateVaultItem(vault_id, id, title, website, password, username){
   const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}/items/${id}`;
   console.log(requestUrl);
 
@@ -99,8 +98,7 @@ export async function updateVaultItem(id, title, website, password, username){
   return {}
 }
 
-export async function createVaultItem(title, website, password, username){
-  const vault_id = await getDefaultVaultId();
+export async function createVaultItem(vault_id, title, website, password, username){
   const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}/items/`;
   console.log(requestUrl);
 
@@ -132,8 +130,7 @@ export async function createVaultItem(title, website, password, username){
   return {}
 }
 
-export async function deleteVaultItem(id){
-  const vault_id = await getDefaultVaultId();
+export async function deleteVaultItem(vault_id, id){
   const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}/items/${id}`;
   console.log(requestUrl);
 

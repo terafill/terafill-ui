@@ -9,8 +9,84 @@ import MoonLoader from "react-spinners/MoonLoader";
 import Navbar from "../components/Navbar";
 import Button from "../components/Button";
 import { useTokenExpiration } from '../components/TokenTools';
-import { getDefaultVaultItems, updateVaultItem, createVaultItem, deleteVaultItem } from '../data';
+import { updateVaultItem, createVaultItem, deleteVaultItem, getVaults, getVaultItems } from '../data';
 import "./AppHome.css";
+
+// For multi vault dropdown
+import { Fragment } from 'react'
+import { Listbox, Transition } from '@headlessui/react'
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ')
+}
+
+function MultiVaultDropown({ vaultList, selectedVault, setSelectedVault }) {
+
+  console.log("MultiVaultDropown.selected", selectedVault, vaultList)
+
+  return (
+    <Listbox value={selectedVault} onChange={setSelectedVault}>
+      {({ open }) => (
+        <>
+          {vaultList&&selectedVault?
+          (<div className="w-11/12 my-2 mx-2">
+            <Listbox.Button className="flex relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-1.5 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+              <span className="flex-1 block truncate">{vaultList[selectedVault].name}</span>
+              <span className="flex-0 pointer-events-none inset-y-0 flex items-center">
+                <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+              </span>
+            </Listbox.Button>
+
+            <Transition
+              show={open}
+              as={Fragment}
+              leave="transition ease-in duration-100"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                {Object.entries(vaultList).map(([vaultId, vault]) => (
+                  <Listbox.Option
+                    key={vault.id}
+                    className={({ active }) =>
+                      classNames(
+                        active ? 'bg-indigo-600 text-white' : 'text-gray-900',
+                        'relative cursor-default select-none py-2 pl-3 pr-9'
+                      )
+                    }
+                    value={vault.id}
+                  >
+                    {({ selectedVault, active }) => (
+                      <>
+                        <span className={classNames(selectedVault ? 'font-semibold' : 'font-normal', 'block truncate')}>
+                          {vault.name}
+                        </span>
+
+                        {selectedVault ? (
+                          <span
+                            className={classNames(
+                              active ? 'text-white' : 'text-indigo-600',
+                              'absolute inset-y-0 right-0 flex items-center pr-4'
+                            )}
+                          >
+                            <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                          </span>
+                        ) : null}
+                      </>
+                    )}
+                  </Listbox.Option>
+                ))}
+              </Listbox.Options>
+            </Transition>
+          </div>):''}
+        </>
+      )}
+    </Listbox>
+  )
+}
+
+
 
 export const ItemPanelIndex = () => {
   return (
@@ -31,7 +107,7 @@ export const ItemPanel = () => {
   const location = useLocation();
 
 
-  const [ itemDataList, updateItem ] = useOutletContext();
+  const [ selectedVault, itemDataList, updateItem, deleteItem, addItem ] = useOutletContext();
 
   useEffect(()=>{
     console.log("id", id);
@@ -42,6 +118,7 @@ export const ItemPanel = () => {
           password: '',
           website: '',
           username: '',
+          vault_id: selectedVault,
         }
         console.log("itemFormDisabled", itemFormDisabled);
         setItemFormDisability(prevState=>false);
@@ -81,19 +158,20 @@ export const ItemPanel = () => {
             if(!itemFormDisabled){
               setItemUpdating(true);
               if (id === "new"){
-                const response = await createVaultItem(itemDataList[id].title, itemDataList[id].website, itemDataList[id].password, itemDataList[id].username);
+                const response = await createVaultItem(selectedVault, itemDataList[id].title, itemDataList[id].website, itemDataList[id].password, itemDataList[id].username);
                   if (response.status == 200){
+                    addItem(itemDataList[id].vault_id, {...itemDataList[id], id: response.data.id});
                     toast.success("Vault item created successfully!");
-                      navigate(`/app-home/${response.data.id}`);
+                    navigate(`/app-home/${response.data.id}`);
                   }
                   else{
                     toast.error("Something went wrong!");
                   }
               }
               else{
-                const response = await updateVaultItem(id, itemDataList[id].title, itemDataList[id].website, itemDataList[id].password, itemDataList[id].username);
+                const response = await updateVaultItem(itemDataList[id].vault_id, id, itemDataList[id].title, itemDataList[id].website, itemDataList[id].password, itemDataList[id].username);
                 if (response.status == 200){
-                  updateItem(id, "icon", `https://cool-rose-moth.faviconkit.com/${itemDataList[id].website}/256`);
+                  updateItem(itemDataList[id].vault_id, id, "icon", `https://cool-rose-moth.faviconkit.com/${itemDataList[id].website}/256`);
                   toast.success("Vault item updated successfully!");
                 }
                 else{
@@ -118,10 +196,11 @@ export const ItemPanel = () => {
         />}
        {itemFormDisabled && !itemUpdating && id!="new" && <Button
           onClick={async () => {
-            const response = await deleteVaultItem(id);
+            const response = await deleteVaultItem(selectedVault, id);
               if (response.status == 204){
+                deleteItem(itemDataList[id].vault_id, id);
                 toast.success("Vault item deleted successfully!");
-                  navigate(-1);
+                navigate(-1);
               }
               else{
                 toast.error("Something went wrong!");
@@ -142,7 +221,7 @@ export const ItemPanel = () => {
           className={`flex self-stretch flex-1 relative rounded-lg w-8/12 text-5xl font-medium bg-[transparent] rounded-3xs w-11/12 overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center ${itemFormDisabled ? '' : 'border-2 border-blue-100 bg-blue-50 bg-opacity-40'}`}
           value={itemDataList[id]?itemDataList[id].title:''}
           placeholder="title"
-          onChange={(e)=>{updateItem(id, "title", e.target.value)}}
+          onChange={(e)=>{updateItem(itemDataList[id].vault_id, id, "title", e.target.value)}}
           disabled={itemFormDisabled}
         />
         <label className="text-center font-medium">USERNAME</label>
@@ -151,7 +230,7 @@ export const ItemPanel = () => {
           type="text"
           value={itemDataList[id]?itemDataList[id].username:''}
           placeholder="Username"
-          onChange={(e)=>{updateItem(id, "username", e.target.value)}}
+          onChange={(e)=>{updateItem(itemDataList[id].vault_id, id, "username", e.target.value)}}
           disabled={itemFormDisabled}
         />
         <label className="text-center font-medium">PASSWORD</label>
@@ -161,7 +240,7 @@ export const ItemPanel = () => {
             type={showPassword?"text":"password"}
             value={itemDataList[id]?itemDataList[id].password:''}
             placeholder="Password"
-            onChange={(e)=>{updateItem(id, "password", e.target.value)}}
+            onChange={(e)=>{updateItem(itemDataList[id].vault_id, id, "password", e.target.value)}}
             disabled={itemFormDisabled}
             />
             <button
@@ -182,7 +261,7 @@ export const ItemPanel = () => {
           type="text"
           value={itemDataList[id]?itemDataList[id].website:''}
           placeholder="Website"
-          onChange={(e)=>{updateItem(id, "website", e.target.value)}}
+          onChange={(e)=>{updateItem(itemDataList[id].vault_id, id, "website", e.target.value)}}
           disabled={itemFormDisabled}
         />
       </div>
@@ -197,10 +276,59 @@ export const ItemPanel = () => {
 }
 
 
+const NavigationPanel = ({ itemDataList, vaultList, selectedVault, setSelectedVault }) => {
+
+  const navigate = useNavigate();
+
+  console.log("NavigationPanel.itemDataList", itemDataList);
+
+  return (
+    <div className="self-stretch shadow-[1px_0px_4px_rgba(0,_0,_0,_0.25)] w-3/12 flex flex-col grow-0 shrink-0 items-center justify-start relative z-[1]" id="left-panel">
+      <MultiVaultDropown vaultList={vaultList} selectedVault={selectedVault} setSelectedVault={setSelectedVault}/>
+      <div className="self-stretch overflow-hidden flex flex-col p-2 items-center justify-center z-[0] border-[1px]">
+        <input
+          className="[border:none] rounded-lg px-2 py-2 flex text-[23.04px] bg-gray-200 w-full overflow-hidden flex-row items-center justify-center"
+          type="text"
+          placeholder=" 🔎 Quick Search"
+        />
+      </div>
+      <div className="self-stretch flex-1 overflow-y-auto px-2 py-2 flex flex-col items-center justify-start z-[1] border-[2px] border-solid" id="item-list">
+      {
+       Object.entries(itemDataList).map( ([id, itemData]) =>
+        (id!="new") && <NavLink
+          to={`${itemData.id}`}
+          key={itemData.id}
+          className={({ isActive }) => isActive? "bg-gray-200 mt-1 mb-1 px-[16px] rounded-lg hover:bg-gray-200": "mt-1 mb-1 px-[16px] rounded-lg hover:bg-gray-100"}
+        >
+          <button className="cursor-pointer rounded-lg [border:none] overflow-hidden flex flex-row items-center justify-start">
+            <img className="relative w-[40px] h-[40px] shrink-0 overflow-hidden object-cover" alt="" src={itemData.icon} />
+            <div className="flex flex-col text-left px-[8px] py-[8px]">
+              <label className="cursor-pointer relative text-xl tracking-[0.03em] font-bold w-[230px] h-[23px] shrink-0 truncate overflow-hidden line-clamp-2">{itemData.title}</label>
+              <label className="cursor-pointer relative text-base tracking-[0.03em] w-[230px] h-[23px] shrink-0 truncate overflow-hidden line-clamp-2">{itemData.username}</label>
+            </div>
+          </button>
+        </NavLink>
+       )
+      }
+      </div>
+      <Button
+        buttonType="blue"
+        icon="/icbaselineplus.svg"
+        buttonClassName="absolute bottom-[1.2rem] right-[1.2rem] h-[3rem] w-[3rem] z-[100] rounded-[rem]"
+        onClick={()=>navigate("new")}
+      />
+    </div>
+  );
+}
+
+
 const AppHome = () => {
 
   const navigate = useNavigate();
-  const [itemDataList, setItemDataList] = useState([]);
+  const [selectedVault, setSelectedVault] = useState(null);
+  const [itemDataList, setItemDataList] = useState({});
+  // const [vaultList, setVaultList] = useState({all: {name: "all", id: "all"}});
+  const [vaultList, setVaultList] = useState(null);
   const shouldLoad = useRef(true);
 
   useTokenExpiration();
@@ -208,31 +336,109 @@ const AppHome = () => {
   useEffect(() => {
     if(shouldLoad.current){
       (async () => {
-        console.log("Data loading!")
-        const data = await getDefaultVaultItems();
-        const morphedData = {};
-        for (let idx=0;idx<data.length;idx+=1){
-          morphedData[data[idx].id] = data[idx];
-          morphedData[data[idx].id].icon =  `https://cool-rose-moth.faviconkit.com/${data[idx].website}/256`;
+        console.log("Vault List loading!")
+        const vaultData = await getVaults();
+        let morphedVaultData = {
+        };
+        for (let idx=0;idx<vaultData.length;idx+=1){
+          const vault_id = vaultData[idx].id;
+          morphedVaultData[vault_id] = {...vaultData[idx], "itemList": {}};
+
+          const vault_items = await getVaultItems(vault_id);
+          for (let idx=0;idx<vault_items.length;idx+=1){
+            const item_id = vault_items[idx].id
+            morphedVaultData[vault_id]["itemList"][item_id] = vault_items[idx];
+            morphedVaultData[vault_id]["itemList"][item_id].icon =  `https://cool-rose-moth.faviconkit.com/${vault_items[idx].website}/256`;
+          }
         }
-        setItemDataList(morphedData);
+        // morphedVaultData["all"] = {name: "all", id: "all"};
+        setVaultList(morphedVaultData);
       })();
       shouldLoad.current = false;
     }
   }, []);
 
+  // useEffect(()=>{
+  //   console.log("useEffect.vaultList", vaultList);
+  // }, [vaultList])
+
   useEffect(()=>{
-    console.log("itemDataList", itemDataList);
+    console.log("Vault view changed", selectedVault, vaultList);
+    if(selectedVault == null && vaultList != null){
+      setSelectedVault(Object.entries(vaultList)[0][0]);
+      return
+    }
+    if (vaultList == null){
+      return
+    }
+    let itemViewData = {}
+    if(selectedVault=="all"){
+      Object.entries(vaultList).map(([vaultId, vault])=>{
+        if (vaultId!="all"){
+          itemViewData = {...vault["itemList"], ...itemViewData}
+        }
+      })
+    }
+    else{
+      itemViewData = vaultList[selectedVault]["itemList"]
+      console.debug("Debug vaultList", vaultList[selectedVault]["itemList"]);
+    }
+    setItemDataList(itemViewData);
+  }, [selectedVault, vaultList])
+
+  useEffect(()=>{
+    console.log("useEffect.itemDataList", itemDataList);
   }, [itemDataList])
 
-  const updateItem = (itemId, attribute, value) => {
-    setItemDataList(prevItemDataList=>({
-      ...prevItemDataList,
-      [itemId]: {
-        ...prevItemDataList[itemId],
-        [attribute]: value
+  const updateItem = (vaultId, itemId, attribute, value) => {
+    setVaultList(prevVaultList=>({
+      ...prevVaultList,
+      [vaultId]: {
+        ...prevVaultList[vaultId],
+        itemList: {
+          ...prevVaultList[vaultId]["itemList"],
+          [itemId]: {
+            ...prevVaultList[vaultId]["itemList"][itemId],
+            [attribute]: value
+          }
+        }
+      }
+    }))
+  }
+
+  const deleteItem = (vaultId, itemId) => {
+    console.log("Deletion attempt", vaultId, itemId);
+    setVaultList(prevVaultList => {
+      const updatedVaultList = {
+        ...prevVaultList,
+        [vaultId]: {
+          ...prevVaultList[vaultId],
+          itemList: {
+            ...prevVaultList[vaultId].itemList
+          }
+        }
+      };
+
+      if (updatedVaultList[vaultId] && updatedVaultList[vaultId].itemList[itemId]) {
+        delete updatedVaultList[vaultId].itemList[itemId];
+      }
+
+      return updatedVaultList;
+    });
+  };
+
+  const addItem = (vaultId, itemData) => {
+    if(itemData["website"]){
+      itemData["icon"] = `https://cool-rose-moth.faviconkit.com/${itemData.website}/256`
+    }
+    setVaultList(prevVaultList=>({
+      ...prevVaultList,
+      [vaultId]:{
+        ...prevVaultList[vaultId],
+        "itemList": {...prevVaultList[vaultId]["itemList"], [itemData.id]: itemData}
       }
     }));
+    deleteItem(vaultId, "new");
   }
 
 
@@ -240,41 +446,13 @@ const AppHome = () => {
       <div className="relative w-full h-screen flex flex-col items-center justify-center text-left">
       <Navbar navbarType="app"/>
       <div className="self-stretch flex-1 overflow-hidden flex flex-row items-center justify-center" id="apphome-inner">
-        <div className="self-stretch shadow-[1px_0px_4px_rgba(0,_0,_0,_0.25)] w-3/12 flex flex-col grow-0 shrink-0 items-center justify-start relative z-[1]" id="left-panel">
-          <div className="self-stretch overflow-hidden flex flex-col p-2 items-center justify-center z-[0] border-[1px]">
-          <input
-            className="[border:none] rounded-lg px-2 py-2 flex text-[23.04px] bg-gray-200 w-full overflow-hidden flex-row items-center justify-center"
-            type="text"
-            placeholder=" 🔎 Quick Search"
-          />
-          </div>
-          <div className="self-stretch flex-1 overflow-y-auto px-2 py-2 flex flex-col items-center justify-start z-[1] border-[2px] border-solid" id="item-list">
-          {
-           Object.entries(itemDataList).map( ([id, itemData]) =>
-            (id!="new") && <NavLink
-              to={`${itemData.id}`}
-              key={itemData.id}
-              className={({ isActive }) => isActive? "bg-gray-200 mt-1 mb-1 px-[16px] rounded-lg hover:bg-gray-200": "mt-1 mb-1 px-[16px] rounded-lg hover:bg-gray-100"}
-            >
-              <button className="cursor-pointer rounded-lg [border:none] overflow-hidden flex flex-row items-center justify-start">
-                <img className="relative w-[40px] h-[40px] shrink-0 overflow-hidden object-cover" alt="" src={itemData.icon} />
-                <div className="flex flex-col text-left px-[8px] py-[8px]">
-                  <label className="cursor-pointer relative text-xl tracking-[0.03em] font-bold w-[230px] h-[23px] shrink-0 truncate overflow-hidden line-clamp-2">{itemData.title}</label>
-                  <label className="cursor-pointer relative text-base tracking-[0.03em] w-[230px] h-[23px] shrink-0 truncate overflow-hidden line-clamp-2">{itemData.username}</label>
-                </div>
-              </button>
-            </NavLink>
-           )
-          }
-          </div>
-          <Button
-            buttonType="blue"
-            icon="/icbaselineplus.svg"
-            buttonClassName="absolute bottom-[1.2rem] right-[1.2rem] h-[3rem] w-[3rem] z-[100] rounded-[rem]"
-            onClick={()=>navigate("new")}
-          />
-        </div>
-        <Outlet context={[ itemDataList, updateItem ]}/>
+        <NavigationPanel
+          vaultList={vaultList}
+          itemDataList={itemDataList}
+          selectedVault={selectedVault}
+          setSelectedVault={setSelectedVault}
+        />
+        <Outlet context={[ selectedVault, itemDataList, updateItem, deleteItem, addItem ]}/>
       </div>
     </div>
   );

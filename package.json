@@ -7,6 +7,7 @@
         "@chakra-ui/theme": "^3.0.1",
         "@emotion/react": "^11.10.6",
         "@emotion/styled": "^11.10.6",
+        "@headlessui/react": "^1.7.15",
         "@heroicons/react": "^2.0.17",
         "@testing-library/jest-dom": "^5.16.1",
         "@testing-library/react": "^13.3.0",

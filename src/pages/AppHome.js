@@ -15,7 +15,21 @@ import "./AppHome.css";
 // For multi vault dropdown
 import { Fragment } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+import {
+  ChevronUpDownIcon,
+  ArchiveBoxIcon,
+  ArrowRightCircleIcon,
+  ChevronDownIcon,
+  DocumentDuplicateIcon,
+  HeartIcon,
+  PencilSquareIcon,
+  TrashIcon,
+  UserPlusIcon,
+  CogIcon,
+  SquaresPlusIcon,
+  FolderPlusIcon,
+} from '@heroicons/react/20/solid'
+
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -30,8 +44,8 @@ function MultiVaultDropown({ vaultList, selectedVault, setSelectedVault }) {
       {({ open }) => (
         <>
           {vaultList&&selectedVault?
-          (<div className="w-11/12 my-2 mx-2">
-            <Listbox.Button className="flex relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-1.5 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+          (<div className="w-11/12 my-2">
+            <Listbox.Button className="flex relative w-full rounded-md bg-white py-1.5 pl-3 pr-1.5 text-left text-black-700 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none sm:text-sm sm:leading-6">
               <span className="flex-1 block truncate">{vaultList[selectedVault].name}</span>
               <span className="flex-0 pointer-events-none inset-y-0 flex items-center">
                 <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -45,14 +59,14 @@ function MultiVaultDropown({ vaultList, selectedVault, setSelectedVault }) {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+              <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-11/12 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm cursor-pointer">
                 {Object.entries(vaultList).map(([vaultId, vault]) => (
                   <Listbox.Option
                     key={vault.id}
                     className={({ active }) =>
                       classNames(
-                        active ? 'bg-indigo-600 text-white' : 'text-gray-900',
-                        'relative cursor-default select-none py-2 pl-3 pr-9'
+                        active ? 'bg-gray-100 text-black-900' : 'text-black-700',
+                        'relative select-none py-2 pl-3 pr-9'
                       )
                     }
                     value={vault.id}
@@ -83,6 +97,165 @@ function MultiVaultDropown({ vaultList, selectedVault, setSelectedVault }) {
         </>
       )}
     </Listbox>
+  )
+}
+
+import { Menu } from '@headlessui/react'
+
+function VaultSettingsMenu() {
+  return (
+    <Menu as="div" className="relative inline-block text-left">
+      <div>
+        <Menu.Button className="inline-flex w-full justify-center rounded-md bg-white px-2 py-2 text-sm font-normal text-black-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+          <CogIcon className="h-5 w-5 text-gray-800" aria-hidden="true" />
+        </Menu.Button>
+      </div>
+
+      <Transition
+        as={Fragment}
+        enter="transition ease-out duration-100"
+        enterFrom="transform opacity-0 scale-95"
+        enterTo="transform opacity-100 scale-100"
+        leave="transition ease-in duration-75"
+        leaveFrom="transform opacity-100 scale-100"
+        leaveTo="transform opacity-0 scale-95"
+      >
+        <Menu.Items className="absolute left-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <div className="py-1">
+            <Menu.Item>
+              {({ active }) => (
+                <a
+                  href="#"
+                  className={classNames(
+                    active ? 'bg-gray-100 text-black-900' : 'text-black-700',
+                    'group flex items-center px-4 py-2 text-sm'
+                  )}
+                >
+                  <PencilSquareIcon
+                    className="mr-3 h-5 w-5 text-black-400 group-hover:text-black-500"
+                    aria-hidden="true"
+                  />
+                  Edit vault
+                </a>
+              )}
+            </Menu.Item>
+            <Menu.Item>
+              {({ active }) => (
+                <a
+                  href="#"
+                  className={classNames(
+                    active ? 'bg-gray-100 text-black-900' : 'text-black-700',
+                    'group flex items-center px-4 py-2 text-sm'
+                  )}
+                >
+                  <SquaresPlusIcon
+                    className="mr-3 h-5 w-5 text-black-400 group-hover:text-black-500"
+                    aria-hidden="true"
+                  />
+                  Add vault
+                </a>
+              )}
+            </Menu.Item>
+{/*            <Menu.Item>
+              {({ active }) => (
+                <a
+                  href="#"
+                  className={classNames(
+                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                    'group flex items-center px-4 py-2 text-sm'
+                  )}
+                >
+                  <DocumentDuplicateIcon
+                    className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                    aria-hidden="true"
+                  />
+                  Duplicate
+                </a>
+              )}
+            </Menu.Item>*/}
+          </div>
+       {/*   <div className="py-1">
+            <Menu.Item>
+              {({ active }) => (
+                <a
+                  href="#"
+                  className={classNames(
+                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                    'group flex items-center px-4 py-2 text-sm'
+                  )}
+                >
+                  <ArchiveBoxIcon className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />
+                  Archive
+                </a>
+              )}
+            </Menu.Item>
+            <Menu.Item>
+              {({ active }) => (
+                <a
+                  href="#"
+                  className={classNames(
+                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                    'group flex items-center px-4 py-2 text-sm'
+                  )}
+                >
+                  <ArrowRightCircleIcon
+                    className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                    aria-hidden="true"
+                  />
+                  Move
+                </a>
+              )}
+            </Menu.Item>
+          </div>*/}
+          <div className="py-1">
+            <Menu.Item>
+              {({ active }) => (
+                <a
+                  href="#"
+                  className={classNames(
+                    active ? 'bg-gray-100 text-black-900' : 'text-black-700',
+                    'group flex items-center px-4 py-2 text-sm'
+                  )}
+                >
+                  <UserPlusIcon className="mr-3 h-5 w-5 text-black-400 group-hover:text-black-500" aria-hidden="true" />
+                  Share vault
+                </a>
+              )}
+            </Menu.Item>
+{/*            <Menu.Item>
+              {({ active }) => (
+                <a
+                  href="#"
+                  className={classNames(
+                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                    'group flex items-center px-4 py-2 text-sm'
+                  )}
+                >
+                  <HeartIcon className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />
+                  Add to favorites
+                </a>
+              )}
+            </Menu.Item>*/}
+          </div>
+          <div className="py-1">
+            <Menu.Item>
+              {({ active }) => (
+                <a
+                  href="#"
+                  className={classNames(
+                    active ? 'bg-gray-100 text-red-900' : 'text-red-700',
+                    'group flex items-center px-4 py-2 text-sm'
+                  )}
+                >
+                  <TrashIcon className="mr-3 h-5 w-5 text-red-400 group-hover:text-red-500" aria-hidden="true" />
+                  Delete vault
+                </a>
+              )}
+            </Menu.Item>
+          </div>
+        </Menu.Items>
+      </Transition>
+    </Menu>
   )
 }
 
@@ -284,7 +457,11 @@ const NavigationPanel = ({ itemDataList, vaultList, selectedVault, setSelectedVa
 
   return (
     <div className="self-stretch shadow-[1px_0px_4px_rgba(0,_0,_0,_0.25)] w-3/12 flex flex-col grow-0 shrink-0 items-center justify-start relative z-[1]" id="left-panel">
-      <MultiVaultDropown vaultList={vaultList} selectedVault={selectedVault} setSelectedVault={setSelectedVault}/>
+      <div className="flex w-full items-center justify-around gap-2 px-2" id="vaul-bar">
+        {/*<p className="text-md">Vault</p>*/}
+        <MultiVaultDropown vaultList={vaultList} selectedVault={selectedVault} setSelectedVault={setSelectedVault}/>
+        <VaultSettingsMenu />
+      </div>
       <div className="self-stretch overflow-hidden flex flex-col p-2 items-center justify-center z-[0] border-[1px]">
         <input
           className="[border:none] rounded-lg px-2 py-2 flex text-[23.04px] bg-gray-200 w-full overflow-hidden flex-row items-center justify-center"

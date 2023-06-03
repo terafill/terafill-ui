@@ -9,7 +9,16 @@ import MoonLoader from "react-spinners/MoonLoader";
 import Navbar from "../components/Navbar";
 import Button from "../components/Button";
 import { useTokenExpiration } from '../components/TokenTools';
-import { updateVaultItem, createVaultItem, deleteVaultItem, getVaults, getVaultItems } from '../data';
+import {
+  updateVaultItem,
+  createVaultItem,
+  deleteVaultItem,
+  getVaults,
+  getVaultItems,
+  updateVault,
+  addVault,
+  deleteVault,
+} from '../data';
 import "./AppHome.css";
 
 // For multi vault dropdown
@@ -100,9 +109,346 @@ function MultiVaultDropown({ vaultList, selectedVault, setSelectedVault }) {
   )
 }
 
+
+// import { Fragment, useRef, useState } from 'react'
+import { Dialog } from '@headlessui/react'
+import { CheckIcon } from '@heroicons/react/24/outline'
+
+function EditVaultPopup({open, setOpen, selectedVault, vaultList, updateVaultState}) {
+  const cancelButtonRef = useRef(null);
+  const [vaultName, setVaultName] = useState('');
+  const [vaultDescription, setVaultDescription] = useState('');
+
+  useEffect(()=>{
+    if(selectedVault != null){
+      setVaultName(vaultList[selectedVault].name);
+      setVaultDescription(vaultList[selectedVault].description);
+    }
+  }, [selectedVault])
+
+  return (
+    <Transition.Root show={open} as={Fragment}>
+      <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={setOpen}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-opacity-75 transition-opacity" />
+        </Transition.Child>
+
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="flex min-h-full items-end justify-center p-4 text-center items-center">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <Dialog.Panel className="flex flex-col w-80 justify-center items-center gap-6 relative transform overflow-hidden rounded-lg bg-white p-4 text-left shadow-2xl transition-all">
+                <div className="flex flex-col w-5/6 items-center gap-8 text-center" id="popup-body">
+                  <Dialog.Title as="h3" className="w-full text-base font-semibold leading-6 text-gray-900">
+                    Edit Vault details
+                  </Dialog.Title>
+                  <div className="relative w-full">
+                    <label
+                      htmlFor="vaultName"
+                      className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
+                    >
+                      Name
+                    </label>
+                    <input
+                      type="text"
+                      name="vaultName"
+                      id="vaultName"
+                      className="w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+                      placeholder="Enter vault name"
+                      value={vaultName}
+                      onChange={ (e) =>{setVaultName(prevVaultName=>(e.target.value))}}
+                      required
+                      title="Please enter email"
+                    />
+                  </div>
+                  <div className="relative w-full">
+                    <label
+                      htmlFor="description"
+                      className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
+                    >
+                      Description
+                    </label>
+                    <textarea
+                      name="vaultDescription"
+                      id="vaultDescription"
+                      className="w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+                      placeholder="Enter Vault description"
+                      value={vaultDescription}
+                      onChange={ (e) =>{setVaultDescription(prevVaultDescription=>(e.target.value))}}
+                      required
+                      title="Please enter email"
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-row w-5/6 justify-center items-center gap-2" id="button-group">
+                  <button
+                    type="button"
+                    className="mt-3 inline-flex w-2/3 justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
+                    onClick={() => setOpen(false)}
+                    ref={cancelButtonRef}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className="inline-flex w-2/3 justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
+                    onClick={async () => {
+                      const response = await updateVault(selectedVault, vaultName, vaultDescription);
+                      if (response.status == 200){
+                        updateVaultState(selectedVault, "name", vaultName);
+                        updateVaultState(selectedVault, "description", vaultDescription);
+                        toast.success("Vault updated successfully!");
+                      }
+                      else{
+                        toast.error("Something went wrong!");
+                      }
+                      setOpen(false);
+                    }}
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition.Root>
+  )
+}
+
+
+function AddVaultPopup({open, setOpen, vaultList, addVaultState}) {
+  const cancelButtonRef = useRef(null);
+  const [vaultName, setVaultName] = useState('');
+  const [vaultDescription, setVaultDescription] = useState('');
+
+  return (
+    <Transition.Root show={open} as={Fragment}>
+      <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={setOpen}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-opacity-75 transition-opacity" />
+        </Transition.Child>
+
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="flex min-h-full items-end justify-center p-4 text-center items-center">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <Dialog.Panel className="flex flex-col w-80 justify-center items-center gap-6 relative transform overflow-hidden rounded-lg bg-white p-4 text-left shadow-2xl transition-all">
+                <div className="flex flex-col w-5/6 items-center gap-8 text-center" id="popup-body">
+                  <Dialog.Title as="h3" className="w-full text-base font-semibold leading-6 text-gray-900">
+                    Enter new vault details
+                  </Dialog.Title>
+                  <div className="relative w-full">
+                    <label
+                      htmlFor="vaultName"
+                      className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
+                    >
+                      Name
+                    </label>
+                    <input
+                      type="text"
+                      name="vaultName"
+                      id="vaultName"
+                      className="w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+                      placeholder="Enter vault name"
+                      value={vaultName}
+                      onChange={ (e) =>{setVaultName(prevVaultName=>(e.target.value))}}
+                      required
+                      title="Please enter email"
+                    />
+                  </div>
+                  <div className="relative w-full">
+                    <label
+                      htmlFor="description"
+                      className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
+                    >
+                      Description
+                    </label>
+                    <textarea
+                      name="vaultDescription"
+                      id="vaultDescription"
+                      className="w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+                      placeholder="Enter Vault description"
+                      value={vaultDescription}
+                      onChange={ (e) =>{setVaultDescription(prevVaultDescription=>(e.target.value))}}
+                      required
+                      title="Please enter email"
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-row w-5/6 justify-center items-center gap-2" id="button-group">
+                  <button
+                    type="button"
+                    className="mt-3 inline-flex w-2/3 justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
+                    onClick={() => setOpen(false)}
+                    ref={cancelButtonRef}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className="inline-flex w-2/3 justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
+                    onClick={async () => {
+                      const response = await addVault(vaultName, vaultDescription);
+                      if (response.status == 200){
+                        addVaultState(response.data);
+                        toast.success("New Vault added successfully!");
+                      }
+                      else{
+                        toast.error("Something went wrong!");
+                      }
+                      setOpen(false);
+                    }}
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition.Root>
+  )
+}
+
+
+function DeleteVaultPopup({open, setOpen, selectedVault, vaultList, deleteVaultState}) {
+  const cancelButtonRef = useRef(null);
+  const [vaultName, setVaultName] = useState('');
+
+  useEffect(()=>{
+    setVaultName('');
+  }, [selectedVault])
+
+
+  return (
+    <Transition.Root show={open} as={Fragment}>
+      <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={setOpen}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-opacity-75 transition-opacity" />
+        </Transition.Child>
+
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="flex min-h-full items-end justify-center p-4 text-center items-center">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <Dialog.Panel className="flex flex-col w-80 justify-center items-center gap-6 relative transform overflow-hidden rounded-lg bg-white p-4 text-left shadow-2xl transition-all">
+                <div className="flex flex-col w-5/6 items-center gap-8 text-center" id="popup-body">
+                  <Dialog.Title as="h3" className="w-full text-base font-semibold leading-6 text-gray-900">
+                    Confirm Vault deletion
+                  </Dialog.Title>
+                  <div className="relative w-full">
+                    <label
+                      htmlFor="vaultName"
+                      className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
+                    >
+                      Confirm vault name
+                    </label>
+                    <input
+                      type="text"
+                      name="vaultName"
+                      id="vaultName"
+                      className="w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+                      placeholder="Enter vault name"
+                      value={vaultName}
+                      onChange={ (e) =>{setVaultName(prevVaultName=>(e.target.value))}}
+                      required
+                      title="Enter vault name to confirm deletion"
+                    />
+                  </div>
+                  <div className="flex flex-row w-5/6 justify-center items-center gap-2" id="button-group">
+                    <button
+                      type="button"
+                      className="mt-3 inline-flex w-2/3 justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
+                      onClick={() => setOpen(false)}
+                      ref={cancelButtonRef}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className="inline-flex w-2/3 justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
+                      onClick={async () => {
+                        if(vaultName!=vaultList[selectedVault].name){
+                          toast.warn("Vault name doesn't match!");
+                          return;
+                        }
+
+                        const response = await deleteVault(selectedVault);
+                        if (response.status == 204){
+                          deleteVaultState(selectedVault);
+                          toast.success("Vault deleted successfully!");
+                        }
+                        else{
+                          toast.error("Something went wrong!");
+                        }
+                        setOpen(false);
+                      }}
+                    >
+                      Confirm
+                    </button>
+                  </div>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition.Root>
+  )
+}
+
+
 import { Menu } from '@headlessui/react'
 
-function VaultSettingsMenu() {
+function VaultSettingsMenu({ setOpenEditVault, setOpenAddVault, setOpenDeleteVault }) {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
@@ -122,7 +468,7 @@ function VaultSettingsMenu() {
       >
         <Menu.Items className="absolute left-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="py-1">
-            <Menu.Item>
+            <Menu.Item onClick={()=>{setOpenEditVault(true);console.log("clicked", "edit")}}>
               {({ active }) => (
                 <a
                   href="#"
@@ -139,7 +485,7 @@ function VaultSettingsMenu() {
                 </a>
               )}
             </Menu.Item>
-            <Menu.Item>
+            <Menu.Item onClick={()=>setOpenAddVault(true)}>
               {({ active }) => (
                 <a
                   href="#"
@@ -208,7 +554,7 @@ function VaultSettingsMenu() {
             </Menu.Item>
           </div>*/}
           <div className="py-1">
-            <Menu.Item>
+            <Menu.Item onClick={()=>{console.log("clicked", "share")}}>
               {({ active }) => (
                 <a
                   href="#"
@@ -238,7 +584,7 @@ function VaultSettingsMenu() {
             </Menu.Item>*/}
           </div>
           <div className="py-1">
-            <Menu.Item>
+            <Menu.Item onClick={()=>{setOpenDeleteVault(true);console.log("clicked", "delete")}}>
               {({ active }) => (
                 <a
                   href="#"
@@ -309,9 +655,9 @@ export const ItemPanel = () => {
 
   return (
     <div className="self-stretch flex-1 overflow-hidden flex flex-col py-[32px] px-[16px] h-1/1 items-center justify-between z-[0]" id="right-panel">
-      <div className="absolute">
+{/*      <div className="absolute">
         <ToastContainer />
-      </div>
+      </div>*/}
       <div className="self-end flex flex-row">
         {!itemFormDisabled && !itemUpdating && <Button
           onClick={() => {
@@ -449,7 +795,15 @@ export const ItemPanel = () => {
 }
 
 
-const NavigationPanel = ({ itemDataList, vaultList, selectedVault, setSelectedVault }) => {
+const NavigationPanel = ({
+  itemDataList,
+  vaultList,
+  selectedVault,
+  setSelectedVault,
+  setOpenEditVault,
+  setOpenAddVault,
+  setOpenDeleteVault,
+ }) => {
 
   const navigate = useNavigate();
 
@@ -459,8 +813,16 @@ const NavigationPanel = ({ itemDataList, vaultList, selectedVault, setSelectedVa
     <div className="self-stretch shadow-[1px_0px_4px_rgba(0,_0,_0,_0.25)] w-3/12 flex flex-col grow-0 shrink-0 items-center justify-start relative z-[1]" id="left-panel">
       <div className="flex w-full items-center justify-around gap-2 px-2" id="vaul-bar">
         {/*<p className="text-md">Vault</p>*/}
-        <MultiVaultDropown vaultList={vaultList} selectedVault={selectedVault} setSelectedVault={setSelectedVault}/>
-        <VaultSettingsMenu />
+        <MultiVaultDropown
+          vaultList={vaultList}
+          selectedVault={selectedVault}
+          setSelectedVault={setSelectedVault}
+        />
+        <VaultSettingsMenu
+          setOpenEditVault={setOpenEditVault}
+          setOpenAddVault={setOpenAddVault}
+          setOpenDeleteVault={setOpenDeleteVault}
+        />
       </div>
       <div className="self-stretch overflow-hidden flex flex-col p-2 items-center justify-center z-[0] border-[1px]">
         <input
@@ -618,16 +980,79 @@ const AppHome = () => {
     deleteItem(vaultId, "new");
   }
 
+  const updateVaultState = (vaultId, attribute, value) => {
+    setVaultList(prevVaultList=>({
+      ...prevVaultList,
+      [vaultId]: {
+        ...prevVaultList[vaultId],
+        [attribute]: value
+      }
+    }))
+  };
+
+  const addVaultState = (vaultData) => {
+    setVaultList(prevVaultList=>({
+      ...prevVaultList,
+      [vaultData.id]: {
+        ...vaultData,
+        'itemList': []
+      }
+    }))
+  }
+
+  const deleteVaultState = (vaultId) => {
+    if (Object.entries(vaultList)[0][0]!=vaultId){
+      setSelectedVault(Object.entries(vaultList)[0][0]);
+    }else{
+      setSelectedVault(Object.entries(vaultList)[1][0]);
+    }
+    setVaultList(prevVaultList=>{
+      const updatedVaultList = {
+        ...prevVaultList
+      };
+      delete updatedVaultList[vaultId];
+      return updatedVaultList;
+    })
+
+  }
+
+  const [openEditVaultPopup, setOpenEditVault] = useState(false);
+  const [openAddVaultPopup, setOpenAddVault] = useState(false);
+  const [openDeleteVaultPopup, setOpenDeleteVault] = useState(false);
 
   return (
       <div className="relative w-full h-screen flex flex-col items-center justify-center text-left">
       <Navbar navbarType="app"/>
       <div className="self-stretch flex-1 overflow-hidden flex flex-row items-center justify-center" id="apphome-inner">
+        <ToastContainer />
+        <EditVaultPopup
+          open={openEditVaultPopup}
+          setOpen={setOpenEditVault}
+          selectedVault={selectedVault}
+          vaultList={vaultList}
+          updateVaultState={updateVaultState}
+        />
+        <AddVaultPopup
+          open={openAddVaultPopup}
+          setOpen={setOpenAddVault}
+          vaultList={vaultList}
+          addVaultState={addVaultState}
+        />
+        <DeleteVaultPopup
+          open={openDeleteVaultPopup}
+          setOpen={setOpenDeleteVault}
+          selectedVault={selectedVault}
+          vaultList={vaultList}
+          deleteVaultState={deleteVaultState}
+        />
         <NavigationPanel
           vaultList={vaultList}
           itemDataList={itemDataList}
           selectedVault={selectedVault}
           setSelectedVault={setSelectedVault}
+          setOpenEditVault={setOpenEditVault}
+          setOpenAddVault={setOpenAddVault}
+          setOpenDeleteVault={setOpenDeleteVault}
         />
         <Outlet context={[ selectedVault, itemDataList, updateItem, deleteItem, addItem ]}/>
       </div>

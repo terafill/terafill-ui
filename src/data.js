@@ -154,3 +154,92 @@ export async function deleteVaultItem(vault_id, id){
 
   return {}
 }
+
+
+
+
+
+export async function updateVault(vault_id, name, description){
+  const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}`;
+  console.log(requestUrl);
+
+  var config = {
+    method: 'put',
+    url: requestUrl,
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${Cookies.get("accessToken")}`
+    },
+    data: {
+      name: name,
+      description: description
+    }
+  };
+
+  try {
+    let response = await axios(config);
+    console.log("Vault updated !")
+    return response
+  } catch (error) {
+    console.log(error);
+  }
+
+  return {}
+}
+
+
+export async function addVault(name, description){
+  const requestUrl = `${baseUrl}/users/me/vaults/`;
+  console.log(requestUrl);
+
+  var config = {
+    method: 'post',
+    url: requestUrl,
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${Cookies.get("accessToken")}`
+    },
+    data: {
+      name: name,
+      description: description
+    }
+  };
+
+  try {
+    let response = await axios(config);
+    console.log("Vault Added!")
+    return response
+  } catch (error) {
+    console.log(error);
+  }
+
+  return {}
+}
+
+
+export async function deleteVault(vault_id){
+  const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}`;
+  console.log(requestUrl);
+
+  var config = {
+    method: 'delete',
+    url: requestUrl,
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${Cookies.get("accessToken")}`
+    },
+  };
+
+  try {
+    let response = await axios(config);
+    console.log("Vault Deleted!")
+    return response
+  } catch (error) {
+    console.log(error);
+  }
+
+  return {}
+}

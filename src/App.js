@@ -20,7 +20,7 @@ import FaqPage from "./pages/FaqPage";
 // Login and Signup
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
-import { CreateAccountForm, EmailConfirmationForm, CreatePasswordForm, RecoveryKitForm } from "./pages/SignUpPage";
+import { CreateAccountForm, EmailConfirmationForm, RecoveryKitForm } from "./pages/SignUpPage";
 
 // App Home
 import AppHome, { ItemPanel, ItemPanelIndex, itemDataLoader } from "./pages/AppHome";
@@ -90,10 +90,6 @@ const router = createBrowserRouter([
       {
         path: "email-confirmation",
         element: <EmailConfirmationForm />
-      },
-      {
-        path: "create-password",
-        element: <CreatePasswordForm />
       },
       {
         path: "recovery-kit",

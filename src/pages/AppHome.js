@@ -448,7 +448,20 @@ function DeleteVaultPopup({open, setOpen, selectedVault, vaultList, deleteVaultS
 
 import { Menu } from '@headlessui/react'
 
-function VaultSettingsMenu({ setOpenEditVault, setOpenAddVault, setOpenDeleteVault }) {
+function VaultSettingsMenu({ vaultList, selectedVault, setOpenEditVault, setOpenAddVault, setOpenDeleteVault }) {
+
+  // console.log("VaultSettingsMenu.is_default", vaultList)
+  const [is_default, setIsDefault] = useState(false);
+  useEffect(()=>{
+    if (selectedVault!=null && vaultList!=null){
+      if (vaultList[selectedVault]["is_default"]){
+        setIsDefault(true);
+        return
+      }
+    }
+    setIsDefault(false);
+  }, selectedVault)
+
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
@@ -583,8 +596,8 @@ function VaultSettingsMenu({ setOpenEditVault, setOpenAddVault, setOpenDeleteVau
               )}
             </Menu.Item>*/}
           </div>
-          <div className="py-1">
-            <Menu.Item onClick={()=>{setOpenDeleteVault(true);console.log("clicked", "delete")}}>
+          {!is_default&&<div className="py-1">
+            <Menu.Item disabled onClick={()=>{setOpenDeleteVault(true);console.log("clicked", "delete")}}>
               {({ active }) => (
                 <a
                   href="#"
@@ -598,7 +611,7 @@ function VaultSettingsMenu({ setOpenEditVault, setOpenAddVault, setOpenDeleteVau
                 </a>
               )}
             </Menu.Item>
-          </div>
+          </div>}
         </Menu.Items>
       </Transition>
     </Menu>
@@ -819,6 +832,8 @@ const NavigationPanel = ({
           setSelectedVault={setSelectedVault}
         />
         <VaultSettingsMenu
+          vaultList={vaultList}
+          selectedVault={selectedVault}
           setOpenEditVault={setOpenEditVault}
           setOpenAddVault={setOpenAddVault}
           setOpenDeleteVault={setOpenDeleteVault}

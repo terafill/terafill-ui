@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 
 const baseUrl = "http://localhost:8000/api/v1"
 
-async function getVaults(){
+export async function getVaults(){
 
   const requestUrl =  `${baseUrl}/users/me/vaults/`;
   console.log(requestUrl);
@@ -29,7 +29,7 @@ async function getVaults(){
 
 }
 
-async function getVaultItems(vault_id){
+export async function getVaultItems(vault_id){
   const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}/items/`;
   console.log(requestUrl);
 
@@ -67,8 +67,7 @@ export async function getDefaultVaultItems(){
 }
 
 
-export async function updateVaultItem(id, title, website, password, username){
-  const vault_id = await getDefaultVaultId();
+export async function updateVaultItem(vault_id, id, title, website, password, username){
   const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}/items/${id}`;
   console.log(requestUrl);
 
@@ -99,8 +98,7 @@ export async function updateVaultItem(id, title, website, password, username){
   return {}
 }
 
-export async function createVaultItem(title, website, password, username){
-  const vault_id = await getDefaultVaultId();
+export async function createVaultItem(vault_id, title, website, password, username){
   const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}/items/`;
   console.log(requestUrl);
 
@@ -132,8 +130,7 @@ export async function createVaultItem(title, website, password, username){
   return {}
 }
 
-export async function deleteVaultItem(id){
-  const vault_id = await getDefaultVaultId();
+export async function deleteVaultItem(vault_id, id){
   const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}/items/${id}`;
   console.log(requestUrl);
 
@@ -150,6 +147,95 @@ export async function deleteVaultItem(id){
   try {
     let response = await axios(config);
     console.log("Item deleted successfully !")
+    return response
+  } catch (error) {
+    console.log(error);
+  }
+
+  return {}
+}
+
+
+
+
+
+export async function updateVault(vault_id, name, description){
+  const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}`;
+  console.log(requestUrl);
+
+  var config = {
+    method: 'put',
+    url: requestUrl,
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${Cookies.get("accessToken")}`
+    },
+    data: {
+      name: name,
+      description: description
+    }
+  };
+
+  try {
+    let response = await axios(config);
+    console.log("Vault updated !")
+    return response
+  } catch (error) {
+    console.log(error);
+  }
+
+  return {}
+}
+
+
+export async function addVault(name, description){
+  const requestUrl = `${baseUrl}/users/me/vaults/`;
+  console.log(requestUrl);
+
+  var config = {
+    method: 'post',
+    url: requestUrl,
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${Cookies.get("accessToken")}`
+    },
+    data: {
+      name: name,
+      description: description
+    }
+  };
+
+  try {
+    let response = await axios(config);
+    console.log("Vault Added!")
+    return response
+  } catch (error) {
+    console.log(error);
+  }
+
+  return {}
+}
+
+
+export async function deleteVault(vault_id){
+  const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}`;
+  console.log(requestUrl);
+
+  var config = {
+    method: 'delete',
+    url: requestUrl,
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${Cookies.get("accessToken")}`
+    },
+  };
+
+  try {
+    let response = await axios(config);
+    console.log("Vault Deleted!")
     return response
   } catch (error) {
     console.log(error);

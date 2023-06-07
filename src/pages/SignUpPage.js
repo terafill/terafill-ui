@@ -41,11 +41,15 @@ export const CreateAccountForm = () => {
   const [errorList, setErrorList] = useState([]);
   const [isErrorListVisible, setErrorListVisibility] = useState(false);
 
+  const passwordRef = useRef(null);
+  const passwordRepeatRef = useRef(null);
+
   const initateSignupProcess = () => {
     var data = JSON.stringify({
       email: userData.email,
       first_name: userData.firstName,
       last_name: userData.lastName,
+      password: userData.password,
     });
 
     console.log(`http://localhost:8000/api/v1/auth/signup`);
@@ -67,10 +71,15 @@ export const CreateAccountForm = () => {
 
   return (
       <form
-        className="bg-white w-2/3 rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[32px]"
+        className="bg-white w-2/3 rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[16px]"
           onSubmit={(e)=>{
               e.preventDefault();
               setErrorListVisibility(false);
+              if(passwordRef.current.value != passwordRepeatRef.current.value){
+                setErrorList(["Passwords don't match!"]);
+                setErrorListVisibility(prevState => (true));
+              }
+              else{
               initateSignupProcess().then(function (response) {
                   console.log(response)
                   stepForward();
@@ -83,13 +92,24 @@ export const CreateAccountForm = () => {
                     setErrorList([`User with email id: ${userData.email} is already registered.`]);
                     setErrorListVisibility(true);
                   }
+                  else if (error.response.data.hasOwnProperty('detail')){
+                    const error_msg = error.response.data.detail;
+                    console.log(error_msg);
+                    setErrorList([error_msg]);
+                    setErrorListVisibility(true);
+                  }
+                  else{
+                    setErrorList([`Something went wrong: ${error}.`]);
+                    setErrorListVisibility(true);
+                  }
                 });
+              }
           }}
           >
         <h4 className="m-0 relative text-3xl leading-[120%] font-bold text-black text-center">Create Account</h4>
 
-        <span className="relative w-2/3 flex-auto flex flex-row justify-center gap-2">
-          <div className="relative">
+        <span className="relative w-2/3 flex-auto flex flex-row justify-center gap-2" id="name">
+          <div className="relative w-full" id="first-name">
             <label
               htmlFor="firstName"
               className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
@@ -97,7 +117,6 @@ export const CreateAccountForm = () => {
               First Name
             </label>
             <input
-              // ref={firstName}
               type="text"
               name="firstName"
               id="firstName"
@@ -110,7 +129,7 @@ export const CreateAccountForm = () => {
             />
           </div>
 
-          <div className="relative">
+          <div className="relative w-full"  id="last-name">
             <label
               htmlFor="lastName"
               className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
@@ -149,7 +168,7 @@ export const CreateAccountForm = () => {
           />
         </div>
 
-        <div className="relative w-2/3">
+{/*        <div className="relative w-2/3">
           <label htmlFor="location" className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700">
             Country
           </label>
@@ -172,7 +191,50 @@ export const CreateAccountForm = () => {
           <div className="absolute top-0 right-0 h-full pr-3 flex items-center pointer-events-none">
             <ChevronDownIcon className="h-4 w-4 text-gray-500" />
           </div>
+        </div>*/}
+
+{/*        <h6 className="m-0 relative text-xl leading-[120%] font-bold text-black text-center">
+          Create your master password
+        </h6>*/}
+        <div className="relative w-2/3">
+          <label
+            htmlFor="password"
+            className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
+          >
+            Master Password
+          </label>
+          <input
+            ref={passwordRef}
+            type="password"
+            name="password"
+            id="password"
+            className="w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+            placeholder="*********"
+            onChange={ (e) =>{setUserData(prevState => ({...prevState, password: e.target.value}))} }
+
+            required
+          />
         </div>
+        <div className="relative w-2/3">
+          <label
+            htmlFor="name"
+            className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
+          >
+            Re-enter Master Password
+          </label>
+          <input
+            ref={passwordRepeatRef}
+            type="password"
+            name="passwordRepeat"
+            id="passwordRepeat"
+            className="w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+            placeholder="*********"
+            required
+          />
+        </div>
+        <p className="m-0 relative text-md text-red-500 font-bold text-center flex items-center justify-center w-[538px] h-12 shrink-0">
+          Note: Memorise this password and keep it safe.
+        </p>
 
         { isErrorListVisible &&
           <Errors
@@ -282,18 +344,19 @@ export const EmailConfirmationForm = () => {
     }
   }
 
-  const initateSignupProcess = () => {
+  const completeSignupProcess = () => {
+    console.log(typeof(pinState), {...pinState});
     var data = JSON.stringify({
       email: userData.email,
-      first_name: userData.firstName,
-      last_name: userData.lastName,
+      password: userData.password,
+      verification_code: [...pinState].join('')
     });
 
-    console.log(`http://localhost:8000/api/v1/auth/signup`);
+    console.log(`http://localhost:8000/api/v1/auth/signup/confirm`);
 
     var config = {
       method: 'post',
-      url: `http://localhost:8000/api/v1/auth/signup`,
+      url: `http://localhost:8000/api/v1/auth/signup/confirm`,
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
@@ -305,18 +368,19 @@ export const EmailConfirmationForm = () => {
 
   }
 
-  const completeSignupProcess = () => {
-    console.log(typeof(pinState), {...pinState});
+  const reinitateSignupProcess = () => {
     var data = JSON.stringify({
       email: userData.email,
-      verification_code: [...pinState].join('')
+      first_name: userData.firstName,
+      last_name: userData.lastName,
+      password: userData.password,
     });
 
-    console.log(`http://localhost:8000/api/v1/auth/email-verification`);
+    console.log(`http://localhost:8000/api/v1/auth/signup`);
 
     var config = {
       method: 'post',
-      url: `http://localhost:8000/api/v1/auth/email-verification`,
+      url: `http://localhost:8000/api/v1/auth/signup`,
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
@@ -337,9 +401,12 @@ export const EmailConfirmationForm = () => {
               setErrorListVisibility(false);
               setSuccessAlertVisibility(false);
               completeSignupProcess().then(function (response) {
-                  console.log(response)
+                  console.log(response);
+                  Cookies.set(`accessToken`, response.data.accessToken, { expires: 7 });
+                  Cookies.set(`refreshToken`, response.data.refreshToken, { expires: 7 });
+                  Cookies.set(`idToken`, response.data.idToken, { expires: 7 });
                   stepForward();
-                  navigate("/signup/create-password");
+                  navigate("/signup/recovery-kit");
                 })
                 .catch(function (error) {
                   console.log(error);
@@ -393,7 +460,7 @@ export const EmailConfirmationForm = () => {
               onClick={()=>{
                 setPinState(['','','','','','']);
                 setSuccessAlertVisibility(false);
-                initateSignupProcess().then(function (response) {
+                reinitateSignupProcess().then(function (response) {
                     console.log(response);
                     setSuccessAlertVisibility(true);
                   })
@@ -441,135 +508,6 @@ export const EmailConfirmationForm = () => {
         </div>
       </form>
   )
-}
-
-export const CreatePasswordForm = () => {
-  const [stepIdx, steps, stepForward, stepBackward, userData, setUserData] = useOutletContext();
-  const [errorList, setErrorList] = useState([]);
-  const [isErrorListVisible, setErrorListVisibility] = useState(false);
-
-  const navigate = useNavigate();
-  const passwordRef = useRef(null);
-  const passwordRepeatRef = useRef(null);
-
-  const registerMasterPassword = () => {
-    var data = JSON.stringify({
-      email: userData.email,
-      master_password: userData.password
-    });
-
-    console.log(`http://localhost:8000/api/v1/auth/create-password`);
-
-    var config = {
-      method: 'post',
-      url: `http://localhost:8000/api/v1/auth/create-password`,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      data : data
-    };
-
-    return axios(config);
-  }
-
-  useEffect(()=>{
-    // console.log(`isErrorListVisible ${isErrorListVisible}`);
-  }, [isErrorListVisible])
-
-  return (
-      <form className="bg-white rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[32px]"
-        id="submit"
-        onSubmit={(e)=>{
-          e.preventDefault();
-          setErrorListVisibility(prevState => (false));
-
-          if(passwordRef.current.value != passwordRepeatRef.current.value){
-            setErrorList(["Passwords don't match!"]);
-            setErrorListVisibility(prevState => (true));
-          }
-          else{
-          registerMasterPassword().then(function (response) {
-              console.log(response);
-              Cookies.set(`accessToken`, response.data.accessToken, { expires: 7 });
-              Cookies.set(`refreshToken`, response.data.refreshToken, { expires: 7 });
-              Cookies.set(`idToken`, response.data.idToken, { expires: 7 });
-              stepForward();
-              navigate("/signup/recovery-kit");
-            })
-            .catch(function (error) {
-              console.log(error);
-              if (error.response.data.hasOwnProperty('detail')){
-                const error_msg = error.response.data.detail;
-                console.log(error_msg);
-                setErrorList([error_msg]);
-              }
-              else{
-                setErrorList([`Something went wrong: ${error}.`]);
-              }
-              setErrorListVisibility(prevState => (true));
-            });
-          }
-        }}>
-        <h4 className="m-0 relative text-4xl leading-[120%] font-bold text-black text-center">
-          Create your master password
-        </h4>
-        <div className="relative w-2/3">
-          <label
-            htmlFor="password"
-            className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
-          >
-            Password
-          </label>
-          <input
-            ref={passwordRef}
-            type="password"
-            name="password"
-            id="password"
-            className="w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
-            placeholder="*********"
-            onChange={ (e) =>{setUserData(prevState => ({...prevState, password: e.target.value}))} }
-
-            required
-          />
-        </div>
-        <div className="relative w-2/3">
-          <label
-            htmlFor="name"
-            className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
-          >
-            Re-enter Password
-          </label>
-          <input
-            ref={passwordRepeatRef}
-            type="password"
-            name="passwordRepeat"
-            id="passwordRepeat"
-            className="w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
-            placeholder="*********"
-            required
-          />
-        </div>
-        { isErrorListVisible &&
-          <Errors
-            errorList={errorList}
-            showAlert={isErrorListVisible}
-            setAlertVisibilty={setErrorListVisibility}
-            />
-        }
-        <p className="m-0 relative text-1xl text-red-500 font-bold text-center flex items-center justify-center w-[538px] h-12 shrink-0">
-          Note: Memorise this password and keep it safe.
-        </p>
-        <div className="flex flex-row items-center justify-center gap-[32px]">
-          <Button
-            buttonType="dark"
-            label="Submit"
-            id="submit-button"
-            type="submit"
-          />
-        </div>
-      </form>
-    )
 }
 
 export const RecoveryKitForm = () => {
@@ -628,8 +566,7 @@ const SignUpPage = () => {
   const [steps, setSteps] = useState({
     1: { id: 'Step 1', name: 'Create Account', to: '', status: 'current' },
     2: { id: 'Step 2', name: 'Email Confirmation', to: 'email-confirmation', status: 'upcoming' },
-    3: { id: 'Step 3', name: 'Create Password', to: 'create-password', status: 'upcoming' },
-    4: { id: 'Step 4', name: 'Finish Setup', to: 'recovery-kit', status: 'upcoming' },
+    3: { id: 'Step 3', name: 'Finish Setup', to: 'recovery-kit', status: 'upcoming' },
   })
 
   const updateStepIdx = ({ newStepIdx }) => {
@@ -687,25 +624,25 @@ const SignUpPage = () => {
     <div className="bg-gray-100 w-screen h-screen flex flex-col items-center justify-center">
       <Navbar navbarType="signup"/>
       <div className="self-stretch flex-1 overflow-hidden flex flex-col items-center justify-center">
-      <nav aria-label="Progress" className="">
+      <nav aria-label="Progress" className="w-2/3 mb-4">
         <ol role="list" className="space-y-4 md:flex md:space-x-16 md:space-y-0">
           {Object.entries(steps).map(([ newStepIdx, step ]) => (
             <li key={step.name} className="md:flex-1">
               {step.status === 'completed' ? (
                 <span
-                  className="flex flex-col border-l-4 border-black py-2 pl-4 md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4"
+                  className="flex flex-col items-center border-l-4 border-black py-2 pl-4 md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4"
                 >
                   <span className="text-sm font-medium text-black">{step.name}</span>
                 </span>
               ) : step.status === 'current' ? (
                 <span
-                  className="flex flex-col border-l-4 border-black py-2 pl-4 md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4"
+                  className="flex flex-col justify-center items-center border-l-4 border-black py-2 pl-4 md:border-l-0 md:border-t-4 md:pb-4 md:pl-0 md:pt-4 bg-gray-200 rounded-lg"
                 >
                   <span className="text-sm font-medium text-black">{step.name}</span>
                 </span>
               ) : (
                 <span
-                  className="flex flex-col border-l-4 border-gray-200 py-2 pl-4 md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4"
+                  className="flex flex-col items-center border-l-4 border-gray-200 py-2 pl-4 md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4"
                 >
                   <span className="text-sm font-medium text-gray-500">{step.name}</span>
                 </span>

@@ -6,15 +6,13 @@ const baseUrl = "http://localhost:8000/api/v1"
 export async function getVaults(){
 
   const requestUrl =  `${baseUrl}/users/me/vaults/`;
-  console.log(requestUrl);
-
   var config = {
+    withCredentials: true,
     method: 'get',
     url: requestUrl,
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': `Bearer ${Cookies.get("accessToken")}`
     }
   };
 
@@ -26,14 +24,12 @@ export async function getVaults(){
   }
 
   return null;
-
 }
 
 export async function getVaultItems(vault_id){
   const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}/items/`;
-  console.log(requestUrl);
-
   var config = {
+    withCredentials: true,
     method: 'get',
     url: requestUrl,
     headers: {
@@ -72,6 +68,7 @@ export async function updateVaultItem(vault_id, id, title, website, password, us
   console.log(requestUrl);
 
   var config = {
+    withCredentials: true,
     method: 'put',
     url: requestUrl,
     headers: {
@@ -103,6 +100,7 @@ export async function createVaultItem(vault_id, title, website, password, userna
   console.log(requestUrl);
 
   var config = {
+    withCredentials: true,
     method: 'post',
     url: requestUrl,
     headers: {
@@ -135,6 +133,7 @@ export async function deleteVaultItem(vault_id, id){
   console.log(requestUrl);
 
   var config = {
+    withCredentials: true,
     method: 'delete',
     url: requestUrl,
     headers: {
@@ -164,6 +163,7 @@ export async function updateVault(vault_id, name, description){
   console.log(requestUrl);
 
   var config = {
+    withCredentials: true,
     method: 'put',
     url: requestUrl,
     headers: {
@@ -194,6 +194,7 @@ export async function addVault(name, description){
   console.log(requestUrl);
 
   var config = {
+    withCredentials: true,
     method: 'post',
     url: requestUrl,
     headers: {
@@ -224,6 +225,7 @@ export async function deleteVault(vault_id){
   console.log(requestUrl);
 
   var config = {
+    withCredentials: true,
     method: 'delete',
     url: requestUrl,
     headers: {

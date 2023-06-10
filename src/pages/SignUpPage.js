@@ -4,11 +4,11 @@ import { useState, useEffect, useRef } from 'react';
 
 import axios from "axios";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
-import Cookies from 'js-cookie';
 
 import Button from "../components/Button";
 import Navbar from "../components/Navbar";
 import Errors, { SuccessAlert } from "../components/Alerts";
+import { initateSignupProcess, completeSignupProcess, generateSecretKey, storeAuthData } from "../data/auth";
 
 const countries = [
   'India',
@@ -44,31 +44,6 @@ export const CreateAccountForm = () => {
   const passwordRef = useRef(null);
   const passwordRepeatRef = useRef(null);
 
-  const initateSignupProcess = () => {
-    var data = JSON.stringify({
-      email: userData.email,
-      first_name: userData.firstName,
-      last_name: userData.lastName,
-      password: userData.password,
-    });
-
-    console.log(`http://localhost:8000/api/v1/auth/signup`);
-
-    var config = {
-      method: 'post',
-      url: `http://localhost:8000/api/v1/auth/signup`,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      data : data
-    };
-
-    return axios(config);
-
-  }
-
-
   return (
       <form
         className="bg-white w-2/3 rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[16px]"
@@ -80,7 +55,7 @@ export const CreateAccountForm = () => {
                 setErrorListVisibility(prevState => (true));
               }
               else{
-              initateSignupProcess().then(function (response) {
+              initateSignupProcess(userData.email).then(function (response) {
                   console.log(response)
                   stepForward();
                   navigate("email-confirmation");
@@ -88,13 +63,13 @@ export const CreateAccountForm = () => {
                 .catch(function (error) {
                   console.log(error);
                   if (error.response.status === 409){
-                    console.log("There is a conflict.")
+                    console.error("There is a conflict.")
                     setErrorList([`User with email id: ${userData.email} is already registered.`]);
                     setErrorListVisibility(true);
                   }
                   else if (error.response.data.hasOwnProperty('detail')){
                     const error_msg = error.response.data.detail;
-                    console.log(error_msg);
+                    console.error(error_msg);
                     setErrorList([error_msg]);
                     setErrorListVisibility(true);
                   }
@@ -344,55 +319,6 @@ export const EmailConfirmationForm = () => {
     }
   }
 
-  const completeSignupProcess = () => {
-    console.log(typeof(pinState), {...pinState});
-    var data = JSON.stringify({
-      email: userData.email,
-      password: userData.password,
-      verification_code: [...pinState].join('')
-    });
-
-    console.log(`http://localhost:8000/api/v1/auth/signup/confirm`);
-
-    var config = {
-      method: 'post',
-      url: `http://localhost:8000/api/v1/auth/signup/confirm`,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      data : data
-    };
-
-    return axios(config);
-
-  }
-
-  const reinitateSignupProcess = () => {
-    var data = JSON.stringify({
-      email: userData.email,
-      first_name: userData.firstName,
-      last_name: userData.lastName,
-      password: userData.password,
-    });
-
-    console.log(`http://localhost:8000/api/v1/auth/signup`);
-
-    var config = {
-      method: 'post',
-      url: `http://localhost:8000/api/v1/auth/signup`,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      data : data
-    };
-
-    return axios(config);
-
-  }
-
-
   return (
       <form
         className="bg-white rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[32px]"
@@ -400,17 +326,29 @@ export const EmailConfirmationForm = () => {
               e.preventDefault();
               setErrorListVisibility(false);
               setSuccessAlertVisibility(false);
-              completeSignupProcess().then(function (response) {
-                  console.log(response);
-                  Cookies.set(`accessToken`, response.data.accessToken, { expires: 7 });
-                  Cookies.set(`refreshToken`, response.data.refreshToken, { expires: 7 });
-                  Cookies.set(`idToken`, response.data.idToken, { expires: 7 });
+              const secret_key = generateSecretKey();
+              const verification_code = [...pinState].join('');
+              setUserData(prevState=>({...prevState, secretKey: secret_key}))
+              completeSignupProcess(
+                userData.email,
+                userData.password,
+                secret_key,
+                verification_code,
+                userData.firstName,
+                userData.lastName
+                ).then(function (response) {
+                  storeAuthData(
+                    userData.email,
+                    userData.password,
+                    secret_key,
+                    response.data.csdek);
+                  setUserData(prevState=>({...prevState, csdek: response.data.csdek}))
                   stepForward();
                   navigate("/signup/recovery-kit");
                 })
                 .catch(function (error) {
                   console.log(error);
-                  if (error.response.data.hasOwnProperty('detail')){
+                  if (error.hasOwnProperty('response') && error.response.data.hasOwnProperty('detail')){
                     const error_msg = error.response.data.detail;
                     console.log(error_msg);
                     setErrorList([error_msg]);
@@ -460,8 +398,7 @@ export const EmailConfirmationForm = () => {
               onClick={()=>{
                 setPinState(['','','','','','']);
                 setSuccessAlertVisibility(false);
-                reinitateSignupProcess().then(function (response) {
-                    console.log(response);
+                initateSignupProcess(userData.email).then(function (response) {
                     setSuccessAlertVisibility(true);
                   })
                   .catch(function (error) {
@@ -511,6 +448,9 @@ export const EmailConfirmationForm = () => {
 }
 
 export const RecoveryKitForm = () => {
+
+  const [stepIdx, steps, stepForward, stepBackward, userData, setUserData] = useOutletContext();
+
   const navigate = useNavigate();
   return (
         <form
@@ -528,10 +468,10 @@ export const RecoveryKitForm = () => {
               Security Key
             </label>
             <input
-              type="texd"
-              name="name"
-              id="name"
-              value="pall-brau-cump-cub-SPIY-stif-def-hoff"
+              type="text"
+              name="skey"
+              id="skey"
+              value={userData.secretKey}
               className="w-full rounded-md px-2 py-2 text-lg font-medium text-gray-900 text-center shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100"
             />
             <Button
@@ -559,6 +499,7 @@ const SignUpPage = () => {
     lastName: "",
     country: countries[0],
     password: "",
+    secretKey: null,
   });
 
   const [stepIdx, setStepIdx] = useState(1);
@@ -572,6 +513,10 @@ const SignUpPage = () => {
   const updateStepIdx = ({ newStepIdx }) => {
     setStepIdx(newStepIdx);
   }
+
+  // useEffect(()=>{
+  //   const Buffer = BufferPolyfill;
+  // }, [])
 
   useEffect(()=>{
     console.log(stepIdx);

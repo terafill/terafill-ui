@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { getVDEK, encryptData } from './data/auth';
 
 const baseUrl = "http://localhost:8000/api/v1"
 
@@ -39,6 +40,7 @@ export async function getVaultItems(vault_id){
     }
   };
 
+
   try {
     let response = await axios(config);
     return response.data
@@ -65,7 +67,7 @@ export async function getDefaultVaultItems(){
 
 export async function updateVaultItem(vault_id, id, title, website, password, username){
   const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}/items/${id}`;
-  console.log(requestUrl);
+  const vdek = getVDEK();
 
   var config = {
     withCredentials: true,
@@ -77,10 +79,10 @@ export async function updateVaultItem(vault_id, id, title, website, password, us
       'Authorization': `Bearer ${Cookies.get("accessToken")}`
     },
     data: {
-      title: title,
-      website: website,
-      password: password,
-      username: username
+      title: encryptData(title, vdek),
+      website: encryptData(website, vdek),
+      password: encryptData(password, vdek),
+      username: encryptData(username, vdek),
     }
   };
 
@@ -97,7 +99,7 @@ export async function updateVaultItem(vault_id, id, title, website, password, us
 
 export async function createVaultItem(vault_id, title, website, password, username){
   const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}/items/`;
-  console.log(requestUrl);
+  const vdek = getVDEK();
 
   var config = {
     withCredentials: true,
@@ -109,10 +111,10 @@ export async function createVaultItem(vault_id, title, website, password, userna
       'Authorization': `Bearer ${Cookies.get("accessToken")}`
     },
     data: {
-      title: title,
-      website: website,
-      password: password,
-      username: username,
+      title: encryptData(title, vdek),
+      website: encryptData(website, vdek),
+      password: encryptData(password, vdek),
+      username: encryptData(username, vdek),
       type: "PASSWORD"
     }
   };
@@ -153,9 +155,6 @@ export async function deleteVaultItem(vault_id, id){
 
   return {}
 }
-
-
-
 
 
 export async function updateVault(vault_id, name, description){

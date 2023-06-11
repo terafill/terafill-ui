@@ -41,7 +41,7 @@ export function deriveEncryptionKey(passphrase, algorithm, salt=null) {
 }
 
 
-function encryptData(rawData, key) {
+export function encryptData(rawData, key) {
     // Generate a random IV
     const iv = CryptoJS.lib.WordArray.random(128 / 8);
 
@@ -59,7 +59,7 @@ function encryptData(rawData, key) {
 }
 
 
-function decryptData(cipherTextWithIv, key) {
+export function decryptData(cipherTextWithIv, key) {
     // Convert the base64 string back to a WordArray
     const concatenated = CryptoJS.enc.Base64.parse(cipherTextWithIv);
 
@@ -99,6 +99,12 @@ export const fetchDecryptedData = (key, key_hash_salt, value_encryption_key) => 
   return decryptData(encrypted_data, value_encryption_key);
 }
 
+export const getVDEK = () => {
+  const csdek = localStorage.getItem("csdek");
+  const csdek_derived = deriveEncryptionKey(csdek, "SHA-256");
+  const vdek = fetchDecryptedData('vdek', csdek, csdek_derived);
+  return vdek;
+}
 
 export const storeAuthData = (
   email,

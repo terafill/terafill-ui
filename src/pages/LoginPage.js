@@ -9,6 +9,8 @@ import Cookies from 'js-cookie';
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
 
 import Errors from "../components/Alerts";
+import { loginUser, storeAuthData, deriveEncryptionKey, fetchDecryptedData } from "../data/auth";
+
 
 const LoginPage = () => {
 
@@ -16,27 +18,26 @@ const LoginPage = () => {
     const [userData, setUserData] = useState({email:'', password:''});
     const [errorList, setErrorList] = useState([]);
     const [isErrorListVisible, setErrorListVisibility] = useState(false);
+    const [refreshLogin, setRefreshLogin] = useState(false)
+    const shouldLoad = useRef(true);
 
-    const loginUser = () => {
-      var data = JSON.stringify({
-        email: userData.email,
-        master_password: userData.password
-      });
-
-      console.log(`http://localhost:8000/api/v1/auth/login`);
-
-      var config = {
-        method: 'post',
-        url: `http://localhost:8000/api/v1/auth/login`,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        data : data
-      };
-
-      return axios(config);
-   }
+    useEffect(()=>{
+      if(shouldLoad.current){
+        const csdek = localStorage.getItem("csdek");
+        if (csdek){
+          const csdek_derived = deriveEncryptionKey(csdek, "SHA-256");
+          const secret_key = fetchDecryptedData('secretKey', csdek, csdek_derived);
+          const email = fetchDecryptedData('email', csdek, csdek_derived);
+          setUserData(prevState=>({
+            ...prevState,
+            email: email,
+            secretKey: secret_key,
+          }));
+          setRefreshLogin(true);
+        }
+        shouldLoad.current = false;
+      }
+    }, [])
 
     return (
     <div className="bg-gray-100 w-screen h-screen flex flex-col items-center justify-center">
@@ -47,11 +48,13 @@ const LoginPage = () => {
       onSubmit={(e)=>{
         e.preventDefault();
         setErrorListVisibility(prevState => (false));
-        loginUser().then(function (response) {
-              console.log(response);
-              Cookies.set(`accessToken`, response.data.accessToken, { expires: 7 });
-              Cookies.set(`refreshToken`, response.data.refreshToken, { expires: 7 });
-              Cookies.set(`idToken`, response.data.idToken, { expires: 7 });
+        loginUser(userData.email, userData.password, userData.secretKey).then(function (response) {
+              storeAuthData(
+                userData.email,
+                userData.password,
+                userData.secretKey,
+                response.data.csdek);
+              setUserData(prevState=>({...prevState, csdek: response.data.csdek}))
               navigate("/app-home");
             })
             .catch(function (error) {
@@ -86,6 +89,7 @@ const LoginPage = () => {
             onChange={ (e) =>{setUserData(prevState => ({...prevState, email: e.target.value}))} }
             value={userData.email}
             required
+            disabled={refreshLogin?true:false}
           />
         </div>
 
@@ -105,6 +109,25 @@ const LoginPage = () => {
             onChange={ (e) =>{setUserData(prevState => ({...prevState, password: e.target.value}))} }
             value={userData.password}
             required
+          />
+        </div>
+        <div className="relative w-2/3">
+          <label
+            htmlFor="email"
+            className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
+          >
+            Secret Key
+          </label>
+          <input
+            type="password"
+            name="secret-key"
+            id="secret-key"
+            className="w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+            placeholder="Enter Secret key"
+            onChange={ (e) =>{setUserData(prevState => ({...prevState, secretKey: e.target.value}))} }
+            value={userData.secretKey}
+            required
+            disabled={refreshLogin?true:false}
           />
         </div>
         { isErrorListVisible &&

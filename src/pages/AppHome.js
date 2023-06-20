@@ -14,12 +14,14 @@ import {
   updateVaultItem,
   createVaultItem,
   deleteVaultItem,
+} from '../data/item';
+import {
+  addVault,
   getVaults,
   getVaultItems,
   updateVault,
-  addVault,
   deleteVault,
-} from '../data';
+} from '../data/vault';
 import "./AppHome.css";
 
 // For multi vault dropdown

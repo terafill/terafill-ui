@@ -9,6 +9,7 @@ import MoonLoader from "react-spinners/MoonLoader";
 import Navbar from "../components/Navbar";
 import Button from "../components/Button";
 import { useTokenExpiration } from '../components/TokenTools';
+import { getVDEK, decryptData } from '../data/auth';
 import {
   updateVaultItem,
   createVaultItem,
@@ -898,10 +899,16 @@ const AppHome = () => {
           const vault_id = vaultData[idx].id;
           morphedVaultData[vault_id] = {...vaultData[idx], "itemList": {}};
 
+          const vdek = getVDEK();
+
           const vault_items = await getVaultItems(vault_id);
           for (let idx=0;idx<vault_items.length;idx+=1){
             const item_id = vault_items[idx].id
-            morphedVaultData[vault_id]["itemList"][item_id] = vault_items[idx];
+            morphedVaultData[vault_id]["itemList"][item_id] = vault_items[idx]
+            morphedVaultData[vault_id]["itemList"][item_id].title = decryptData(vault_items[idx].title, vdek);
+            morphedVaultData[vault_id]["itemList"][item_id].website = decryptData(vault_items[idx].website, vdek);
+            morphedVaultData[vault_id]["itemList"][item_id].username = decryptData(vault_items[idx].username, vdek);
+            morphedVaultData[vault_id]["itemList"][item_id].password = decryptData(vault_items[idx].password, vdek);
             morphedVaultData[vault_id]["itemList"][item_id].icon =  `https://cool-rose-moth.faviconkit.com/${vault_items[idx].website}/256`;
           }
         }

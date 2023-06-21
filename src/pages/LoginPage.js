@@ -55,7 +55,7 @@ const LoginPage = () => {
                 userData.secretKey,
                 response.data.csdek);
               setUserData(prevState=>({...prevState, csdek: response.data.csdek}))
-              navigate("/app-home");
+              navigate("/app/home");
             })
             .catch(function (error) {
               console.log(error);

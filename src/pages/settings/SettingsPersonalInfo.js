@@ -1,4 +1,5 @@
 import Navbar from "../../components/Navbar";
+import SideNavbar from "../../components/SideNavbar";
 import SettingsPanel from "../../components/SettingsPanel";
 import Card from "../../components/Card";
 
@@ -37,24 +38,30 @@ const SettingsPersonalInfo = () => {
   }]
 
   return (
-        <div className="self-stretch flex-1 bg-font-light overflow-y-auto flex flex-col py-8 px-40 items-center justify-start gap-[32px] z-[0]">
-          <div className="flex flex-col items-center justify-center">
-            <img
-              className="relative w-32 h-32 shrink-0 overflow-hidden"
-              alt=""
-              src="../iconoirprofilecircle.svg"
-            />
-            <b className="relative leading-[120%] flex items-center justify-center w-[444px] h-[77px] shrink-0">Welcome, Leonardo</b>
+      <div className="w-full h-screen flex flex-col justify-start items-stretch text-left">
+        <Navbar navbarType="app"/>
+        <div className="h-full flex flex-row items-stretch" id="app-screen">
+          <SideNavbar />
+          <div className="self-stretch flex-1 bg-font-light overflow-y-auto flex flex-col py-8 px-40 items-center justify-start gap-[32px] z-[0]">
+            <div className="flex flex-col items-center justify-center">
+              <img
+                className="relative w-32 h-32 shrink-0 overflow-hidden"
+                alt=""
+                src="../iconoirprofilecircle.svg"
+              />
+              <b className="relative leading-[120%] flex items-center justify-center w-[444px] h-[77px] shrink-0">Welcome, Leonardo</b>
+            </div>
+            {userProfile.map( userProfileData =>
+              <Card
+                cardType="userProfile"
+                key={userProfileData.profileType}
+                cardLabel={userProfileData.profileType}
+                cardBodyData={userProfileData.profileAttributeList}
+              />
+            )}
           </div>
-          {userProfile.map( userProfileData =>
-            <Card
-              cardType="userProfile"
-              key={userProfileData.profileType}
-              cardLabel={userProfileData.profileType}
-              cardBodyData={userProfileData.profileAttributeList}
-            />
-          )}
         </div>
+    </div>
   );
 };
 

@@ -44,21 +44,44 @@ const router = createBrowserRouter([
     element:  <LandingPage />,
   },
   {
-    path: "/app-home",
-    element: <AppHome />,
+    path: "/app",
     children: [
       {
-        path: ":id",
-        element: <ItemPanel/>,
-        // loader: itemDataLoader,
+        // index: true,
+        path: "home",
+        element: <AppHome />,
+        children: [
+          {
+            path: ":id",
+            element: <ItemPanel/>,
+          },
+          {
+            index: true,
+            element: <ItemPanelIndex />
+          },
+        ],
       },
       {
-        index: true,
-        element: <ItemPanelIndex />
-      },
-    ],
-
+        path: "profile",
+        element: <SettingsPersonalInfo />,
+      }
+    ]
   },
+  // {
+  //   path: "/app-home",
+  //   element: <AppHome />,
+  //   children: [
+  //     {
+  //       path: ":id",
+  //       element: <ItemPanel/>,
+  //     },
+  //     {
+  //       index: true,
+  //       element: <ItemPanelIndex />
+  //     },
+  //   ],
+
+  // },
   {
     path: "/products",
     element: <ProductsPage />
@@ -129,18 +152,6 @@ const router = createBrowserRouter([
         element: <SettingsDeviceManagement />
       },
     ]
-  },
-  {
-    path: "/settings-device-management",
-    element: <SettingsDeviceManagement />
-  },
-  {
-    path: "/settings-security",
-    element: <SettingsSecurity />
-  },
-  {
-    path: "/settings-personal-info",
-    element: <SettingsPersonalInfo />
   },
   {
     path: "/import",

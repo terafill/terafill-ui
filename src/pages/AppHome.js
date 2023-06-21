@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import MoonLoader from "react-spinners/MoonLoader";
 
 import Navbar from "../components/Navbar";
+import SideNavbar from "../components/SideNavbar";
 import Button from "../components/Button";
 import { useTokenExpiration } from '../components/TokenTools';
 import { getVDEK, decryptData } from '../data/auth';
@@ -1045,41 +1046,44 @@ const AppHome = () => {
   const [openDeleteVaultPopup, setOpenDeleteVault] = useState(false);
 
   return (
-      <div className="relative w-full h-screen flex flex-col items-center justify-center text-left">
-      <Navbar navbarType="app"/>
-      <div className="self-stretch flex-1 overflow-hidden flex flex-row items-center justify-center" id="apphome-inner">
-        <ToastContainer />
-        <EditVaultPopup
-          open={openEditVaultPopup}
-          setOpen={setOpenEditVault}
-          selectedVault={selectedVault}
-          vaultList={vaultList}
-          updateVaultState={updateVaultState}
-        />
-        <AddVaultPopup
-          open={openAddVaultPopup}
-          setOpen={setOpenAddVault}
-          vaultList={vaultList}
-          addVaultState={addVaultState}
-        />
-        <DeleteVaultPopup
-          open={openDeleteVaultPopup}
-          setOpen={setOpenDeleteVault}
-          selectedVault={selectedVault}
-          vaultList={vaultList}
-          deleteVaultState={deleteVaultState}
-        />
-        <NavigationPanel
-          vaultList={vaultList}
-          itemDataList={itemDataList}
-          selectedVault={selectedVault}
-          setSelectedVault={setSelectedVault}
-          setOpenEditVault={setOpenEditVault}
-          setOpenAddVault={setOpenAddVault}
-          setOpenDeleteVault={setOpenDeleteVault}
-        />
-        <Outlet context={[ selectedVault, itemDataList, updateItem, deleteItem, addItem ]}/>
-      </div>
+      <div className="w-full h-screen flex flex-col justify-start items-stretch text-left">
+        <Navbar navbarType="app"/>
+        <div className="h-full flex flex-row items-stretch" id="app-screen">
+          <SideNavbar />
+          <div className="self-stretch flex-1 overflow-hidden flex flex-row items-center justify-center" id="apphome-inner">
+            <ToastContainer />
+            <EditVaultPopup
+              open={openEditVaultPopup}
+              setOpen={setOpenEditVault}
+              selectedVault={selectedVault}
+              vaultList={vaultList}
+              updateVaultState={updateVaultState}
+            />
+            <AddVaultPopup
+              open={openAddVaultPopup}
+              setOpen={setOpenAddVault}
+              vaultList={vaultList}
+              addVaultState={addVaultState}
+            />
+            <DeleteVaultPopup
+              open={openDeleteVaultPopup}
+              setOpen={setOpenDeleteVault}
+              selectedVault={selectedVault}
+              vaultList={vaultList}
+              deleteVaultState={deleteVaultState}
+            />
+            <NavigationPanel
+              vaultList={vaultList}
+              itemDataList={itemDataList}
+              selectedVault={selectedVault}
+              setSelectedVault={setSelectedVault}
+              setOpenEditVault={setOpenEditVault}
+              setOpenAddVault={setOpenAddVault}
+              setOpenDeleteVault={setOpenDeleteVault}
+            />
+            <Outlet context={[ selectedVault, itemDataList, updateItem, deleteItem, addItem ]}/>
+          </div>
+        </div>
     </div>
   );
 };

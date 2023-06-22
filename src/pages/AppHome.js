@@ -823,6 +823,11 @@ const NavigationPanel = ({
  }) => {
 
   const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+
+  // useEffect(()=>{
+
+  // }, search)
 
   console.log("NavigationPanel.itemDataList", itemDataList);
 
@@ -848,11 +853,21 @@ const NavigationPanel = ({
           className="[border:none] rounded-lg px-2 py-2 flex text-[23.04px] bg-gray-200 w-full overflow-hidden flex-row items-center justify-center"
           type="text"
           placeholder=" 🔎 Quick Search"
+          value={search}
+          onChange={(e)=>{setSearch(e.target.value)}}
         />
       </div>
       <div className="self-stretch flex-1 overflow-y-auto px-2 py-2 flex flex-col items-center justify-start z-[1] border-[2px] border-solid" id="item-list">
       {
-       Object.entries(itemDataList).map( ([id, itemData]) =>
+       Object.entries(itemDataList)
+          .filter(([id, itemData]) => {
+              return search.toLowerCase() === ''
+              ? true
+              : ( itemData.username.toLowerCase().includes(search)
+                  || itemData.website.toLowerCase().includes(search)
+                  || itemData.title.toLowerCase().includes(search) )
+            })
+          .map( ([id, itemData]) =>
         (id!="new") && <NavLink
           to={`${itemData.id}`}
           key={itemData.id}

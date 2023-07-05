@@ -1,3 +1,4 @@
+import React from 'react';
 export const MenuItem = ({ menuItem, onClick }) => {
   return (
     <button className="cursor-pointer rounded [border:none] p-2 bg-font-light self-stretch h-8 shrink-0 flex flex-row box-border items-center justify-center hover:bg-gray-100" onClick={onClick}>

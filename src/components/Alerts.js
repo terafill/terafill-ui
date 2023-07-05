@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState } from "react";
 import { XCircleIcon } from '@heroicons/react/20/solid';
 import { AiOutlineCloseSquare } from "react-icons/ai";

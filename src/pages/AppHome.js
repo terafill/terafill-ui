@@ -1,6 +1,7 @@
+import React from 'react';
 import { useEffect, useState, useRef } from "react";
 
-import { NavLink, Outlet, useParams, useLoaderData, useNavigate, useOutletContext, withRouter, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useParams, useLoaderData, useNavigate, useOutletContext, useLocation } from "react-router-dom";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -10,7 +11,7 @@ import Navbar from "../components/Navbar";
 import SideNavbar from "../components/SideNavbar";
 import Button from "../components/Button";
 import { useTokenExpiration } from '../components/TokenTools';
-import { getVDEK, decryptData } from '../data/auth';
+import { getKeyWrappingKeyPair, decryptData } from '../utils/security';
 import {
   updateVaultItem,
   createVaultItem,
@@ -42,6 +43,8 @@ import {
   SquaresPlusIcon,
   FolderPlusIcon,
 } from '@heroicons/react/20/solid'
+
+import { v4 as uuidv4 } from 'uuid';
 
 
 function classNames(...classes) {
@@ -665,7 +668,7 @@ export const ItemPanel = () => {
         setShareButtonVisible(prevState=>true);
       }
     if(itemDataList[id] === undefined){
-      navigate('/app-home');
+      navigate('/app/home');
     }
   }, [location]);
 
@@ -694,11 +697,20 @@ export const ItemPanel = () => {
             if(!itemFormDisabled){
               setItemUpdating(true);
               if (id === "new"){
-                const response = await createVaultItem(selectedVault, itemDataList[id].title, itemDataList[id].website, itemDataList[id].password, itemDataList[id].username);
+                const iek = uuidv4();
+                const response = await createVaultItem(
+                  selectedVault,
+                  itemDataList[id].title,
+                  itemDataList[id].website,
+                  itemDataList[id].password,
+                  itemDataList[id].username,
+                  iek);
                   if (response.status == 200){
-                    addItem(itemDataList[id].vault_id, {...itemDataList[id], id: response.data.id});
+                    addItem(
+                      itemDataList[id].vault_id,
+                      {...itemDataList[id], id: response.data.id, iek: iek});
                     toast.success("Vault item created successfully!");
-                    navigate(`/app-home/${response.data.id}`);
+                    navigate(`/app/home/${response.data.id}`);
                   }
                   else{
                     toast.error("Something went wrong!");
@@ -917,16 +929,18 @@ const AppHome = () => {
           const vault_id = vaultData[idx].id;
           morphedVaultData[vault_id] = {...vaultData[idx], "itemList": {}};
 
-          const vdek = getVDEK();
-
           const vault_items = await getVaultItems(vault_id);
+          console.log("useEffect.vault_items", vault_items)
           for (let idx=0;idx<vault_items.length;idx+=1){
             const item_id = vault_items[idx].id
+            const key_wrapping_key_pair = getKeyWrappingKeyPair();
+            const iek = key_wrapping_key_pair.private.decrypt(vault_items[idx].encrypted_encryption_key);
             morphedVaultData[vault_id]["itemList"][item_id] = vault_items[idx]
-            morphedVaultData[vault_id]["itemList"][item_id].title = decryptData(vault_items[idx].title, vdek);
-            morphedVaultData[vault_id]["itemList"][item_id].website = decryptData(vault_items[idx].website, vdek);
-            morphedVaultData[vault_id]["itemList"][item_id].username = decryptData(vault_items[idx].username, vdek);
-            morphedVaultData[vault_id]["itemList"][item_id].password = decryptData(vault_items[idx].password, vdek);
+            morphedVaultData[vault_id]["itemList"][item_id].title = decryptData(vault_items[idx].title, iek);
+            morphedVaultData[vault_id]["itemList"][item_id].website = decryptData(vault_items[idx].website, iek);
+            morphedVaultData[vault_id]["itemList"][item_id].username = decryptData(vault_items[idx].username, iek);
+            morphedVaultData[vault_id]["itemList"][item_id].password = decryptData(vault_items[idx].password, iek);
+            morphedVaultData[vault_id]["itemList"][item_id].iek = iek
             morphedVaultData[vault_id]["itemList"][item_id].icon =  `https://cool-rose-moth.faviconkit.com/${vault_items[idx].website}/256`;
           }
         }

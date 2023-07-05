@@ -14,6 +14,7 @@ export async function getVaults(){
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
+      'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
     }
   };
 
@@ -36,7 +37,7 @@ export async function getVaultItems(vault_id){
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': `Bearer ${Cookies.get("accessToken")}`
+      'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
     }
   };
 
@@ -74,7 +75,7 @@ export async function updateVault(vault_id, name, description){
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': `Bearer ${Cookies.get("accessToken")}`
+      'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
     },
     data: {
       name: name,
@@ -103,7 +104,7 @@ export async function addVault(name, description){
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': `Bearer ${Cookies.get("accessToken")}`
+      'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
     },
     data: {
       name: name,
@@ -132,7 +133,7 @@ export async function deleteVault(vault_id){
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': `Bearer ${Cookies.get("accessToken")}`
+      'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
     },
   };
 

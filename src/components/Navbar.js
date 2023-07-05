@@ -1,3 +1,4 @@
+import React from 'react';
 import { memo, useState, useRef, useCallback } from "react";
 import NotificationsMenu from "../components/NotificationsMenu";
 import PortalPopup from "../components/PortalPopup";

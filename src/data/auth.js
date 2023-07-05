@@ -1,7 +1,9 @@
+// import jsrp from '../jsrp';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import CryptoJS from 'crypto-js';
-import { v4 as uuidv4 } from 'uuid';
+import { Buffer } from 'buffer/';
+
+import { getAuthClientDetails, getVDEK, getRSAPrivateKey, getSRPClient } from "../utils/security";
 
 export const initateSignupProcess = (email) => {
   var data = JSON.stringify({
@@ -20,131 +22,55 @@ export const initateSignupProcess = (email) => {
 }
 
 
-export function deriveEncryptionKey(passphrase, algorithm, salt=null) {
-    if (algorithm === 'SHA-256') {
-        const hash = CryptoJS.SHA256(passphrase);
-        return hash.toString(CryptoJS.enc.Hex);
-    } else if (algorithm === 'PBKDF2') {
-        if (salt === null){
-          const salt = CryptoJS.lib.WordArray.random(128/8);
-        }
-        const iterations = 1000;
-        const keyLength = 256;
-        const key = CryptoJS.PBKDF2(passphrase, salt, {
-            keySize: keyLength / 32,
-            iterations: iterations
-        });
-        return key.toString(CryptoJS.enc.Hex);
-    } else {
-        throw new Error('Unsupported algorithm');
-    }
-}
-
-
-export function encryptData(rawData, key) {
-    // Generate a random IV
-    const iv = CryptoJS.lib.WordArray.random(128 / 8);
-
-    // Encrypt the data
-    const encrypted = CryptoJS.AES.encrypt(rawData, CryptoJS.enc.Utf8.parse(key), {
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7,
-        iv: iv,
-    });
-
-    // Concatenate the IV and the ciphertext
-    const cipherTextWithIv = iv.concat(encrypted.ciphertext).toString(CryptoJS.enc.Base64);
-
-    return cipherTextWithIv;
-}
-
-
-export function decryptData(cipherTextWithIv, key) {
-    // Convert the base64 string back to a WordArray
-    const concatenated = CryptoJS.enc.Base64.parse(cipherTextWithIv);
-
-    // Split the IV and ciphertext parts
-    const iv = CryptoJS.lib.WordArray.create(concatenated.words.slice(0, 4));
-    const ciphertext = CryptoJS.lib.WordArray.create(concatenated.words.slice(4));
-
-    // Decrypt the data
-    const decrypted = CryptoJS.AES.decrypt({ ciphertext: ciphertext }, CryptoJS.enc.Utf8.parse(key), {
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7,
-        iv: iv,
-    });
-
-    return decrypted.toString(CryptoJS.enc.Utf8);
-
-}
-
-export const generateSecretKey = () => {
-  const secret_key = uuidv4();
-  return secret_key
-};
-
-
-const storeEncryptedData = (key, value, key_hash_salt, value_encryption_key) => {
-  localStorage.setItem(
-    deriveEncryptionKey(key, "PBKDF2", key_hash_salt),
-    encryptData(value, value_encryption_key)
-  );
-}
-
-export const fetchDecryptedData = (key, key_hash_salt, value_encryption_key) => {
-  const encrypted_data = localStorage.getItem(
-    deriveEncryptionKey(key, "PBKDF2", key_hash_salt)
-  );
-
-  return decryptData(encrypted_data, value_encryption_key);
-}
-
-export const getVDEK = () => {
-  const csdek = localStorage.getItem("csdek");
-  const csdek_derived = deriveEncryptionKey(csdek, "SHA-256");
-  const vdek = fetchDecryptedData('vdek', csdek, csdek_derived);
-  return vdek;
-}
-
-export const storeAuthData = (
+export const completeSignupProcess =  async (
   email,
   password,
-  secret_key,
-  csdek,
-) => {
-  const csdek_derived = deriveEncryptionKey(csdek, "SHA-256");
-  const vdek = deriveEncryptionKey(secret_key, "PBKDF2", password);
-
-  localStorage.clear()
-
-  localStorage.setItem("csdek", csdek);
-  storeEncryptedData('secretKey', secret_key, csdek, csdek_derived);
-  storeEncryptedData('vdek', vdek, csdek, csdek_derived);
-  storeEncryptedData('email', email, csdek, csdek_derived);
-}
-
-
-export const completeSignupProcess = (
-  email,
-  password,
-  secret_key,
   verification_code,
   first_name,
-  last_name
+  last_name,
   ) => {
-  const mpesk = deriveEncryptionKey(secret_key, "PBKDF2", password);
+  // generate verifier and salt
+  getAuthClientDetails(email, password).then(([salt, verifier]) => {
+      const encrypted_key_wrapping_key = getRSAPrivateKey(password, true);
+
+      const data = JSON.stringify({
+        email: email,
+        verification_code: verification_code,
+        first_name: first_name,
+        last_name: last_name,
+        verifier: verifier.toString('hex'),
+        salt: salt.toString('hex'),
+        encrypted_key_wrapping_key: encrypted_key_wrapping_key
+      });
+
+      const config = {
+        withCredentials: true,
+        method: 'post',
+        url: `http://localhost:8000/api/v1/auth/signup/confirm`,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
+        },
+        data : data
+      };
+
+      return axios(config);
+  }).catch(err => {
+      console.error(err);
+      return null
+  });
+}
+
+const getSalt = (email) => {
   var data = JSON.stringify({
     email: email,
-    mpesk: mpesk,
-    verification_code: verification_code,
-    first_name: first_name,
-    last_name: last_name,
   });
 
   var config = {
     withCredentials: true,
     method: 'post',
-    url: `http://localhost:8000/api/v1/auth/signup/confirm`,
+    url: `http://localhost:8000/api/v1/auth/salt`,
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
@@ -152,22 +78,13 @@ export const completeSignupProcess = (
     },
     data : data
   };
-
   return axios(config);
 }
 
-
-export const loginUser = (email, password, secret_key) => {
-
-  // const csdek = localStorage.getItem("csdek")
-  // const csdek_derived = deriveEncryptionKey(csdek, "SHA-256");
-  // storeEncryptedData('secretKey', secret_key, csdek, csdek_derived);
-
-  const mpesk = deriveEncryptionKey(secret_key, "PBKDF2", password);
-
+const initiateLogin = (email, clientPubliKey) => {
   var data = JSON.stringify({
     email: email,
-    mpesk: mpesk
+    client_public_key: clientPubliKey
   });
 
   var config = {
@@ -181,8 +98,74 @@ export const loginUser = (email, password, secret_key) => {
     },
     data : data
   };
-
   return axios(config);
+}
+
+const confirmLogin = (email, clientProof) => {
+  var data = JSON.stringify({
+    email: email,
+    client_proof: clientProof,
+  });
+
+  var config = {
+    withCredentials: true,
+    method: 'post',
+    url: `http://localhost:8000/api/v1/auth/login/confirm`,
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
+    },
+    data : data
+  };
+  return axios(config);
+}
+
+
+export const loginUser = async (email, password) => {
+
+  try {
+    // Get salt from server
+    const salt_response = await getSalt(email);
+    const { salt } = salt_response.data;
+
+    // Create SRP Client
+    const client = await getSRPClient(email, password, salt);
+    const clientPubliKey = client.computeA();
+
+    // Send A to server and receive B
+    const login_response = await initiateLogin(email, Buffer.from(clientPubliKey).toString('hex'))
+    const {salt_, server_public_key} = login_response.data;
+    client.setB(Buffer.from(server_public_key, 'hex'));
+
+    const clientProof = client.computeM1();
+
+    // Share proofs and complete login
+    const confirm_login_response = await confirmLogin(
+      email,
+      Buffer.from(clientProof).toString('hex')
+    );
+    const { server_proof, key_wrapping_key } = confirm_login_response.data;
+    // if (client.checkServerProof(server_proof)){
+    if (client.checkM2(Buffer.from(server_proof, "hex"))){
+      console.warn("Server verified!");
+      return {
+        loggedIn: true,
+        key_wrapping_key: key_wrapping_key
+      };
+    }
+    else{
+      console.error("Server not verified!");
+      return {
+        loggedIn: false
+      };
+    }
+  }
+  catch(error){
+    console.error(error);
+  }
+
+  return false;
 }
 
 

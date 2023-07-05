@@ -1,3 +1,5 @@
+import React from 'react';
+
 import Navbar from "../components/Navbar";
 import KeylanceFooterContainer from "../components/KeylanceFooterContainer";
 

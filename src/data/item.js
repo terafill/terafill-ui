@@ -1,13 +1,14 @@
 import axios from 'axios';
+import forge from 'node-forge';
 import Cookies from 'js-cookie';
-import { getVDEK, encryptData } from './auth';
+import { v4 as uuidv4 } from 'uuid';
+import { getKeyWrappingKeyPair, encryptData } from '../utils/security';
 
 const baseUrl = "http://localhost:8000/api/v1"
 
 
-export async function updateVaultItem(vault_id, id, title, website, password, username){
+export async function updateVaultItem(vault_id, id, title, website, password, username, iek){
   const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}/items/${id}`;
-  const vdek = getVDEK();
 
   var config = {
     withCredentials: true,
@@ -16,13 +17,13 @@ export async function updateVaultItem(vault_id, id, title, website, password, us
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': `Bearer ${Cookies.get("accessToken")}`
+      'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
     },
     data: {
-      title: encryptData(title, vdek),
-      website: encryptData(website, vdek),
-      password: encryptData(password, vdek),
-      username: encryptData(username, vdek),
+      title: encryptData(title, iek),
+      website: encryptData(website, iek),
+      password: encryptData(password, iek),
+      username: encryptData(username, iek),
     }
   };
 
@@ -37,9 +38,10 @@ export async function updateVaultItem(vault_id, id, title, website, password, us
   return {}
 }
 
-export async function createVaultItem(vault_id, title, website, password, username){
+export async function createVaultItem(vault_id, title, website, password, username, iek){
   const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}/items/`;
-  const vdek = getVDEK();
+  const key_wrapping_key_pair = getKeyWrappingKeyPair();
+  const iek_enc = key_wrapping_key_pair.public.encrypt(iek);
 
   var config = {
     withCredentials: true,
@@ -48,13 +50,14 @@ export async function createVaultItem(vault_id, title, website, password, userna
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': `Bearer ${Cookies.get("accessToken")}`
+      'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
     },
     data: {
-      title: encryptData(title, vdek),
-      website: encryptData(website, vdek),
-      password: encryptData(password, vdek),
-      username: encryptData(username, vdek),
+      title: encryptData(title, iek),
+      website: encryptData(website, iek),
+      password: encryptData(password, iek),
+      username: encryptData(username, iek),
+      encrypted_encryption_key: iek_enc,
       type: "PASSWORD"
     }
   };
@@ -81,7 +84,7 @@ export async function deleteVaultItem(vault_id, id){
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': `Bearer ${Cookies.get("accessToken")}`
+      'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
     },
   };
 

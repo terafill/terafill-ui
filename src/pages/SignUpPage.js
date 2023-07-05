@@ -1,3 +1,4 @@
+import React from 'react';
 import { NavLink, Outlet, useParams, useLoaderData } from "react-router-dom";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { useState, useEffect, useRef } from 'react';
@@ -8,7 +9,8 @@ import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import Button from "../components/Button";
 import Navbar from "../components/Navbar";
 import Errors, { SuccessAlert } from "../components/Alerts";
-import { initateSignupProcess, completeSignupProcess, generateSecretKey, storeAuthData } from "../data/auth";
+import { generateSecretKey, storeAuthData } from "../utils/security";
+import { initateSignupProcess, completeSignupProcess } from "../data/auth";
 
 const countries = [
   'India',
@@ -44,42 +46,44 @@ export const CreateAccountForm = () => {
   const passwordRef = useRef(null);
   const passwordRepeatRef = useRef(null);
 
+  const createAccountAction = (e) => {
+      e.preventDefault();
+      setErrorListVisibility(false);
+      if(passwordRef.current.value != passwordRepeatRef.current.value){
+        setErrorList(["Passwords don't match!"]);
+        setErrorListVisibility(prevState => (true));
+      }
+      else{
+      initateSignupProcess(userData.email).then(function (response) {
+          console.log(response)
+          stepForward();
+          navigate("email-confirmation");
+        })
+        .catch(function (error) {
+          console.log(error);
+          if (error.response.status === 409){
+            console.error("There is a conflict.")
+            setErrorList([`User with email id: ${userData.email} is already registered.`]);
+            setErrorListVisibility(true);
+          }
+          else if (error.response.data.hasOwnProperty('detail')){
+            const error_msg = error.response.data.detail;
+            console.error(error_msg);
+            setErrorList([error_msg]);
+            setErrorListVisibility(true);
+          }
+          else{
+            setErrorList([`Something went wrong: ${error}.`]);
+            setErrorListVisibility(true);
+          }
+        });
+      }
+  }
+
   return (
       <form
         className="bg-white w-2/3 rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[16px]"
-          onSubmit={(e)=>{
-              e.preventDefault();
-              setErrorListVisibility(false);
-              if(passwordRef.current.value != passwordRepeatRef.current.value){
-                setErrorList(["Passwords don't match!"]);
-                setErrorListVisibility(prevState => (true));
-              }
-              else{
-              initateSignupProcess(userData.email).then(function (response) {
-                  console.log(response)
-                  stepForward();
-                  navigate("email-confirmation");
-                })
-                .catch(function (error) {
-                  console.log(error);
-                  if (error.response.status === 409){
-                    console.error("There is a conflict.")
-                    setErrorList([`User with email id: ${userData.email} is already registered.`]);
-                    setErrorListVisibility(true);
-                  }
-                  else if (error.response.data.hasOwnProperty('detail')){
-                    const error_msg = error.response.data.detail;
-                    console.error(error_msg);
-                    setErrorList([error_msg]);
-                    setErrorListVisibility(true);
-                  }
-                  else{
-                    setErrorList([`Something went wrong: ${error}.`]);
-                    setErrorListVisibility(true);
-                  }
-                });
-              }
-          }}
+          onSubmit={createAccountAction}
           >
         <h4 className="m-0 relative text-3xl leading-[120%] font-bold text-black text-center">Create Account</h4>
 
@@ -319,46 +323,45 @@ export const EmailConfirmationForm = () => {
     }
   }
 
+  const signupConfirmationAction = (e)=>{
+    e.preventDefault();
+    setErrorListVisibility(false);
+    setSuccessAlertVisibility(false);
+    const secret_key = generateSecretKey();
+    const verification_code = [...pinState].join('');
+    setUserData(prevState=>({...prevState, secretKey: secret_key}))
+
+    completeSignupProcess(
+      userData.email,
+      userData.password,
+      verification_code,
+      userData.firstName,
+      userData.lastName
+      ).then(function (response) {
+        storeAuthData(userData.email);
+        // setUserData(prevState=>({...prevState, csdek: response.data.csdek}))
+        // stepForward();
+        // navigate("/signup/recovery-kit");
+        navigate("/login");
+      })
+      .catch(function (error) {
+        console.log(error);
+        if (error.hasOwnProperty('response') && error.response.data.hasOwnProperty('detail')){
+          const error_msg = error.response.data.detail;
+          console.log(error_msg);
+          setErrorList([error_msg]);
+        }
+        else{
+          setErrorList([`Something went wrong: ${error}.`]);
+        }
+        setErrorListVisibility(true);
+      });
+  }
+
   return (
       <form
         className="bg-white rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[32px]"
-          onSubmit={(e)=>{
-              e.preventDefault();
-              setErrorListVisibility(false);
-              setSuccessAlertVisibility(false);
-              const secret_key = generateSecretKey();
-              const verification_code = [...pinState].join('');
-              setUserData(prevState=>({...prevState, secretKey: secret_key}))
-              completeSignupProcess(
-                userData.email,
-                userData.password,
-                secret_key,
-                verification_code,
-                userData.firstName,
-                userData.lastName
-                ).then(function (response) {
-                  storeAuthData(
-                    userData.email,
-                    userData.password,
-                    secret_key,
-                    response.data.csdek);
-                  setUserData(prevState=>({...prevState, csdek: response.data.csdek}))
-                  stepForward();
-                  navigate("/signup/recovery-kit");
-                })
-                .catch(function (error) {
-                  console.log(error);
-                  if (error.hasOwnProperty('response') && error.response.data.hasOwnProperty('detail')){
-                    const error_msg = error.response.data.detail;
-                    console.log(error_msg);
-                    setErrorList([error_msg]);
-                  }
-                  else{
-                    setErrorList([`Something went wrong: ${error}.`]);
-                  }
-                  setErrorListVisibility(true);
-                });
-          }}
+          onSubmit={signupConfirmationAction}
       >
         <h4 className="m-0 relative text-4xl leading-[120%] font-bold text-black text-center">Verify your email address</h4>
         <p className="m-0 relative text-xl text-background-dark text-center flex items-center w-[538px] h-12 shrink-0">
@@ -499,7 +502,7 @@ const SignUpPage = () => {
     lastName: "",
     country: countries[0],
     password: "",
-    secretKey: null,
+    // secretKey: null,
   });
 
   const [stepIdx, setStepIdx] = useState(1);
@@ -507,16 +510,12 @@ const SignUpPage = () => {
   const [steps, setSteps] = useState({
     1: { id: 'Step 1', name: 'Create Account', to: '', status: 'current' },
     2: { id: 'Step 2', name: 'Email Confirmation', to: 'email-confirmation', status: 'upcoming' },
-    3: { id: 'Step 3', name: 'Finish Setup', to: 'recovery-kit', status: 'upcoming' },
+    // 3: { id: 'Step 3', name: 'Finish Setup', to: 'recovery-kit', status: 'upcoming' },
   })
 
   const updateStepIdx = ({ newStepIdx }) => {
     setStepIdx(newStepIdx);
   }
-
-  // useEffect(()=>{
-  //   const Buffer = BufferPolyfill;
-  // }, [])
 
   useEffect(()=>{
     console.log(stepIdx);

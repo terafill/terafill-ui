@@ -1,3 +1,4 @@
+import React from 'react';
 import Navbar from "../components/Navbar";
 import Button from "../components/Button";
 import { HiLightBulb, HiBugAnt } from "react-icons/hi2";

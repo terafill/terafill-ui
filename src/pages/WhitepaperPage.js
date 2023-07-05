@@ -1,3 +1,4 @@
+import React from 'react';
 import Navbar from "../components/Navbar";
 import KeylanceFooterContainer from "../components/KeylanceFooterContainer";
 import { CheckCircleIcon, InformationCircleIcon } from '@heroicons/react/20/solid'

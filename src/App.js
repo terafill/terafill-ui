@@ -1,3 +1,5 @@
+import React from 'react';
+
 import {
   Routes,
   Route,
@@ -7,6 +9,10 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import { useEffect } from "react";
+import { Buffer } from 'buffer';
+import process from 'process';
+global.Buffer = Buffer;
+global.process = process;
 
 
 
@@ -23,7 +29,7 @@ import SignUpPage from "./pages/SignUpPage";
 import { CreateAccountForm, EmailConfirmationForm, RecoveryKitForm } from "./pages/SignUpPage";
 
 // App Home
-import AppHome, { ItemPanel, ItemPanelIndex, itemDataLoader } from "./pages/AppHome";
+import AppHome, { ItemPanel, ItemPanelIndex } from "./pages/AppHome";
 
 // Settings
 import Settings from './pages/settings/Settings';

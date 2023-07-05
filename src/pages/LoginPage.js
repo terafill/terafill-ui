@@ -1,3 +1,4 @@
+import React from 'react';
 import Button from "../components/Button";
 import Navbar from "../components/Navbar";
 import { NavLink, Outlet, useParams, useLoaderData } from "react-router-dom";
@@ -9,7 +10,8 @@ import Cookies from 'js-cookie';
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
 
 import Errors from "../components/Alerts";
-import { loginUser, storeAuthData, deriveEncryptionKey, fetchDecryptedData } from "../data/auth";
+import { storeAuthData, getHash, fetchDecryptedData } from "../utils/security";
+import { loginUser } from "../data/auth";
 
 
 const LoginPage = () => {
@@ -23,18 +25,18 @@ const LoginPage = () => {
 
     useEffect(()=>{
       if(shouldLoad.current){
-        const csdek = localStorage.getItem("csdek");
-        if (csdek){
-          const csdek_derived = deriveEncryptionKey(csdek, "SHA-256");
-          const secret_key = fetchDecryptedData('secretKey', csdek, csdek_derived);
-          const email = fetchDecryptedData('email', csdek, csdek_derived);
-          setUserData(prevState=>({
-            ...prevState,
-            email: email,
-            secretKey: secret_key,
-          }));
-          setRefreshLogin(true);
-        }
+        // const csdek = localStorage.getItem("csdek");
+        // if (csdek){
+        //   const csdek_derived = getHash(csdek, "SHA-256");
+        //   const secret_key = fetchDecryptedData('secretKey', csdek, csdek_derived);
+        //   const email = fetchDecryptedData('email', csdek, csdek_derived);
+        //   setUserData(prevState=>({
+        //     ...prevState,
+        //     email: email,
+        //     secretKey: secret_key,
+        //   }));
+        //   setRefreshLogin(true);
+        // }
         shouldLoad.current = false;
       }
     }, [])
@@ -44,30 +46,25 @@ const LoginPage = () => {
       <Navbar navbarType="login"/>
       <div className="self-stretch flex-1 overflow-hidden flex flex-col items-center justify-center">
      <form
-      className="bg-white w-2/3 rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[32px]"
+      className="bg-white w-1/2 rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-16 px-16 items-center justify-center gap-[32px]"
       onSubmit={(e)=>{
         e.preventDefault();
         setErrorListVisibility(prevState => (false));
-        loginUser(userData.email, userData.password, userData.secretKey).then(function (response) {
-              storeAuthData(
-                userData.email,
-                userData.password,
-                userData.secretKey,
-                response.data.csdek);
-              setUserData(prevState=>({...prevState, csdek: response.data.csdek}))
+        loginUser(userData.email, userData.password).then(function (response) {
+              storeAuthData(userData.email, userData.password, response.key_wrapping_key)
               navigate("/app/home");
             })
             .catch(function (error) {
               console.log(error);
-              if (error.response.data.hasOwnProperty('detail')){
-                const error_msg = error.response.data.detail;
-                console.log(error_msg);
-                setErrorList([error_msg]);
-              }
-              else{
-                setErrorList([`Something went wrong: ${error}.`]);
-              }
-              setErrorListVisibility(prevState => (true));
+              // if (error.response.data.hasOwnProperty('detail')){
+              //   const error_msg = error.response.data.detail;
+              //   console.log(error_msg);
+              //   setErrorList([error_msg]);
+              // }
+              // else{
+              //   setErrorList([`Something went wrong: ${error}.`]);
+              // }
+              // setErrorListVisibility(prevState => (true));
             });
       }}
       >
@@ -111,7 +108,7 @@ const LoginPage = () => {
             required
           />
         </div>
-        <div className="relative w-2/3">
+{/*        <div className="relative w-2/3">
           <label
             htmlFor="email"
             className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
@@ -129,7 +126,7 @@ const LoginPage = () => {
             required
             disabled={refreshLogin?true:false}
           />
-        </div>
+        </div>*/}
         { isErrorListVisible &&
           <Errors
             errorList={errorList}

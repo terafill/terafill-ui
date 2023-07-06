@@ -7,71 +7,70 @@ import {
   useLocation,
   createBrowserRouter,
   RouterProvider,
-} from "react-router-dom";
-import { useEffect } from "react";
+} from 'react-router-dom';
+import { useEffect } from 'react';
 import { Buffer } from 'buffer';
 import process from 'process';
 global.Buffer = Buffer;
 global.process = process;
 
-
-
 // Landing Page
-import LandingPage from "./pages/LandingPage";
-import ProductsPage from "./pages/ProductsPage";
-import PricingPage from "./pages/PricingPage";
-import WhitepaperPage from "./pages/WhitepaperPage";
-import FaqPage from "./pages/FaqPage";
+import LandingPage from './pages/LandingPage';
+import ProductsPage from './pages/ProductsPage';
+import PricingPage from './pages/PricingPage';
+import WhitepaperPage from './pages/WhitepaperPage';
+import FaqPage from './pages/FaqPage';
 
 // Login and Signup
-import LoginPage from "./pages/LoginPage";
-import SignUpPage from "./pages/SignUpPage";
-import { CreateAccountForm, EmailConfirmationForm, RecoveryKitForm } from "./pages/SignUpPage";
+import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUpPage';
+import { CreateAccountForm, EmailConfirmationForm, RecoveryKitForm } from './pages/SignUpPage';
 
 // App Home
-import AppHome, { ItemPanel, ItemPanelIndex } from "./pages/AppHome";
+import AppHome, { ItemPanel, ItemPanelIndex } from './pages/AppHome';
 
 // Settings
 import Settings from './pages/settings/Settings';
-import SettingsPersonalInfo from "./pages/settings/SettingsPersonalInfo";
-import SettingsDeviceManagement from "./pages/settings/SettingsDeviceManagement";
-import SettingsSecurity from "./pages/settings/SettingsSecurity";
-import SettingsSharing, { SettingsSharingByUser, SettingsSharingByPassword } from "./pages/settings/SettingsSharing";
+import SettingsPersonalInfo from './pages/settings/SettingsPersonalInfo';
+import SettingsDeviceManagement from './pages/settings/SettingsDeviceManagement';
+import SettingsSecurity from './pages/settings/SettingsSecurity';
+import SettingsSharing, {
+  SettingsSharingByUser,
+  SettingsSharingByPassword,
+} from './pages/settings/SettingsSharing';
 
 // Others
-import Import from "./pages/Import";
-import HelpSupport from "./pages/HelpSupport";
-
-
+import Import from './pages/Import';
+import HelpSupport from './pages/HelpSupport';
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element:  <LandingPage />,
+    path: '/',
+    element: <LandingPage />,
   },
   {
-    path: "/app",
+    path: '/app',
     children: [
       {
         // index: true,
-        path: "home",
+        path: 'home',
         element: <AppHome />,
         children: [
           {
-            path: ":id",
-            element: <ItemPanel/>,
+            path: ':id',
+            element: <ItemPanel />,
           },
           {
             index: true,
-            element: <ItemPanelIndex />
+            element: <ItemPanelIndex />,
           },
         ],
       },
       {
-        path: "profile",
+        path: 'profile',
         element: <SettingsPersonalInfo />,
-      }
-    ]
+      },
+    ],
   },
   // {
   //   path: "/app-home",
@@ -89,83 +88,83 @@ const router = createBrowserRouter([
 
   // },
   {
-    path: "/products",
-    element: <ProductsPage />
+    path: '/products',
+    element: <ProductsPage />,
   },
   {
-    path: "/pricing",
-    element: <PricingPage />
+    path: '/pricing',
+    element: <PricingPage />,
   },
   {
-    path: "/whitepaper",
-    element: <WhitepaperPage />
+    path: '/whitepaper',
+    element: <WhitepaperPage />,
   },
   {
-    path: "/faq",
-    element: <FaqPage />
+    path: '/faq',
+    element: <FaqPage />,
   },
   {
-    path: "/login",
-    element: <LoginPage />
+    path: '/login',
+    element: <LoginPage />,
   },
   {
-    path: "/signup",
+    path: '/signup',
     element: <SignUpPage />,
     children: [
       {
         index: true,
-        element: <CreateAccountForm />
+        element: <CreateAccountForm />,
       },
       {
-        path: "email-confirmation",
-        element: <EmailConfirmationForm />
+        path: 'email-confirmation',
+        element: <EmailConfirmationForm />,
       },
       {
-        path: "recovery-kit",
-        element: <RecoveryKitForm />
+        path: 'recovery-kit',
+        element: <RecoveryKitForm />,
       },
-    ]
+    ],
   },
   {
-    path: "/settings",
+    path: '/settings',
     element: <Settings />,
     children: [
       {
         index: true,
-        element: <SettingsPersonalInfo />
+        element: <SettingsPersonalInfo />,
       },
       {
-        path: "security",
-        element: <SettingsSecurity />
+        path: 'security',
+        element: <SettingsSecurity />,
       },
       {
-        path: "sharing",
+        path: 'sharing',
         element: <SettingsSharing />,
         children: [
           {
             index: true,
-            path: "by-password",
-            element: <SettingsSharingByPassword />
+            path: 'by-password',
+            element: <SettingsSharingByPassword />,
           },
           {
-            path: "by-user",
-            element: <SettingsSharingByUser />
+            path: 'by-user',
+            element: <SettingsSharingByUser />,
           },
-        ]
+        ],
       },
       {
-        path: "device-management",
-        element: <SettingsDeviceManagement />
+        path: 'device-management',
+        element: <SettingsDeviceManagement />,
       },
-    ]
+    ],
   },
   {
-    path: "/import",
-    element: <Import />
+    path: '/import',
+    element: <Import />,
   },
   {
-    path: "/help-and-support",
-    element: <HelpSupport />
+    path: '/help-and-support',
+    element: <HelpSupport />,
   },
 ]);
 

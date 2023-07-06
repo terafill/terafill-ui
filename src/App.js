@@ -1,5 +1,12 @@
-import React from 'react';
+import { Buffer } from 'buffer';
+import process from 'process';
 
+import React, { useEffect } from 'react';
+
+global.Buffer = Buffer;
+global.process = process;
+
+// Landing Page
 import {
   Routes,
   Route,
@@ -8,40 +15,33 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from 'react-router-dom';
-import { useEffect } from 'react';
-import { Buffer } from 'buffer';
-import process from 'process';
-global.Buffer = Buffer;
-global.process = process;
 
-// Landing Page
-import LandingPage from './pages/LandingPage';
-import ProductsPage from './pages/ProductsPage';
-import PricingPage from './pages/PricingPage';
-import WhitepaperPage from './pages/WhitepaperPage';
+import AppHome, { ItemPanel, ItemPanelIndex } from './pages/AppHome';
 import FaqPage from './pages/FaqPage';
+import HelpSupport from './pages/HelpSupport';
+import Import from './pages/Import';
+import LandingPage from './pages/LandingPage';
 
 // Login and Signup
 import LoginPage from './pages/LoginPage';
-import SignUpPage from './pages/SignUpPage';
-import { CreateAccountForm, EmailConfirmationForm, RecoveryKitForm } from './pages/SignUpPage';
+import PricingPage from './pages/PricingPage';
+import ProductsPage from './pages/ProductsPage';
 
 // App Home
-import AppHome, { ItemPanel, ItemPanelIndex } from './pages/AppHome';
 
 // Settings
 import Settings from './pages/settings/Settings';
-import SettingsPersonalInfo from './pages/settings/SettingsPersonalInfo';
 import SettingsDeviceManagement from './pages/settings/SettingsDeviceManagement';
+import SettingsPersonalInfo from './pages/settings/SettingsPersonalInfo';
 import SettingsSecurity from './pages/settings/SettingsSecurity';
 import SettingsSharing, {
   SettingsSharingByUser,
   SettingsSharingByPassword,
 } from './pages/settings/SettingsSharing';
+import SignUpPage, { CreateAccountForm, EmailConfirmationForm, RecoveryKitForm } from './pages/SignUpPage';
+import WhitepaperPage from './pages/WhitepaperPage';
 
 // Others
-import Import from './pages/Import';
-import HelpSupport from './pages/HelpSupport';
 
 const router = createBrowserRouter([
   {

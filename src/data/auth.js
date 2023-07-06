@@ -1,9 +1,10 @@
 // import jsrp from '../jsrp';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import { Buffer } from 'buffer/';
+import Cookies from 'js-cookie';
 
 import { getAuthClientDetails, getVDEK, getRSAPrivateKey, getSRPClient } from '../utils/security';
+
 
 export const initateSignupProcess = (email) => {
   var data = JSON.stringify({

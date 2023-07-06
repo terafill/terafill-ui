@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+
 import { createAvatar } from '@dicebear/avatars';
 import * as style from '@dicebear/avatars-male-sprites';
 

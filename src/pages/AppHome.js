@@ -1,6 +1,6 @@
-import React from 'react';
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef , Fragment } from 'react';
 
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import {
   NavLink,
   Outlet,
@@ -10,23 +10,11 @@ import {
   useOutletContext,
   useLocation,
 } from 'react-router-dom';
-import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import MoonLoader from 'react-spinners/MoonLoader';
-
-import Navbar from '../components/Navbar';
-import SideNavbar from '../components/SideNavbar';
-import Button from '../components/Button';
-import { useTokenExpiration } from '../components/TokenTools';
-import { getKeyWrappingKeyPair, decryptData } from '../utils/security';
-import { updateVaultItem, createVaultItem, deleteVaultItem } from '../data/item';
-import { addVault, getVaults, getVaultItems, updateVault, deleteVault } from '../data/vault';
-import './AppHome.css';
-
-// For multi vault dropdown
-import { Fragment } from 'react';
-import { Listbox, Transition } from '@headlessui/react';
+import { v4 as uuidv4 } from 'uuid';
+import { Listbox, Transition , Menu } from '@headlessui/react';
 import {
   ChevronUpDownIcon,
   ArchiveBoxIcon,
@@ -42,7 +30,14 @@ import {
   FolderPlusIcon,
 } from '@heroicons/react/20/solid';
 
-import { v4 as uuidv4 } from 'uuid';
+import Button from '../components/Button';
+import Navbar from '../components/Navbar';
+import SideNavbar from '../components/SideNavbar';
+import { useTokenExpiration } from '../components/TokenTools';
+import { updateVaultItem, createVaultItem, deleteVaultItem } from '../data/item';
+import { addVault, getVaults, getVaultItems, updateVault, deleteVault } from '../data/vault';
+import { getKeyWrappingKeyPair, decryptData } from '../utils/security';
+import './AppHome.css';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -481,7 +476,6 @@ function DeleteVaultPopup({ open, setOpen, selectedVault, vaultList, deleteVault
   );
 }
 
-import { Menu } from '@headlessui/react';
 
 function VaultSettingsMenu({
   vaultList,

@@ -1,7 +1,9 @@
-import React from 'react';
-import { memo } from 'react';
-import Button from '../components/Button';
+import React, { memo } from 'react';
+
 import { NavLink } from 'react-router-dom';
+
+import Button from '../components/Button';
+
 
 const SignoutPopup = memo(({ onConfirm, onClose }) => {
   return (

@@ -1,12 +1,15 @@
 import React from 'react';
-import Navbar from '../components/Navbar';
-import KeylanceFooterContainer from '../components/KeylanceFooterContainer';
+
+
 import {
   ArrowPathIcon,
   CloudArrowUpIcon,
   FingerPrintIcon,
   LockClosedIcon,
 } from '@heroicons/react/24/outline';
+
+import KeylanceFooterContainer from '../components/KeylanceFooterContainer';
+import Navbar from '../components/Navbar';
 
 const features = [
   {

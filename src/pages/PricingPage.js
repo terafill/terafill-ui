@@ -1,8 +1,10 @@
-import React from 'react';
-import Navbar from '../components/Navbar';
-import KeylanceFooterContainer from '../components/KeylanceFooterContainer';
-import { Fragment } from 'react';
+import React, { Fragment } from 'react';
+
+
 import { CheckIcon, MinusIcon } from '@heroicons/react/20/solid';
+
+import KeylanceFooterContainer from '../components/KeylanceFooterContainer';
+import Navbar from '../components/Navbar';
 
 const tiers = [
   {

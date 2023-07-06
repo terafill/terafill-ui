@@ -1,16 +1,16 @@
-import React from 'react';
-import { NavLink, Outlet, useParams, useLoaderData } from 'react-router-dom';
-import { useNavigate, useOutletContext } from 'react-router-dom';
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-import axios from 'axios';
+
+
 import { ChevronDownIcon } from '@heroicons/react/24/solid';
+import axios from 'axios';
+import { NavLink, Outlet, useParams, useLoaderData , useNavigate, useOutletContext } from 'react-router-dom';
 
+import Errors, { SuccessAlert } from '../components/Alerts';
 import Button from '../components/Button';
 import Navbar from '../components/Navbar';
-import Errors, { SuccessAlert } from '../components/Alerts';
-import { generateSecretKey, storeAuthData } from '../utils/security';
 import { initateSignupProcess, completeSignupProcess } from '../data/auth';
+import { generateSecretKey, storeAuthData } from '../utils/security';
 
 const countries = [
   'India',

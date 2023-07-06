@@ -1,8 +1,7 @@
-import React from 'react';
-import { useState } from 'react';
-import { XCircleIcon } from '@heroicons/react/20/solid';
+import React, { useState } from 'react';
+
+import { XCircleIcon , CheckCircleIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { AiOutlineCloseSquare } from 'react-icons/ai';
-import { CheckCircleIcon, XMarkIcon } from '@heroicons/react/20/solid';
 
 export default function Errors({ errorList, showAlert, setAlertVisibilty }) {
   const closeErrors = () => {

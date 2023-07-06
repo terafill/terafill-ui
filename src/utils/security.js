@@ -1,37 +1,20 @@
-import forge from 'node-forge';
-import CryptoJS from 'crypto-js';
-import { v4 as uuidv4 } from 'uuid';
-import SRP from 'srp-js';
-// import jsrp from "jsrp"
 import { Buffer } from 'buffer/';
-// import crypto from "crypto";
+import CryptoJS from 'crypto-js';
+import forge from 'node-forge';
+import SRP from 'srp-js';
+import { v4 as uuidv4 } from 'uuid';
 
 export const getSRPClient = (username, password, salt) => {
-  console.log('getSRPClient_.email', username);
-  console.log('getSRPClient_.password', password);
-
   return new Promise((resolve, reject) => {
     const params = SRP.params[1024];
 
     var identity = Buffer.from(username);
-    console.log('getSRPClient.username', username);
-    console.log('getSRPClient.password', password);
     var password_ = Buffer.from(password);
     var salt_ = Buffer.from(salt, 'hex');
-    // var salt = crypto.randomBytes(32);
-    // var salt = Buffer.from(CryptoJS.lib.WordArray.random(32).toString(), 'hex');
     var verifier = SRP.computeVerifier(params, salt_, identity, password_);
-    // var secret = crypto.randomBytes(32);
     var secret = Buffer.from(CryptoJS.lib.WordArray.random(32).toString(), 'hex');
-
     const client = new SRP.Client(params, salt_, identity, password_, secret);
     resolve(client);
-
-    // var client = new jsrp.client();
-
-    // client.init({username: username, password: password, length: 1024}, ()=> {
-    //     resolve(client);
-    // })
   });
 };
 
@@ -40,22 +23,8 @@ export const getAuthClientDetails = (username, password) => {
     const params = SRP.params[1024];
     var identity = Buffer.from(username);
     var password_ = Buffer.from(password);
-    // var salt = crypto.randomBytes(32);
     var salt = Buffer.from(CryptoJS.lib.WordArray.random(32).toString(), 'hex');
     var verifier = SRP.computeVerifier(params, salt, identity, password_);
-
-    // var client = new jsrp.client();
-
-    // client.init({username: username, password: password, length: 1024}, ()=> {})
-
-    // client.createVerifier((err, result) => {
-    //     if(err) {
-    //         reject(err);
-    //     } else {
-    //         console.log("result", result.salt, result.verifier);
-    //         resolve([result.salt, result.verifier]);
-    //     }
-    // });
     resolve([salt, verifier]);
   });
 };

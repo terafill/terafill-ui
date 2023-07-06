@@ -1,6 +1,6 @@
+import Card from '../../components/Card';
 import Navbar from '../../components/Navbar';
 import SettingsPanel from '../../components/SettingsPanel';
-import Card from '../../components/Card';
 
 const userSecurity = [
   {

@@ -1,6 +1,9 @@
 import React from 'react';
-import Button from '../components/Button';
+
 import { NavLink } from 'react-router-dom';
+
+import Button from '../components/Button';
+
 
 const SettingsPanel = ({ activeSettingsPanel, setActiveSettingsPanel }) => {
   const extraBoxShadow = '0px 0px 4px rgba(0, 0, 0, 0.25) inset';

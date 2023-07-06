@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
 
 import hash from 'object-hash';
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { getProfile, updateProfile, getProfileImage } from '../../data/user';
+import { ToastContainer, toast } from 'react-toastify';
+
 import Avatar from '../../components/Avatar';
 import Button from '../../components/Button';
-import Navbar from '../../components/Navbar';
-import SideNavbar from '../../components/SideNavbar';
-import SettingsPanel from '../../components/SettingsPanel';
 import Card from '../../components/Card';
+import Navbar from '../../components/Navbar';
+import SettingsPanel from '../../components/SettingsPanel';
+import SideNavbar from '../../components/SideNavbar';
+import { getProfile, updateProfile, getProfileImage } from '../../data/user';
 
 const SettingsPersonalInfo = () => {
   const [saveButtonEnabled, setSaveButtonEnabled] = useState(false);

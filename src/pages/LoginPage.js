@@ -1,17 +1,16 @@
-import React from 'react';
-import Button from '../components/Button';
-import Navbar from '../components/Navbar';
-import { NavLink, Outlet, useParams, useLoaderData } from 'react-router-dom';
-import { useNavigate, useOutletContext } from 'react-router-dom';
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
+
+import { ChevronDownIcon } from '@heroicons/react/24/solid';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { ChevronDownIcon } from '@heroicons/react/24/solid';
+import { NavLink, Outlet, useParams, useLoaderData , useNavigate, useOutletContext } from 'react-router-dom';
 
 import Errors from '../components/Alerts';
-import { storeAuthData, getHash, fetchDecryptedData } from '../utils/security';
+import Button from '../components/Button';
+import Navbar from '../components/Navbar';
 import { loginUser } from '../data/auth';
+import { storeAuthData, getHash, fetchDecryptedData } from '../utils/security';
 
 const LoginPage = () => {
   const navigate = useNavigate();

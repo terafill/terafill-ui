@@ -4,9 +4,8 @@ import { NavLink } from 'react-router-dom';
 
 import Button from '../components/Button';
 
-
 const SettingsPanel = ({ activeSettingsPanel, setActiveSettingsPanel }) => {
-  const extraBoxShadow = '0px 0px 4px rgba(0, 0, 0, 0.25) inset';
+  // const extraBoxShadow = '0px 0px 4px rgba(0, 0, 0, 0.25) inset';
   return (
     <nav className='self-stretch bg-white bg-font-light shadow-[2px_4px_4px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-0 px-4 items-center justify-center gap-[64px] z-[1]'>
       <NavLink to='' onClick={() => setActiveSettingsPanel('Personal Info')}>

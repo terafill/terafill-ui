@@ -1,11 +1,8 @@
 import React, { memo } from 'react';
 
-import { NavLink } from 'react-router-dom';
-
 import Button from '../components/Button';
 
-
-const SignoutPopup = memo(({ onConfirm, onClose }) => {
+const SignoutPopup = ({ onConfirm, onClose }) => {
   return (
     <div className='bg-white relative rounded-md overflow-hidden px-8 py-8 flex flex-col items-center justify-center gap-4 max-w-full max-h-full'>
       <b className='relative flex items-center justify-center shrink-0 text-lg'>
@@ -17,6 +14,6 @@ const SignoutPopup = memo(({ onConfirm, onClose }) => {
       </div>
     </div>
   );
-});
+};
 
-export default SignoutPopup;
+export default memo(SignoutPopup);

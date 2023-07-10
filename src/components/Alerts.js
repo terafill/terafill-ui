@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-import { XCircleIcon , CheckCircleIcon, XMarkIcon } from '@heroicons/react/20/solid';
+import { XCircleIcon, CheckCircleIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { AiOutlineCloseSquare } from 'react-icons/ai';
 
 export default function Errors({ errorList, showAlert, setAlertVisibilty }) {

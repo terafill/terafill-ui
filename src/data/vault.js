@@ -1,5 +1,4 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
 
 const baseUrl = 'http://localhost:8000/api/v1';
 

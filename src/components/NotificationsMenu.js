@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 
 import { MenuItem } from '../components/Menu';
 
-const NotificationsMenu = memo(({ onClose }) => {
+const NotificationsMenu = () => {
   return (
     <div className='relative shadow-[0px_0px_4px_rgba(0,_0,_0,_0.25)] rounded-md bg-white overflow-hidden flex flex-col items-center justify-center max-w-full max-h-full'>
       <div className='px-2 py-2 w-[232px] overflow-hidden flex flex-col items-center justify-center gap-2'>
@@ -12,6 +12,6 @@ const NotificationsMenu = memo(({ onClose }) => {
       </div>
     </div>
   );
-});
+};
 
-export default NotificationsMenu;
+export default memo(NotificationsMenu);

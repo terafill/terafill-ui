@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react';
 
-
 import { CheckIcon, MinusIcon } from '@heroicons/react/20/solid';
 
 import KeylanceFooterContainer from '../components/KeylanceFooterContainer';

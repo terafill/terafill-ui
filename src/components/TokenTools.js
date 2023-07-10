@@ -1,11 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import Cookies from 'js-cookie';
-import jwt_decode from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 
 import { getLoginStatus } from '../data/auth';
-
 
 export function cleanupUserSession(navigate = null) {
   Cookies.remove('sessionToken');

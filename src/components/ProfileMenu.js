@@ -1,6 +1,5 @@
 import React, { memo, useState, useCallback } from 'react';
 
-
 import { useNavigate } from 'react-router-dom';
 
 import { cleanupUserSession } from './TokenTools';
@@ -9,20 +8,20 @@ import PortalPopup from '../components/PortalPopup';
 import SignoutPopup from '../components/SignoutPopup';
 import { logoutUser } from '../data/auth';
 
-const ProfileMenu = memo(({ onClose }) => {
+const ProfileMenu = () => {
   const [isSignoutPopupOpen, setSignoutPopupOpen] = useState(false);
   const navigate = useNavigate();
 
   const onSignoutConfirm = useCallback(() => {
     // Signout
     logoutUser()
-      .then(function (response) {
+      .then(function () {
         cleanupUserSession();
         console.log('Session cleaned up!');
       })
       .catch(function (error) {
         console.log(error);
-        if (error.response.data.hasOwnProperty('detail')) {
+        if (error?.response?.data?.detail) {
           const error_msg = error.response.data.detail;
           console.log(error_msg);
           alert([error_msg]);
@@ -64,6 +63,6 @@ const ProfileMenu = memo(({ onClose }) => {
       )}
     </>
   );
-});
+};
 
-export default ProfileMenu;
+export default memo(ProfileMenu);

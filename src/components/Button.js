@@ -5,11 +5,9 @@ const Button = ({
   buttonClassName,
   onClick,
   label,
-  labelDisplay,
   labelClassName,
   icon,
   iconComponent,
-  iconDisplay,
   iconPosition = 'left',
   iconClassName,
   ...props

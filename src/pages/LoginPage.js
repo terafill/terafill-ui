@@ -1,16 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-
-import { ChevronDownIcon } from '@heroicons/react/24/solid';
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import { NavLink, Outlet, useParams, useLoaderData , useNavigate, useOutletContext } from 'react-router-dom';
+import {
+  useNavigate,
+} from 'react-router-dom';
 
 import Errors from '../components/Alerts';
 import Button from '../components/Button';
 import Navbar from '../components/Navbar';
 import { loginUser } from '../data/auth';
-import { storeAuthData, getHash, fetchDecryptedData } from '../utils/security';
+import { storeAuthData } from '../utils/security';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -22,20 +20,9 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (shouldLoad.current) {
-      // const csdek = localStorage.getItem("csdek");
-      // if (csdek){
-      //   const csdek_derived = getHash(csdek, "SHA-256");
-      //   const secret_key = fetchDecryptedData('secretKey', csdek, csdek_derived);
-      //   const email = fetchDecryptedData('email', csdek, csdek_derived);
-      //   setUserData(prevState=>({
-      //     ...prevState,
-      //     email: email,
-      //     secretKey: secret_key,
-      //   }));
-      //   setRefreshLogin(true);
-      // }
-      shouldLoad.current = false;
-    }
+        setRefreshLogin(true);
+        shouldLoad.current = false;
+      }
   }, []);
 
   return (

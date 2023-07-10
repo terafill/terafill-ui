@@ -5,9 +5,6 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import './global.css';
 
-// window.Buffer = window.Buffer || require("buffer").Buffer;
-import { Buffer } from 'buffer';
-
 const container = document.getElementById('root');
 const root = createRoot(container);
 

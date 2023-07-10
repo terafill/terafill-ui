@@ -1,20 +1,13 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment } from 'react';
 
-
-import { Dialog, Transition } from '@headlessui/react';
 import {
-  Bars3Icon,
-  CalendarIcon,
   ChartPieIcon,
-  DocumentDuplicateIcon,
-  FolderIcon,
   HomeIcon,
   UsersIcon,
-  XMarkIcon,
   ShieldCheckIcon,
   UserIcon,
 } from '@heroicons/react/24/outline';
-import { useNavigate, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 const navigation = [
   { name: 'Home', href: '/app/home', icon: HomeIcon, comingSoon: false },
@@ -29,9 +22,6 @@ function classNames(...classes) {
 }
 
 export default function SideNavbar() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const navigate = useNavigate();
-
   return (
     <>
       <div className='h-full w-24 flex flex-0 justify-center bg-gray-900'>
@@ -43,7 +33,7 @@ export default function SideNavbar() {
               disabled={true}
               className={item.comingSoon ? 'pointer-events-none' : ''}
             >
-              {({ isActive, isPending }) => (
+              {({ isActive }) => (
                 <li key={item.name} className='cursor-pointer flex flex-1 p-2 h-24 w-24'>
                   <div
                     className={classNames(

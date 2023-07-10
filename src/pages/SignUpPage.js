@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-
-
-import { ChevronDownIcon } from '@heroicons/react/24/solid';
-import axios from 'axios';
-import { NavLink, Outlet, useParams, useLoaderData , useNavigate, useOutletContext } from 'react-router-dom';
+import {
+  Outlet,
+  useNavigate,
+  useOutletContext,
+} from 'react-router-dom';
 
 import Errors, { SuccessAlert } from '../components/Alerts';
 import Button from '../components/Button';
@@ -488,7 +488,6 @@ const SignUpPage = () => {
     lastName: '',
     country: countries[0],
     password: '',
-    // secretKey: null,
   });
 
   const [stepIdx, setStepIdx] = useState(1);

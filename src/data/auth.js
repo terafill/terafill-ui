@@ -1,10 +1,8 @@
 // import jsrp from '../jsrp';
 import axios from 'axios';
 import { Buffer } from 'buffer/';
-import Cookies from 'js-cookie';
 
-import { getAuthClientDetails, getVDEK, getRSAPrivateKey, getSRPClient } from '../utils/security';
-
+import { getAuthClientDetails, getRSAPrivateKey, getSRPClient } from '../utils/security';
 
 export const initateSignupProcess = (email) => {
   var data = JSON.stringify({
@@ -135,7 +133,7 @@ export const loginUser = async (email, password) => {
 
     // Send A to server and receive B
     const login_response = await initiateLogin(email, Buffer.from(clientPubliKey).toString('hex'));
-    const { salt_, server_public_key } = login_response.data;
+    const { server_public_key } = login_response.data;
     client.setB(Buffer.from(server_public_key, 'hex'));
 
     const clientProof = client.computeM1();

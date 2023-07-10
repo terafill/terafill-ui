@@ -1,33 +1,26 @@
-import React, { useEffect, useState, useRef , Fragment } from 'react';
-
+import React, { useEffect, useState, useRef, Fragment } from 'react';
+import { Dialog, Listbox, Transition, Menu } from '@headlessui/react';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import {
   NavLink,
   Outlet,
   useParams,
-  useLoaderData,
   useNavigate,
   useOutletContext,
   useLocation,
 } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import MoonLoader from 'react-spinners/MoonLoader';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
-import { Listbox, Transition , Menu } from '@headlessui/react';
+import { CheckIcon } from '@heroicons/react/24/outline';
 import {
   ChevronUpDownIcon,
-  ArchiveBoxIcon,
-  ArrowRightCircleIcon,
-  ChevronDownIcon,
-  DocumentDuplicateIcon,
-  HeartIcon,
   PencilSquareIcon,
   TrashIcon,
   UserPlusIcon,
   CogIcon,
   SquaresPlusIcon,
-  FolderPlusIcon,
 } from '@heroicons/react/20/solid';
 
 import Button from '../components/Button';
@@ -114,10 +107,6 @@ function MultiVaultDropown({ vaultList, selectedVault, setSelectedVault }) {
     </Listbox>
   );
 }
-
-// import { Fragment, useRef, useState } from 'react'
-import { Dialog } from '@headlessui/react';
-import { CheckIcon } from '@heroicons/react/24/outline';
 
 function EditVaultPopup({ open, setOpen, selectedVault, vaultList, updateVaultState }) {
   const cancelButtonRef = useRef(null);
@@ -475,7 +464,6 @@ function DeleteVaultPopup({ open, setOpen, selectedVault, vaultList, deleteVault
     </Transition.Root>
   );
 }
-
 
 function VaultSettingsMenu({
   vaultList,

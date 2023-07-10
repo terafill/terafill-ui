@@ -1,4 +1,6 @@
-import React, { useMemo } from 'react';
+import React from 'react';
+
+import { v4 as uuidv4 } from 'uuid';
 
 import Button from '../components/Button';
 
@@ -44,11 +46,19 @@ const Card = ({
       </div>
       <div className='flex flex-col' id='card-body'>
         {cardBodyData.map((cardItemData) => {
+          const uuid = uuidv4();
           if (cardType === 'device') {
-            return <CardItem label={cardItemData.eventDate} text={cardItemData.eventDescription} />;
+            return (
+              <CardItem
+                key={uuid}
+                label={cardItemData.eventDate}
+                text={cardItemData.eventDescription}
+              />
+            );
           } else if (cardType === 'password') {
             return (
               <CardItem
+                key={uuid}
                 label={cardItemData.userName}
                 label2={cardItemData.userEmail}
                 blockButton={true}
@@ -57,6 +67,7 @@ const Card = ({
           } else if (cardType === 'user') {
             return (
               <CardItem
+                key={uuid}
                 label={cardItemData.passwordAppName}
                 label2={cardItemData.passwordUserName}
                 blockButton={true}
@@ -65,6 +76,7 @@ const Card = ({
           } else if (cardType === 'userProfile') {
             return (
               <CardItem
+                key={uuid}
                 label={cardItemData.attributeType}
                 label2={cardItemData.attributeValue}
                 editButton={true}
@@ -73,6 +85,7 @@ const Card = ({
           } else if (cardType === 'userSecurity') {
             return (
               <CardItem
+                key={uuid}
                 id={cardItemData.attributeType}
                 label={cardItemData.attributeType}
                 editButton={true}

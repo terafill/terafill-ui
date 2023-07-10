@@ -8,7 +8,6 @@ import { getLoginStatus } from '../data/auth';
 export function cleanupUserSession(navigate = null) {
   Cookies.remove('sessionToken');
   Cookies.remove('sessionId');
-  localStorage.removeItem('vdek');
   if (navigate) {
     navigate('/login');
   }
@@ -17,10 +16,9 @@ export function cleanupUserSession(navigate = null) {
 
 export async function isUserSessionValid() {
   try {
-    const response = await getLoginStatus();
-    return response.data.loggedIn;
+    const { response }  = await getLoginStatus();
+    return response?.loggedIn||false;
   } catch (error) {
-    console.error(error);
     return false;
   }
 }

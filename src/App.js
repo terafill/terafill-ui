@@ -21,7 +21,6 @@ import SettingsSharing, {
 import SignUpPage, {
   CreateAccountForm,
   EmailConfirmationForm,
-  RecoveryKitForm,
 } from './pages/SignUpPage';
 import WhitepaperPage from './pages/WhitepaperPage';
 
@@ -85,11 +84,7 @@ const router = createBrowserRouter([
       {
         path: 'email-confirmation',
         element: <EmailConfirmationForm />,
-      },
-      {
-        path: 'recovery-kit',
-        element: <RecoveryKitForm />,
-      },
+      }
     ],
   },
   {

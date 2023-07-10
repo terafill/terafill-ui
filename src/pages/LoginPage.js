@@ -3,8 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   useNavigate,
 } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
 
-import Errors from '../components/Alerts';
+import 'react-toastify/dist/ReactToastify.css';
 import Button from '../components/Button';
 import Navbar from '../components/Navbar';
 import { loginUser } from '../data/auth';
@@ -12,18 +13,30 @@ import { storeAuthData } from '../utils/security';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const [userData, setUserData] = useState({ email: '', password: '' });
-  const [errorList, setErrorList] = useState([]);
-  const [isErrorListVisible, setErrorListVisibility] = useState(false);
+  const email = localStorage.getItem("email");
+  const [userData, setUserData] = useState({ email: email||'', password: '' });
   const [refreshLogin, setRefreshLogin] = useState(false);
   const shouldLoad = useRef(true);
 
   useEffect(() => {
     if (shouldLoad.current) {
-        setRefreshLogin(true);
+        if(email){
+          setRefreshLogin(true);
+        }
         shouldLoad.current = false;
       }
   }, []);
+
+  const attemptLogin = async (e) => {
+    e.preventDefault();
+    const {response, error} = await loginUser(userData.email, userData.password);
+    if (error){toast.error(error);}
+    else{
+      storeAuthData(userData.email, userData.password, response.key_wrapping_key);
+      toast.success("Login successful");
+      navigate('/app/home');
+    }
+  }
 
   return (
     <div className='bg-gray-100 w-screen h-screen flex flex-col items-center justify-center'>
@@ -31,28 +44,9 @@ const LoginPage = () => {
       <div className='self-stretch flex-1 overflow-hidden flex flex-col items-center justify-center'>
         <form
           className='bg-white w-1/2 rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-16 px-16 items-center justify-center gap-[32px]'
-          onSubmit={(e) => {
-            e.preventDefault();
-            setErrorListVisibility((prevState) => false);
-            loginUser(userData.email, userData.password)
-              .then(function (response) {
-                storeAuthData(userData.email, userData.password, response.key_wrapping_key);
-                navigate('/app/home');
-              })
-              .catch(function (error) {
-                console.log(error);
-                // if (error.response.data.hasOwnProperty('detail')){
-                //   const error_msg = error.response.data.detail;
-                //   console.log(error_msg);
-                //   setErrorList([error_msg]);
-                // }
-                // else{
-                //   setErrorList([`Something went wrong: ${error}.`]);
-                // }
-                // setErrorListVisibility(prevState => (true));
-              });
-          }}
+          onSubmit={attemptLogin}
         >
+          <ToastContainer />
           <h4 className='m-0 relative text-3xl leading-[120%] font-bold text-black text-center'>
             Welcome
           </h4>
@@ -99,33 +93,6 @@ const LoginPage = () => {
               required
             />
           </div>
-          {/*        <div className="relative w-2/3">
-          <label
-            htmlFor="email"
-            className="absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700"
-          >
-            Secret Key
-          </label>
-          <input
-            type="password"
-            name="secret-key"
-            id="secret-key"
-            className="w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
-            placeholder="Enter Secret key"
-            onChange={ (e) =>{setUserData(prevState => ({...prevState, secretKey: e.target.value}))} }
-            value={userData.secretKey}
-            required
-            disabled={refreshLogin?true:false}
-          />
-        </div>*/}
-          {isErrorListVisible && (
-            <Errors
-              errorList={errorList}
-              showAlert={isErrorListVisible}
-              setAlertVisibilty={setErrorListVisibility}
-            />
-          )}
-
           <Button buttonType='dark' label='Submit' type='submit' />
         </form>
       </div>

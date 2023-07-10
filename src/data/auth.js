@@ -4,20 +4,31 @@ import { Buffer } from 'buffer/';
 
 import { getAuthClientDetails, getRSAPrivateKey, getSRPClient } from '../utils/security';
 
-export const initateSignupProcess = (email) => {
-  var data = JSON.stringify({
-    email: email,
-  });
-  var config = {
-    method: 'post',
-    url: `http://localhost:8000/api/v1/auth/signup`,
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
-    data: data,
-  };
-  return axios(config);
+const baseUrl = 'http://localhost:8000/api/v1'
+const clientId = 'b980b13c-4db8-4e8a-859c-4544fd70825f'
+
+export const initateSignupProcess = async (email) => {
+  try {
+    var data = JSON.stringify({
+      email: email,
+    });
+    var config = {
+      method: 'post',
+      url: `${baseUrl}/auth/signup`,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      data: data,
+    };
+    const response = await axios(config);
+    return {response: response?.data||{}}
+
+    }
+    catch(error) {
+      const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+      return { error: error_msg }
+    }
 };
 
 export const completeSignupProcess = async (
@@ -27,39 +38,42 @@ export const completeSignupProcess = async (
   first_name,
   last_name,
 ) => {
-  // generate verifier and salt
-  getAuthClientDetails(email, password)
-    .then(([salt, verifier]) => {
-      const encrypted_key_wrapping_key = getRSAPrivateKey(password, true);
+  try {
+    // generate verifier and salt
+    const [salt, verifier] = await getAuthClientDetails(email, password)
+      .then(([salt, verifier]) => {return [salt, verifier]})
 
-      const data = JSON.stringify({
-        email: email,
-        verification_code: verification_code,
-        first_name: first_name,
-        last_name: last_name,
-        verifier: verifier.toString('hex'),
-        salt: salt.toString('hex'),
-        encrypted_key_wrapping_key: encrypted_key_wrapping_key,
-      });
+    const encrypted_key_wrapping_key = getRSAPrivateKey(password, true);
+
+    const data = JSON.stringify({
+      email: email,
+      verification_code: verification_code,
+      first_name: first_name,
+      last_name: last_name,
+      verifier: verifier.toString('hex'),
+      salt: salt.toString('hex'),
+      encrypted_key_wrapping_key: encrypted_key_wrapping_key,
+    });
 
       const config = {
         withCredentials: true,
         method: 'post',
-        url: `http://localhost:8000/api/v1/auth/signup/confirm`,
+        url: `${baseUrl}/auth/signup/confirm`,
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
-          'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
+          'client-id': clientId,
         },
         data: data,
       };
 
-      return axios(config);
-    })
-    .catch((err) => {
-      console.error(err);
-      return null;
-    });
+      const response = await axios(config);
+      return {response: response?.data||{}}
+    }
+    catch(error) {
+      const error_msg = error?.response?.data?.detail?.info||`Something went wrong: ${error}.`;
+      return { error: error_msg }
+    }
 };
 
 const getSalt = (email) => {
@@ -70,11 +84,11 @@ const getSalt = (email) => {
   var config = {
     withCredentials: true,
     method: 'post',
-    url: `http://localhost:8000/api/v1/auth/salt`,
+    url: `${baseUrl}/auth/salt`,
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
+      'client-id': clientId,
     },
     data: data,
   };
@@ -90,11 +104,11 @@ const initiateLogin = (email, clientPubliKey) => {
   var config = {
     withCredentials: true,
     method: 'post',
-    url: `http://localhost:8000/api/v1/auth/login`,
+    url: `${baseUrl}/auth/login`,
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
+      'client-id': clientId,
     },
     data: data,
   };
@@ -110,11 +124,11 @@ const confirmLogin = (email, clientProof) => {
   var config = {
     withCredentials: true,
     method: 'post',
-    url: `http://localhost:8000/api/v1/auth/login/confirm`,
+    url: `${baseUrl}/auth/login/confirm`,
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
+      'client-id': clientId,
     },
     data: data,
   };
@@ -144,45 +158,47 @@ export const loginUser = async (email, password) => {
       Buffer.from(clientProof).toString('hex'),
     );
     const { server_proof, key_wrapping_key } = confirm_login_response.data;
-    // if (client.checkServerProof(server_proof)){
     if (client.checkM2(Buffer.from(server_proof, 'hex'))) {
       console.warn('Server verified!');
       return {
-        loggedIn: true,
-        key_wrapping_key: key_wrapping_key,
+        response: {key_wrapping_key: key_wrapping_key},
       };
     } else {
-      console.error('Server not verified!');
-      return {
-        loggedIn: false,
-      };
+      return {error: "Server not verified!"};
     }
-  } catch (error) {
-    console.error(error);
-  }
-
-  return false;
+    }
+    catch(error) {
+      const error_msg = error?.response?.data?.detail?.info||`Something went wrong: ${error}.`;
+      return { error: error_msg }
+    }
 };
 
-export const getLoginStatus = () => {
-  var config = {
-    withCredentials: true,
-    method: 'get',
-    url: `http://localhost:8000/api/v1/auth/status`,
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
-  };
+export const getLoginStatus = async () => {
+  try {
+    var config = {
+      withCredentials: true,
+      method: 'get',
+      url: `${baseUrl}/auth/status`,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+    };
 
-  return axios(config);
+    const response = await axios(config);
+    return {response: response?.data||{}}
+  }
+  catch(error) {
+    const error_msg = error?.response?.data?.detail?.info||`Something went wrong: ${error}.`;
+    return { error: error_msg }
+  }
 };
 
 export const logoutUser = () => {
   var config = {
     withCredentials: true,
     method: 'post',
-    url: `http://localhost:8000/api/v1/auth/logout`,
+    url: `${baseUrl}/auth/logout`,
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',

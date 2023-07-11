@@ -1,15 +1,13 @@
 import { useEffect, useState } from 'react';
 
-import hash from 'object-hash';
-import 'react-toastify/dist/ReactToastify.css';
 
+import hash from 'object-hash';
 import { ToastContainer, toast } from 'react-toastify';
 
+import 'react-toastify/dist/ReactToastify.css';
 import Avatar from '../../components/Avatar';
 import Button from '../../components/Button';
-import Card from '../../components/Card';
 import Navbar from '../../components/Navbar';
-import SettingsPanel from '../../components/SettingsPanel';
 import SideNavbar from '../../components/SideNavbar';
 import { getProfile, updateProfile, getProfileImage } from '../../data/user';
 
@@ -33,38 +31,40 @@ const SettingsPersonalInfo = () => {
     profileImage: '',
   });
 
-  const loadProfile = () => {
-    getProfile()
-      .then((response) => {
-        console.log(response);
-        setUserProfile((prevState) => ({
-          ...prevState,
-          email: response.email,
-          firstName: response.first_name ? response.first_name : '',
-          lastName: response.last_name ? response.last_name : '',
-          phoneNo: response.phone_no ? response.phone_no : '',
-          birthday: response.birthday ? response.birthday : '',
-          gender: response.gender ? response.gender : '',
-        }));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  const loadProfileData = async () => {
+    const { response, error } = await getProfile();
+    if (error) {
+      toast.error(error);
+    } else {
+      setUserProfile((prevState) => ({
+        ...prevState,
+        email: response.email,
+        firstName: response.first_name ? response.first_name : '',
+        lastName: response.last_name ? response.last_name : '',
+        phoneNo: response.phone_no ? response.phone_no : '',
+        birthday: response.birthday ? response.birthday : '',
+        gender: response.gender ? response.gender : '',
+      }));
+    }
+  };
 
-    getProfileImage()
-      .then((response) => {
-        console.log(response);
-        // const base64Image = `data:image/jpeg;base64,${response.data.imageData}`;
-        setUserProfile((prevState) => ({
-          ...prevState,
-          profileImage: response.profile_image
-            ? `data:image/jpeg;base64,${response.profile_image}`
-            : '',
-        }));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  const loadProfileImage = async () => {
+    const { response, error } = await getProfileImage();
+    if (error) {
+      toast.error(error);
+    } else {
+      setUserProfile((prevState) => ({
+        ...prevState,
+        profileImage: response.profile_image
+          ? `data:image/jpeg;base64,${response.profile_image}`
+          : '',
+      }));
+    }
+  };
+
+  const loadProfile = async () => {
+    await loadProfileData();
+    await loadProfileImage();
   };
 
   useEffect(() => {
@@ -72,7 +72,7 @@ const SettingsPersonalInfo = () => {
   }, []);
 
   useEffect(() => {
-    setUserProfileView((prevState) => ({ ...userProfile }));
+    setUserProfileView({ ...userProfile });
   }, [userProfile]);
 
   useEffect(() => {
@@ -251,25 +251,19 @@ const SettingsPersonalInfo = () => {
                   buttonType='dark'
                   buttonClassName={!saveButtonEnabled ? 'pointer-events-none bg-gray-500' : ''}
                   onClick={async () => {
-                    updateProfile(
+                    const { error } = await updateProfile(
                       userProfileView.firstName,
                       userProfileView.lastName,
                       userProfileView.phoneNo,
                       file,
                     )
-                      .then((response) => {
-                        if (response.status == 204) {
-                          loadProfile();
-                          toast.success('Profile updated successfully!');
-                        } else {
-                          console.error(response);
-                          toast.error('Something went wrong!');
-                        }
-                      })
-                      .catch((error) => {
-                        console.error(error);
-                        toast.error('Something went wrong!');
-                      });
+                    if(error){
+                      toast.error(error);
+                    }
+                    else{
+                      await loadProfile();
+                      toast.success('Profile updated successfully!');
+                    }
                   }}
                 />
               </div>

@@ -1,5 +1,15 @@
 import React, { useEffect, useState, useRef, Fragment } from 'react';
+
 import { Dialog, Listbox, Transition, Menu } from '@headlessui/react';
+import {
+  ChevronUpDownIcon,
+  PencilSquareIcon,
+  TrashIcon,
+  UserPlusIcon,
+  CogIcon,
+  SquaresPlusIcon,
+} from '@heroicons/react/20/solid';
+import { CheckIcon } from '@heroicons/react/24/outline';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import {
   NavLink,
@@ -13,15 +23,6 @@ import MoonLoader from 'react-spinners/MoonLoader';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
-import { CheckIcon } from '@heroicons/react/24/outline';
-import {
-  ChevronUpDownIcon,
-  PencilSquareIcon,
-  TrashIcon,
-  UserPlusIcon,
-  CogIcon,
-  SquaresPlusIcon,
-} from '@heroicons/react/20/solid';
 
 import Button from '../components/Button';
 import Navbar from '../components/Navbar';
@@ -60,42 +61,45 @@ function MultiVaultDropown({ vaultList, selectedVault, setSelectedVault }) {
                 leaveTo='opacity-0'
               >
                 <Listbox.Options className='absolute z-10 mt-1 max-h-60 w-11/12 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm cursor-pointer'>
-                  {Object.entries(vaultList).map(([vaultId, vault]) => (
-                    <Listbox.Option
-                      key={vault.id}
-                      className={({ active }) =>
-                        classNames(
-                          active ? 'bg-gray-100 text-black-900' : 'text-black-700',
-                          'relative select-none py-2 pl-3 pr-9',
-                        )
-                      }
-                      value={vault.id}
-                    >
-                      {({ selectedVault, active }) => (
-                        <>
-                          <span
-                            className={classNames(
-                              selectedVault ? 'font-semibold' : 'font-normal',
-                              'block truncate',
-                            )}
-                          >
-                            {vault.name}
-                          </span>
-
-                          {selectedVault ? (
+                  {
+                    //eslint-disable-next-line
+                    Object.entries(vaultList).map(([vaultId, vault]) => (
+                      <Listbox.Option
+                        key={vault.id}
+                        className={({ active }) =>
+                          classNames(
+                            active ? 'bg-gray-100 text-black-900' : 'text-black-700',
+                            'relative select-none py-2 pl-3 pr-9',
+                          )
+                        }
+                        value={vault.id}
+                      >
+                        {({ selectedVault, active }) => (
+                          <>
                             <span
                               className={classNames(
-                                active ? 'text-white' : 'text-indigo-600',
-                                'absolute inset-y-0 right-0 flex items-center pr-4',
+                                selectedVault ? 'font-semibold' : 'font-normal',
+                                'block truncate',
                               )}
                             >
-                              <CheckIcon className='h-5 w-5' aria-hidden='true' />
+                              {vault.name}
                             </span>
-                          ) : null}
-                        </>
-                      )}
-                    </Listbox.Option>
-                  ))}
+
+                            {selectedVault ? (
+                              <span
+                                className={classNames(
+                                  active ? 'text-white' : 'text-indigo-600',
+                                  'absolute inset-y-0 right-0 flex items-center pr-4',
+                                )}
+                              >
+                                <CheckIcon className='h-5 w-5' aria-hidden='true' />
+                              </span>
+                            ) : null}
+                          </>
+                        )}
+                      </Listbox.Option>
+                    ))
+                  }
                 </Listbox.Options>
               </Transition>
             </div>
@@ -169,7 +173,7 @@ function EditVaultPopup({ open, setOpen, selectedVault, vaultList, updateVaultSt
                       placeholder='Enter vault name'
                       value={vaultName}
                       onChange={(e) => {
-                        setVaultName((prevVaultName) => e.target.value);
+                        setVaultName(e.target.value);
                       }}
                       required
                       title='Please enter email'
@@ -189,7 +193,7 @@ function EditVaultPopup({ open, setOpen, selectedVault, vaultList, updateVaultSt
                       placeholder='Enter Vault description'
                       value={vaultDescription}
                       onChange={(e) => {
-                        setVaultDescription((prevVaultDescription) => e.target.value);
+                        setVaultDescription(e.target.value);
                       }}
                       required
                       title='Please enter email'
@@ -212,17 +216,16 @@ function EditVaultPopup({ open, setOpen, selectedVault, vaultList, updateVaultSt
                     type='button'
                     className='inline-flex w-2/3 justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2'
                     onClick={async () => {
-                      const response = await updateVault(
+                      const { error } = await updateVault(
                         selectedVault,
                         vaultName,
                         vaultDescription,
                       );
-                      if (response.status == 200) {
+                      if(error){toast.error(error);}
+                      else{
                         updateVaultState(selectedVault, 'name', vaultName);
                         updateVaultState(selectedVault, 'description', vaultDescription);
                         toast.success('Vault updated successfully!');
-                      } else {
-                        toast.error('Something went wrong!');
                       }
                       setOpen(false);
                     }}
@@ -239,7 +242,7 @@ function EditVaultPopup({ open, setOpen, selectedVault, vaultList, updateVaultSt
   );
 }
 
-function AddVaultPopup({ open, setOpen, vaultList, addVaultState }) {
+function AddVaultPopup({ open, setOpen, addVaultState }) {
   const cancelButtonRef = useRef(null);
   const [vaultName, setVaultName] = useState('');
   const [vaultDescription, setVaultDescription] = useState('');
@@ -293,7 +296,7 @@ function AddVaultPopup({ open, setOpen, vaultList, addVaultState }) {
                       placeholder='Enter vault name'
                       value={vaultName}
                       onChange={(e) => {
-                        setVaultName((prevVaultName) => e.target.value);
+                        setVaultName(e.target.value);
                       }}
                       required
                       title='Please enter email'
@@ -313,7 +316,7 @@ function AddVaultPopup({ open, setOpen, vaultList, addVaultState }) {
                       placeholder='Enter Vault description'
                       value={vaultDescription}
                       onChange={(e) => {
-                        setVaultDescription((prevVaultDescription) => e.target.value);
+                        setVaultDescription(e.target.value);
                       }}
                       required
                       title='Please enter email'
@@ -336,12 +339,12 @@ function AddVaultPopup({ open, setOpen, vaultList, addVaultState }) {
                     type='button'
                     className='inline-flex w-2/3 justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2'
                     onClick={async () => {
-                      const response = await addVault(vaultName, vaultDescription);
-                      if (response.status == 200) {
-                        addVaultState(response.data);
-                        toast.success('New Vault added successfully!');
-                      } else {
-                        toast.error('Something went wrong!');
+                      const { response, error } = await addVault(vaultName, vaultDescription);
+                      if(error){
+                        toast.error(error);
+                      }
+                      else {
+                        addVaultState(response);
                       }
                       setOpen(false);
                     }}
@@ -415,7 +418,7 @@ function DeleteVaultPopup({ open, setOpen, selectedVault, vaultList, deleteVault
                       placeholder='Enter vault name'
                       value={vaultName}
                       onChange={(e) => {
-                        setVaultName((prevVaultName) => e.target.value);
+                        setVaultName(e.target.value);
                       }}
                       required
                       title='Enter vault name to confirm deletion'
@@ -442,12 +445,12 @@ function DeleteVaultPopup({ open, setOpen, selectedVault, vaultList, deleteVault
                           return;
                         }
 
-                        const response = await deleteVault(selectedVault);
-                        if (response.status == 204) {
+                        const { error } = await deleteVault(selectedVault);
+                        if (error) {
+                          toast.error(error);
+                        } else {
                           deleteVaultState(selectedVault);
                           toast.success('Vault deleted successfully!');
-                        } else {
-                          toast.error('Something went wrong!');
                         }
                         setOpen(false);
                       }}
@@ -694,11 +697,11 @@ export const ItemPanel = () => {
         vault_id: selectedVault,
       };
       console.log('itemFormDisabled', itemFormDisabled);
-      setItemFormDisability((prevState) => false);
-      setShareButtonVisible((prevState) => false);
+      setItemFormDisability(false);
+      setShareButtonVisible(false);
     } else {
-      setItemFormDisability((prevState) => true);
-      setShareButtonVisible((prevState) => true);
+      setItemFormDisability(true);
+      setShareButtonVisible(true);
     }
     if (itemDataList[id] === undefined) {
       navigate('/app/home');
@@ -735,7 +738,7 @@ export const ItemPanel = () => {
               setItemUpdating(true);
               if (id === 'new') {
                 const iek = uuidv4();
-                const response = await createVaultItem(
+                const { response, error } = await createVaultItem(
                   selectedVault,
                   itemDataList[id].title,
                   itemDataList[id].website,
@@ -743,7 +746,9 @@ export const ItemPanel = () => {
                   itemDataList[id].username,
                   iek,
                 );
-                if (response.status == 200) {
+                if (error) {
+                  toast.error(error);
+                } else {
                   addItem(itemDataList[id].vault_id, {
                     ...itemDataList[id],
                     id: response.data.id,
@@ -751,11 +756,10 @@ export const ItemPanel = () => {
                   });
                   toast.success('Vault item created successfully!');
                   navigate(`/app/home/${response.data.id}`);
-                } else {
-                  toast.error('Something went wrong!');
                 }
               } else {
-                const response = await updateVaultItem(
+                //eslint-disable-next-line
+                const { response, error } = await updateVaultItem(
                   itemDataList[id].vault_id,
                   id,
                   itemDataList[id].title,
@@ -763,7 +767,9 @@ export const ItemPanel = () => {
                   itemDataList[id].password,
                   itemDataList[id].username,
                 );
-                if (response.status == 200) {
+                if (error) {
+                  toast.error(error);
+                } else {
                   updateItem(
                     itemDataList[id].vault_id,
                     id,
@@ -771,8 +777,6 @@ export const ItemPanel = () => {
                     `https://cool-rose-moth.faviconkit.com/${itemDataList[id].website}/256`,
                   );
                   toast.success('Vault item updated successfully!');
-                } else {
-                  toast.error('Something went wrong!');
                 }
               }
               setItemUpdating(false);
@@ -783,8 +787,9 @@ export const ItemPanel = () => {
           buttonType='link'
           buttonClassName='relative top-[0rem] right-[0rem] z-[100]'
           labelClassName='text-xl'
-          children={<MoonLoader loading={itemUpdating && true} size={15} />}
-        />
+        >
+          <MoonLoader loading={itemUpdating && true} size={15} />
+        </Button>
         {itemFormDisabled && shareButtonVisible && (
           <Button
             label='Share'
@@ -796,13 +801,13 @@ export const ItemPanel = () => {
         {itemFormDisabled && !itemUpdating && id != 'new' && (
           <Button
             onClick={async () => {
-              const response = await deleteVaultItem(selectedVault, id);
-              if (response.status == 204) {
+              const { error } = await deleteVaultItem(selectedVault, id);
+              if (error) {
+                toast.error(error);
+              } else {
                 deleteItem(itemDataList[id].vault_id, id);
                 toast.success('Vault item deleted successfully!');
                 navigate(-1);
-              } else {
-                toast.error('Something went wrong!');
               }
               navigate(-1);
             }}
@@ -948,44 +953,47 @@ const NavigationPanel = ({
         className='self-stretch flex-1 overflow-y-auto px-2 py-2 flex flex-col items-center justify-start z-[1] border-[2px] border-solid'
         id='item-list'
       >
-        {Object.entries(itemDataList)
-          .filter(([id, itemData]) => {
-            return search.toLowerCase() === ''
-              ? true
-              : itemData.username.toLowerCase().includes(search) ||
-                  itemData.website.toLowerCase().includes(search) ||
-                  itemData.title.toLowerCase().includes(search);
-          })
-          .map(
-            ([id, itemData]) =>
-              id != 'new' && (
-                <NavLink
-                  to={`${itemData.id}`}
-                  key={itemData.id}
-                  className={({ isActive }) =>
-                    isActive
-                      ? 'bg-gray-200 mt-1 mb-1 px-[16px] rounded-lg hover:bg-gray-200'
-                      : 'mt-1 mb-1 px-[16px] rounded-lg hover:bg-gray-100'
-                  }
-                >
-                  <button className='cursor-pointer rounded-lg [border:none] overflow-hidden flex flex-row items-center justify-start'>
-                    <img
-                      className='relative w-[40px] h-[40px] shrink-0 overflow-hidden object-cover'
-                      alt=''
-                      src={itemData.icon}
-                    />
-                    <div className='flex flex-col text-left px-[8px] py-[8px]'>
-                      <label className='cursor-pointer relative text-xl tracking-[0.03em] font-bold w-[230px] h-[23px] shrink-0 truncate overflow-hidden line-clamp-2'>
-                        {itemData.title}
-                      </label>
-                      <label className='cursor-pointer relative text-base tracking-[0.03em] w-[230px] h-[23px] shrink-0 truncate overflow-hidden line-clamp-2'>
-                        {itemData.username}
-                      </label>
-                    </div>
-                  </button>
-                </NavLink>
-              ),
-          )}
+        {
+          Object.entries(itemDataList)
+          //eslint-disable-next-line
+            .filter(([id, itemData]) => {
+              return search.toLowerCase() === ''
+                ? true
+                : itemData.username.toLowerCase().includes(search) ||
+                    itemData.website.toLowerCase().includes(search) ||
+                    itemData.title.toLowerCase().includes(search);
+            })
+            .map(
+              ([id, itemData]) =>
+                id != 'new' && (
+                  <NavLink
+                    to={`${itemData.id}`}
+                    key={itemData.id}
+                    className={({ isActive }) =>
+                      isActive
+                        ? 'bg-gray-200 mt-1 mb-1 px-[16px] rounded-lg hover:bg-gray-200'
+                        : 'mt-1 mb-1 px-[16px] rounded-lg hover:bg-gray-100'
+                    }
+                  >
+                    <button className='cursor-pointer rounded-lg [border:none] overflow-hidden flex flex-row items-center justify-start'>
+                      <img
+                        className='relative w-[40px] h-[40px] shrink-0 overflow-hidden object-cover'
+                        alt=''
+                        src={itemData.icon}
+                      />
+                      <div className='flex flex-col text-left px-[8px] py-[8px]'>
+                        <label className='cursor-pointer relative text-xl tracking-[0.03em] font-bold w-[230px] h-[23px] shrink-0 truncate overflow-hidden line-clamp-2'>
+                          {itemData.title}
+                        </label>
+                        <label className='cursor-pointer relative text-base tracking-[0.03em] w-[230px] h-[23px] shrink-0 truncate overflow-hidden line-clamp-2'>
+                          {itemData.username}
+                        </label>
+                      </div>
+                    </button>
+                  </NavLink>
+                ),
+            )
+        }
       </div>
       <Button
         buttonType='blue'
@@ -998,7 +1006,6 @@ const NavigationPanel = ({
 };
 
 const AppHome = () => {
-  const navigate = useNavigate();
   const [selectedVault, setSelectedVault] = useState(null);
   const [itemDataList, setItemDataList] = useState({});
   // const [vaultList, setVaultList] = useState({all: {name: "all", id: "all"}});
@@ -1011,13 +1018,15 @@ const AppHome = () => {
     if (shouldLoad.current) {
       (async () => {
         console.log('Vault List loading!');
-        const vaultData = await getVaults();
+        const { response } = await getVaults();
+        const vaultData = response;
         let morphedVaultData = {};
         for (let idx = 0; idx < vaultData.length; idx += 1) {
           const vault_id = vaultData[idx].id;
           morphedVaultData[vault_id] = { ...vaultData[idx], itemList: {} };
 
-          const vault_items = await getVaultItems(vault_id);
+          const { response } = await getVaultItems(vault_id);
+          const vault_items = response;
           console.log('useEffect.vault_items', vault_items);
           for (let idx = 0; idx < vault_items.length; idx += 1) {
             const item_id = vault_items[idx].id;

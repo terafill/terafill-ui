@@ -18,10 +18,7 @@ import SettingsSharing, {
   SettingsSharingByUser,
   SettingsSharingByPassword,
 } from './pages/settings/SettingsSharing';
-import SignUpPage, {
-  CreateAccountForm,
-  EmailConfirmationForm,
-} from './pages/SignUpPage';
+import SignUpPage, { CreateAccountForm, EmailConfirmationForm } from './pages/SignUpPage';
 import WhitepaperPage from './pages/WhitepaperPage';
 
 const router = createBrowserRouter([
@@ -84,7 +81,7 @@ const router = createBrowserRouter([
       {
         path: 'email-confirmation',
         element: <EmailConfirmationForm />,
-      }
+      },
     ],
   },
   {

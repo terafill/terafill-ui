@@ -16,12 +16,11 @@ export async function getProfile() {
 
   try {
     let response = await axios(config);
-    return response.data;
+    return { response: response?.data || {} };
   } catch (error) {
-    console.log(error);
+    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    return { error: error_msg };
   }
-
-  return null;
 }
 
 export async function getProfileImage() {
@@ -38,12 +37,11 @@ export async function getProfileImage() {
 
   try {
     let response = await axios(config);
-    return response.data;
+    return { response: response?.data || {} };
   } catch (error) {
-    console.log(error);
+    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    return { error: error_msg };
   }
-
-  return null;
 }
 
 export async function updateProfile(firstName, lastName, phoneNo, file = null) {
@@ -73,10 +71,9 @@ export async function updateProfile(firstName, lastName, phoneNo, file = null) {
 
   try {
     let response = await axios(config);
-    return response;
+    return { response: response?.data || {} };
   } catch (error) {
-    console.error(error);
+    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    return { error: error_msg };
   }
-
-  return null;
 }

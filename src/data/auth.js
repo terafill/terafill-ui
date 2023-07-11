@@ -4,8 +4,8 @@ import { Buffer } from 'buffer/';
 
 import { getAuthClientDetails, getRSAPrivateKey, getSRPClient } from '../utils/security';
 
-const baseUrl = 'http://localhost:8000/api/v1'
-const clientId = 'b980b13c-4db8-4e8a-859c-4544fd70825f'
+const baseUrl = 'http://localhost:8000/api/v1';
+const clientId = 'b980b13c-4db8-4e8a-859c-4544fd70825f';
 
 export const initateSignupProcess = async (email) => {
   try {
@@ -22,13 +22,11 @@ export const initateSignupProcess = async (email) => {
       data: data,
     };
     const response = await axios(config);
-    return {response: response?.data||{}}
-
-    }
-    catch(error) {
-      const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-      return { error: error_msg }
-    }
+    return { response: response?.data || {} };
+  } catch (error) {
+    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    return { error: error_msg };
+  }
 };
 
 export const completeSignupProcess = async (
@@ -40,8 +38,11 @@ export const completeSignupProcess = async (
 ) => {
   try {
     // generate verifier and salt
-    const [salt, verifier] = await getAuthClientDetails(email, password)
-      .then(([salt, verifier]) => {return [salt, verifier]})
+    const [salt, verifier] = await getAuthClientDetails(email, password).then(
+      ([salt, verifier]) => {
+        return [salt, verifier];
+      },
+    );
 
     const encrypted_key_wrapping_key = getRSAPrivateKey(password, true);
 
@@ -55,25 +56,24 @@ export const completeSignupProcess = async (
       encrypted_key_wrapping_key: encrypted_key_wrapping_key,
     });
 
-      const config = {
-        withCredentials: true,
-        method: 'post',
-        url: `${baseUrl}/auth/signup/confirm`,
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          'client-id': clientId,
-        },
-        data: data,
-      };
+    const config = {
+      withCredentials: true,
+      method: 'post',
+      url: `${baseUrl}/auth/signup/confirm`,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'client-id': clientId,
+      },
+      data: data,
+    };
 
-      const response = await axios(config);
-      return {response: response?.data||{}}
-    }
-    catch(error) {
-      const error_msg = error?.response?.data?.detail?.info||`Something went wrong: ${error}.`;
-      return { error: error_msg }
-    }
+    const response = await axios(config);
+    return { response: response?.data || {} };
+  } catch (error) {
+    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    return { error: error_msg };
+  }
 };
 
 const getSalt = (email) => {
@@ -161,16 +161,15 @@ export const loginUser = async (email, password) => {
     if (client.checkM2(Buffer.from(server_proof, 'hex'))) {
       console.warn('Server verified!');
       return {
-        response: {key_wrapping_key: key_wrapping_key},
+        response: { key_wrapping_key: key_wrapping_key },
       };
     } else {
-      return {error: "Server not verified!"};
+      return { error: 'Server not verified!' };
     }
-    }
-    catch(error) {
-      const error_msg = error?.response?.data?.detail?.info||`Something went wrong: ${error}.`;
-      return { error: error_msg }
-    }
+  } catch (error) {
+    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    return { error: error_msg };
+  }
 };
 
 export const getLoginStatus = async () => {
@@ -186,11 +185,10 @@ export const getLoginStatus = async () => {
     };
 
     const response = await axios(config);
-    return {response: response?.data||{}}
-  }
-  catch(error) {
-    const error_msg = error?.response?.data?.detail?.info||`Something went wrong: ${error}.`;
-    return { error: error_msg }
+    return { response: response?.data || {} };
+  } catch (error) {
+    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    return { error: error_msg };
   }
 };
 

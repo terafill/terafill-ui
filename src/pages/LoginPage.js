@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import {
-  useNavigate,
-} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -13,30 +11,31 @@ import { storeAuthData } from '../utils/security';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const email = localStorage.getItem("email");
-  const [userData, setUserData] = useState({ email: email||'', password: '' });
+  const email = localStorage.getItem('email');
+  const [userData, setUserData] = useState({ email: email || '', password: '' });
   const [refreshLogin, setRefreshLogin] = useState(false);
   const shouldLoad = useRef(true);
 
   useEffect(() => {
     if (shouldLoad.current) {
-        if(email){
-          setRefreshLogin(true);
-        }
-        shouldLoad.current = false;
+      if (email) {
+        setRefreshLogin(true);
       }
+      shouldLoad.current = false;
+    }
   }, []);
 
   const attemptLogin = async (e) => {
     e.preventDefault();
-    const {response, error} = await loginUser(userData.email, userData.password);
-    if (error){toast.error(error);}
-    else{
+    const { response, error } = await loginUser(userData.email, userData.password);
+    if (error) {
+      toast.error(error);
+    } else {
       storeAuthData(userData.email, userData.password, response.key_wrapping_key);
-      toast.success("Login successful");
+      toast.success('Login successful');
       navigate('/app/home');
     }
-  }
+  };
 
   return (
     <div className='bg-gray-100 w-screen h-screen flex flex-col items-center justify-center'>

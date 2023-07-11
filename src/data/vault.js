@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const baseUrl = 'http://localhost:8000/api/v1';
+const clientId = "b980b13c-4db8-4e8a-859c-4544fd70825f"
 
 export async function getVaults() {
   const requestUrl = `${baseUrl}/users/me/vaults/`;
@@ -11,18 +12,17 @@ export async function getVaults() {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
+      'client-id': clientId,
     },
   };
 
   try {
     let response = await axios(config);
-    return response.data;
+    return { response: response?.data || {} };
   } catch (error) {
-    console.log(error);
+    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    return { error: error_msg };
   }
-
-  return null;
 }
 
 export async function getVaultItems(vault_id) {
@@ -34,30 +34,30 @@ export async function getVaultItems(vault_id) {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
+      'client-id': clientId,
     },
   };
 
   try {
     let response = await axios(config);
-    return response.data;
+    return { response: response?.data || {} };
   } catch (error) {
-    console.log(error);
+    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    return { error: error_msg };
   }
 }
 
 export async function getDefaultVaultId() {
-  const vaults = await getVaults();
-  const default_vault = vaults[0];
+  const { response } = await getVaults();
+  const default_vault = response[0];
   const vault_id = default_vault.id;
   return vault_id;
 }
 
 export async function getDefaultVaultItems() {
   const default_vault_id = await getDefaultVaultId();
-  const vault_items = await getVaultItems(default_vault_id);
-  console.log(default_vault_id, 'vault_items', vault_items);
-  return vault_items;
+  const { response } = await getVaultItems(default_vault_id);
+  return response;
 }
 
 export async function updateVault(vault_id, name, description) {
@@ -69,7 +69,7 @@ export async function updateVault(vault_id, name, description) {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
+      'client-id': clientId,
     },
     data: {
       name: name,
@@ -79,13 +79,11 @@ export async function updateVault(vault_id, name, description) {
 
   try {
     let response = await axios(config);
-    console.log('Vault updated !');
-    return response;
+    return { response: response?.data || {} };
   } catch (error) {
-    console.log(error);
+    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    return { error: error_msg };
   }
-
-  return {};
 }
 
 export async function addVault(name, description) {
@@ -97,7 +95,7 @@ export async function addVault(name, description) {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
+      'client-id': clientId,
     },
     data: {
       name: name,
@@ -107,13 +105,11 @@ export async function addVault(name, description) {
 
   try {
     let response = await axios(config);
-    console.log('Vault Added!');
-    return response;
+    return { response: response?.data || {} };
   } catch (error) {
-    console.log(error);
+    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    return { error: error_msg };
   }
-
-  return {};
 }
 
 export async function deleteVault(vault_id) {
@@ -125,17 +121,15 @@ export async function deleteVault(vault_id) {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
+      'client-id': clientId,
     },
   };
 
   try {
     let response = await axios(config);
-    console.log('Vault Deleted!');
-    return response;
+    return { response: response?.data || {} };
   } catch (error) {
-    console.log(error);
+    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    return { error: error_msg };
   }
-
-  return {};
 }

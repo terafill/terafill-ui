@@ -1,10 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import {
-  Outlet,
-  useNavigate,
-  useOutletContext,
-} from 'react-router-dom';
+import { Outlet, useNavigate, useOutletContext } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -43,23 +39,23 @@ export const CreateAccountForm = () => {
   const passwordRef = useRef(null);
   const passwordRepeatRef = useRef(null);
 
-  useEffect(()=>{
+  useEffect(() => {
     setStepStatus({
-      1: "current",
-      2: "upcoming"
+      1: 'current',
+      2: 'upcoming',
     });
   }, []);
 
-  const createAccountAction = async (e) =>{
+  const createAccountAction = async (e) => {
     e.preventDefault();
     if (passwordRef.current.value != passwordRepeatRef.current.value) {
       toast.error("Passwords don't match!");
     } else {
+      const { error } = await initateSignupProcess(userData.email);
 
-      const {error} = await initateSignupProcess(userData.email);
-
-      if (error){toast.error(error);}
-      else {
+      if (error) {
+        toast.error(error);
+      } else {
         navigate('email-confirmation');
       }
     }
@@ -204,10 +200,10 @@ export const EmailConfirmationForm = () => {
 
   const submitButtonRef = useRef(null);
 
-  useEffect(()=>{
+  useEffect(() => {
     setStepStatus({
-      1: "completed",
-      2: "current"
+      1: 'completed',
+      2: 'current',
     });
   }, []);
 
@@ -267,18 +263,19 @@ export const EmailConfirmationForm = () => {
     e.preventDefault();
     const verification_code = [...pinState].join('');
 
-    const {error} = await completeSignupProcess(
+    const { error } = await completeSignupProcess(
       userData.email,
       userData.password,
       verification_code,
       userData.firstName,
       userData.lastName,
-    )
-    if (error){toast.error(error);}
-    else{
+    );
+    if (error) {
+      toast.error(error);
+    } else {
       storeAuthData(userData.email);
-      toast.success("Signup successful");
-      navigate('/login')
+      toast.success('Signup successful');
+      navigate('/login');
     }
   };
 
@@ -287,7 +284,7 @@ export const EmailConfirmationForm = () => {
       className='bg-white rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[32px]'
       onSubmit={signupConfirmationAction}
     >
-      <ToastContainer style={{ zIndex: 9999 }}/>
+      <ToastContainer style={{ zIndex: 9999 }} />
       <h4 className='m-0 relative text-4xl leading-[120%] font-bold text-black text-center'>
         Verify your email address
       </h4>
@@ -323,10 +320,11 @@ export const EmailConfirmationForm = () => {
           label='Re-send verification code'
           onClick={() => {
             setPinState(['', '', '', '', '', '']);
-            const { error } = initateSignupProcess(userData.email)
-            if(error){toast.error(error);}
-            else{
-              toast.success("Verification code sent successfully!");
+            const { error } = initateSignupProcess(userData.email);
+            if (error) {
+              toast.error(error);
+            } else {
+              toast.success('Verification code sent successfully!');
             }
           }}
           type='reset'
@@ -334,7 +332,9 @@ export const EmailConfirmationForm = () => {
         <Button
           buttonType='link'
           label='Change email address'
-          onClick={() => { navigate('/signup'); }}
+          onClick={() => {
+            navigate('/signup');
+          }}
         />
       </div>
       <div className='flex flex-row items-center justify-center gap-[16px]'>
@@ -345,12 +345,11 @@ export const EmailConfirmationForm = () => {
 };
 
 const steps = {
-  1: { id: 'Step 1', name: 'Create Account', to: ''},
-  2: { id: 'Step 2', name: 'Email Confirmation', to: 'email-confirmation'},
+  1: { id: 'Step 1', name: 'Create Account', to: '' },
+  2: { id: 'Step 2', name: 'Email Confirmation', to: 'email-confirmation' },
 };
 
 const SignUpPage = () => {
-
   const [stepStatus, setStepStatus] = useState({
     1: 'current',
     2: 'upcoming',
@@ -373,22 +372,23 @@ const SignUpPage = () => {
             {
               // eslint-disable-next-line no-unused-vars
               Object.entries(steps).map(([idx, step]) => (
-              <li key={step.name} className='md:flex-1'>
-                {stepStatus[idx] === 'completed' ? (
-                  <span className='flex flex-col items-center py-2 border-t-4 rounded-lg bg-gray-200'>
-                    <span className='text-sm font-medium text-black'>{step.name}</span>
-                  </span>
-                ) : stepStatus[idx] === 'current' ? (
-                  <span className='flex flex-col items-center items-center py-2 border-black border-t-4 bg-gray-200 rounded-lg'>
-                    <span className='text-sm font-medium text-black'>{step.name}</span>
-                  </span>
-                ) : (
-                  <span className='flex flex-col items-center border-gray-200 py-2 border-t-4 rounded-lg'>
-                    <span className='text-sm font-medium text-gray-500'>{step.name}</span>
-                  </span>
-                )}
-              </li>
-            ))}
+                <li key={step.name} className='md:flex-1'>
+                  {stepStatus[idx] === 'completed' ? (
+                    <span className='flex flex-col items-center py-2 border-t-4 rounded-lg bg-gray-200'>
+                      <span className='text-sm font-medium text-black'>{step.name}</span>
+                    </span>
+                  ) : stepStatus[idx] === 'current' ? (
+                    <span className='flex flex-col items-center items-center py-2 border-black border-t-4 bg-gray-200 rounded-lg'>
+                      <span className='text-sm font-medium text-black'>{step.name}</span>
+                    </span>
+                  ) : (
+                    <span className='flex flex-col items-center border-gray-200 py-2 border-t-4 rounded-lg'>
+                      <span className='text-sm font-medium text-gray-500'>{step.name}</span>
+                    </span>
+                  )}
+                </li>
+              ))
+            }
           </ol>
         </nav>
         <Outlet context={[userData, setUserData, setStepStatus]} />

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { getKeyWrappingKeyPair, encryptData } from '../utils/security';
 
 const baseUrl = 'http://localhost:8000/api/v1';
+const clientId = 'b980b13c-4db8-4e8a-859c-4544fd70825f';
 
 export async function updateVaultItem(vault_id, id, title, website, password, username, iek) {
   const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}/items/${id}`;
@@ -14,7 +15,7 @@ export async function updateVaultItem(vault_id, id, title, website, password, us
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
+      'client-id': clientId,
     },
     data: {
       title: encryptData(title, iek),
@@ -26,13 +27,11 @@ export async function updateVaultItem(vault_id, id, title, website, password, us
 
   try {
     let response = await axios(config);
-    console.log('Item updated !');
-    return response;
+    return { response: response?.data || {} };
   } catch (error) {
-    console.log(error);
+    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    return { error: error_msg };
   }
-
-  return {};
 }
 
 export async function createVaultItem(vault_id, title, website, password, username, iek) {
@@ -47,7 +46,7 @@ export async function createVaultItem(vault_id, title, website, password, userna
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
+      'client-id': clientId,
     },
     data: {
       title: encryptData(title, iek),
@@ -61,13 +60,11 @@ export async function createVaultItem(vault_id, title, website, password, userna
 
   try {
     let response = await axios(config);
-    console.log('Item created successfully !');
-    return response;
+    return { response: response?.data || {} };
   } catch (error) {
-    console.log(error);
+    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    return { error: error_msg };
   }
-
-  return {};
 }
 
 export async function deleteVaultItem(vault_id, id) {
@@ -81,17 +78,15 @@ export async function deleteVaultItem(vault_id, id) {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': 'b980b13c-4db8-4e8a-859c-4544fd70825f',
+      'client-id': clientId,
     },
   };
 
   try {
     let response = await axios(config);
-    console.log('Item deleted successfully !');
-    return response;
+    return { response: response?.data || {} };
   } catch (error) {
-    console.log(error);
+    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    return { error: error_msg };
   }
-
-  return {};
 }

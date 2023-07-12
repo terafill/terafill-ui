@@ -1,19 +1,26 @@
+ /* eslint-disable */
 import { useEffect, useState } from 'react';
 
 
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import hash from 'object-hash';
 import { ToastContainer, toast } from 'react-toastify';
+
 
 import 'react-toastify/dist/ReactToastify.css';
 import Avatar from '../../components/Avatar';
 import Button from '../../components/Button';
 import Navbar from '../../components/Navbar';
 import SideNavbar from '../../components/SideNavbar';
+//eslint-disable-next-line
 import { getProfile, updateProfile, getProfileImage } from '../../data/user';
 
 const SettingsPersonalInfo = () => {
-  const [saveButtonEnabled, setSaveButtonEnabled] = useState(false);
-  const [userProfile, setUserProfile] = useState({
+
+    // Access the client
+  const queryClient = useQueryClient();
+
+  const [userProfileView, setUserProfileView] = useState({
     email: '',
     firstName: '',
     lastName: '',
@@ -22,65 +29,64 @@ const SettingsPersonalInfo = () => {
     gender: '',
     profileImage: '',
   });
-  const [userProfileView, setUserProfileView] = useState({
-    email: '',
-    firstName: '',
-    lastName: '',
-    phoneNo: '',
-    birthday: '',
-    profileImage: '',
+
+  const userProfileRaw = useQuery({
+    queryKey: ['profile'], queryFn: getProfile,
+    refetchOnWindowFocus: false,
+    staleTime: 300000
   });
 
-  const loadProfileData = async () => {
-    const { response, error } = await getProfile();
-    if (error) {
-      toast.error(error);
-    } else {
-      setUserProfile((prevState) => ({
+  const userProfileImageRaw = useQuery({
+    queryKey: ['profileImage'], queryFn: getProfileImage,
+    refetchOnWindowFocus: false,
+    staleTime: 300000
+  });
+
+  const loadUserProfileView = ({ loadProfile=false, loadProfileImage=false}) => {
+    if (loadProfile && userProfileRaw.isSuccess){
+      setUserProfileView((prevState) => ({
         ...prevState,
-        email: response.email,
-        firstName: response.first_name ? response.first_name : '',
-        lastName: response.last_name ? response.last_name : '',
-        phoneNo: response.phone_no ? response.phone_no : '',
-        birthday: response.birthday ? response.birthday : '',
-        gender: response.gender ? response.gender : '',
+        ...userProfileRaw.data
       }));
     }
-  };
 
-  const loadProfileImage = async () => {
-    const { response, error } = await getProfileImage();
-    if (error) {
-      toast.error(error);
-    } else {
-      setUserProfile((prevState) => ({
+    if(loadProfileImage && userProfileImageRaw.isSuccess){
+      setUserProfileView((prevState) => ({
         ...prevState,
-        profileImage: response.profile_image
-          ? `data:image/jpeg;base64,${response.profile_image}`
+        profileImage: userProfileImageRaw.data.profileImage
+          ? `data:image/jpeg;base64,${userProfileImageRaw.data.profileImage}`
           : '',
       }));
     }
-  };
+  }
 
-  const loadProfile = async () => {
-    await loadProfileData();
-    await loadProfileImage();
-  };
+  useEffect(()=>{
+    loadUserProfileView({loadProfile:true});
+  }, [userProfileRaw.dataUpdatedAt])
+
+  useEffect(()=>{
+    loadUserProfileView({loadProfileImage:true});
+  }, [userProfileImageRaw.dataUpdatedAt])
+
+  const updateUserProfile = useMutation({
+    mutationFn: updateProfile
+  })
+
+  const [saveButtonEnabled, setSaveButtonEnabled] = useState(false);
 
   useEffect(() => {
-    loadProfile();
-  }, []);
-
-  useEffect(() => {
-    setUserProfileView({ ...userProfile });
-  }, [userProfile]);
-
-  useEffect(() => {
+    console.log(userProfileView);
     (async () => {
-      if (hash(userProfile) != hash(userProfileView)) {
-        setSaveButtonEnabled(true);
-      } else {
-        setSaveButtonEnabled(false);
+      if (userProfileRaw.data && userProfileImageRaw.data.profileImage){
+        const userProfileRawTemp = {
+          ...userProfileRaw.data,
+          profileImage: userProfileImageRaw.data.profileImage?`data:image/jpeg;base64,${userProfileImageRaw.data.profileImage}`:''
+        }
+        if (hash(userProfileRawTemp) !== hash(userProfileView)) {
+          setSaveButtonEnabled(true);
+        } else {
+          setSaveButtonEnabled(false);
+        }
       }
     })();
   }, [userProfileView]);
@@ -223,8 +229,8 @@ const SettingsPersonalInfo = () => {
                 </label>
                 <input
                   type='tel'
-                  name='phone_no'
-                  id='phone_no'
+                  name='phoneNo'
+                  id='phoneNo'
                   className='w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6'
                   placeholder='00-000-00000'
                   value={userProfileView.phoneNo}
@@ -243,7 +249,7 @@ const SettingsPersonalInfo = () => {
                   buttonType='light'
                   labelClassName='text-gray-700'
                   onClick={() => {
-                    loadProfile();
+                    loadUserProfileView({loadProfile: true, loadProfileImage:true});
                   }}
                 />
                 <Button
@@ -251,19 +257,28 @@ const SettingsPersonalInfo = () => {
                   buttonType='dark'
                   buttonClassName={!saveButtonEnabled ? 'pointer-events-none bg-gray-500' : ''}
                   onClick={async () => {
-                    const { error } = await updateProfile(
-                      userProfileView.firstName,
-                      userProfileView.lastName,
-                      userProfileView.phoneNo,
-                      file,
-                    )
-                    if(error){
-                      toast.error(error);
-                    }
-                    else{
-                      await loadProfile();
-                      toast.success('Profile updated successfully!');
-                    }
+                    console.log("Saving", userProfileView);
+                    await updateUserProfile.mutateAsync(
+                      {
+                        firstName: userProfileView.firstName,
+                        lastName: userProfileView.lastName,
+                        phoneNo: userProfileView.phoneNo,
+                        file: file
+                      },
+                      {
+                        onError: (error)=> {
+                          toast.error(error);
+                        },
+                        onSuccess: ()=> {
+                          toast.success("User profile updated!");
+                          queryClient.invalidateQueries({
+                            queries: [
+                              {queryKey: ['profile']},
+                              {queryKey: ['profileImage']}
+                              ]
+                          });
+                        }
+                      })
                   }}
                 />
               </div>

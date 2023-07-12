@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const baseUrl = 'http://localhost:8000/api/v1';
 
+
 export async function getProfile() {
   const requestUrl = `${baseUrl}/users/me/`;
   var config = {
@@ -13,13 +14,12 @@ export async function getProfile() {
       Accept: 'application/json',
     },
   };
-
   try {
     let response = await axios(config);
-    return { response: response?.data || {} };
+    return response?.data || {};
   } catch (error) {
     const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    return { error: error_msg };
+    throw Error(error_msg)
   }
 }
 
@@ -37,14 +37,14 @@ export async function getProfileImage() {
 
   try {
     let response = await axios(config);
-    return { response: response?.data || {} };
+    return response?.data || {};
   } catch (error) {
     const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    return { error: error_msg };
+    throw Error(error_msg)
   }
 }
 
-export async function updateProfile(firstName, lastName, phoneNo, file = null) {
+export async function updateProfile({ firstName, lastName, phoneNo, file = null }) {
   const formData = new FormData();
 
   // Append fields to formData
@@ -71,9 +71,9 @@ export async function updateProfile(firstName, lastName, phoneNo, file = null) {
 
   try {
     let response = await axios(config);
-    return { response: response?.data || {} };
+    return response?.data || {};
   } catch (error) {
     const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    return { error: error_msg };
+    throw Error(error_msg)
   }
 }

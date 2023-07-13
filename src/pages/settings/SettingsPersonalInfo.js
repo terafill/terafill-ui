@@ -31,13 +31,15 @@ const SettingsPersonalInfo = () => {
   });
 
   const userProfileRaw = useQuery({
-    queryKey: ['profile'], queryFn: getProfile,
+    queryKey: ['profile'],
+    queryFn: getProfile,
     refetchOnWindowFocus: false,
     staleTime: 300000
   });
 
   const userProfileImageRaw = useQuery({
-    queryKey: ['profileImage'], queryFn: getProfileImage,
+    queryKey: ['profileImage'],
+    queryFn: getProfileImage,
     refetchOnWindowFocus: false,
     staleTime: 300000
   });

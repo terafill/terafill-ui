@@ -31,7 +31,7 @@ const LoginPage = () => {
     if (error) {
       toast.error(error);
     } else {
-      storeAuthData(userData.email, userData.password, response.key_wrapping_key);
+      storeAuthData(userData.email, userData.password, response.keyWrappingKey);
       toast.success('Login successful');
       navigate('/app/home');
     }

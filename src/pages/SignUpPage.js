@@ -261,12 +261,12 @@ export const EmailConfirmationForm = () => {
 
   const signupConfirmationAction = async (e) => {
     e.preventDefault();
-    const verification_code = [...pinState].join('');
+    const verificationCode = [...pinState].join('');
 
     const { error } = await completeSignupProcess(
       userData.email,
       userData.password,
-      verification_code,
+      verificationCode,
       userData.firstName,
       userData.lastName,
     );

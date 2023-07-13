@@ -1,3 +1,4 @@
+ /* eslint-disable */
 import React, { useEffect, useState, useRef, Fragment } from 'react';
 
 import { Dialog, Listbox, Transition, Menu } from '@headlessui/react';
@@ -23,13 +24,14 @@ import MoonLoader from 'react-spinners/MoonLoader';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
+import { useQueries, useQuery, useQueryClient, useMutation, useIsFetching } from "@tanstack/react-query";
 
 import Button from '../components/Button';
 import Navbar from '../components/Navbar';
 import SideNavbar from '../components/SideNavbar';
 import { useTokenExpiration } from '../components/TokenTools';
 import { updateVaultItem, createVaultItem, deleteVaultItem } from '../data/item';
-import { addVault, getVaults, getVaultItems, updateVault, deleteVault } from '../data/vault';
+import { addVault, getVaults2, getVaults, getVaultItems2, getVaultItems, updateVault, deleteVault } from '../data/vault';
 import { getKeyWrappingKeyPair, decryptData } from '../utils/security';
 import './AppHome.css';
 
@@ -38,8 +40,7 @@ function classNames(...classes) {
 }
 
 function MultiVaultDropown({ vaultList, selectedVault, setSelectedVault }) {
-  console.log('MultiVaultDropown.selected', selectedVault, vaultList);
-
+  // console.log('MultiVaultDropown.selected', selectedVault, vaultList);
   return (
     <Listbox value={selectedVault} onChange={setSelectedVault}>
       {({ open }) => (
@@ -475,11 +476,10 @@ function VaultSettingsMenu({
   setOpenAddVault,
   setOpenDeleteVault,
 }) {
-  // console.log("VaultSettingsMenu.is_default", vaultList)
-  const [is_default, setIsDefault] = useState(false);
+  const [isDefault, setIsDefault] = useState(false);
   useEffect(() => {
     if (selectedVault != null && vaultList != null) {
-      if (vaultList[selectedVault]['is_default']) {
+      if (vaultList[selectedVault]['isDefault']) {
         setIsDefault(true);
         return;
       }
@@ -509,7 +509,7 @@ function VaultSettingsMenu({
             <Menu.Item
               onClick={() => {
                 setOpenEditVault(true);
-                console.log('clicked', 'edit');
+                // console.log('clicked', 'edit');
               }}
             >
               {({ active }) => (
@@ -599,7 +599,7 @@ function VaultSettingsMenu({
           <div className='py-1'>
             <Menu.Item
               onClick={() => {
-                console.log('clicked', 'share');
+                // console.log('clicked', 'share');
               }}
             >
               {({ active }) => (
@@ -633,13 +633,13 @@ function VaultSettingsMenu({
               )}
             </Menu.Item>*/}
           </div>
-          {!is_default && (
+          {!isDefault && (
             <div className='py-1'>
               <Menu.Item
                 disabled
                 onClick={() => {
                   setOpenDeleteVault(true);
-                  console.log('clicked', 'delete');
+                  // console.log('clicked', 'delete');
                 }}
               >
                 {({ active }) => (
@@ -680,33 +680,54 @@ export const ItemPanel = () => {
   const [shareButtonVisible, setShareButtonVisible] = useState(true);
   const [showPassword, setPasswordVisibility] = useState(false);
   const [itemUpdating, setItemUpdating] = useState(false);
+
+  const [itemDataView, setItemDataView] = useState(null);
+
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [selectedVault, itemDataList, updateItem, deleteItem, addItem] = useOutletContext();
+  const [selectedVault, vaultListView] = useOutletContext();
+
+  const queryClient = useQueryClient();
+
+  const itemDataRaw = queryClient.getQueryData(["vaults", selectedVault, "items", id])
+
+  useEffect(()=>{
+    if(itemDataRaw){
+      const keyWrappingKeyPair = getKeyWrappingKeyPair();
+      setItemDataView(decryptedItemData(itemDataRaw, keyWrappingKeyPair));
+    }
+  }, [itemDataRaw])
 
   useEffect(() => {
-    console.log('id', id);
     if (id === 'new') {
-      itemDataList[id] = {
+      setItemDataView({
         title: '',
         icon: null,
         password: '',
         website: '',
         username: '',
-        vault_id: selectedVault,
-      };
-      console.log('itemFormDisabled', itemFormDisabled);
+        vaultId: selectedVault,
+      });
       setItemFormDisability(false);
       setShareButtonVisible(false);
     } else {
       setItemFormDisability(true);
       setShareButtonVisible(true);
     }
-    if (itemDataList[id] === undefined) {
-      navigate('/app/home');
-    }
   }, [location]);
+
+  const updateItemData = useMutation({
+    mutationFn: updateVaultItem
+  });
+
+  const createItemData = useMutation({
+    mutationFn: createVaultItem
+  });
+
+  const deleteItemData = useMutation({
+    mutationFn: deleteVaultItem
+  })
 
   return (
     <div
@@ -738,46 +759,55 @@ export const ItemPanel = () => {
               setItemUpdating(true);
               if (id === 'new') {
                 const iek = uuidv4();
-                const { response, error } = await createVaultItem(
-                  selectedVault,
-                  itemDataList[id].title,
-                  itemDataList[id].website,
-                  itemDataList[id].password,
-                  itemDataList[id].username,
-                  iek,
-                );
-                if (error) {
-                  toast.error(error);
-                } else {
-                  addItem(itemDataList[id].vault_id, {
-                    ...itemDataList[id],
-                    id: response.data.id,
-                    iek: iek,
-                  });
-                  toast.success('Vault item created successfully!');
+                await createItemData.mutateAsync(
+                  {
+                    vaultId: selectedVault,
+                    title: itemDataView.title,
+                    website: itemDataView.website,
+                    password: itemDataView.password,
+                    username: itemDataView.username,
+                    iek: iek
+                  },
+                  {
+                    onError: (error)=> {
+                      toast.error(error);
+                    },
+                    onSuccess: ()=> {
+                      toast.success("Item created!");
+                      queryClient.invalidateQueries({
+                        queries: [
+                          {queryKey: ['vaults', selectedVault, 'items']},
+                          ]
+                      });
+                    }
+                  })
                   navigate(`/app/home/${response.data.id}`);
-                }
               } else {
-                //eslint-disable-next-line
-                const { response, error } = await updateVaultItem(
-                  itemDataList[id].vault_id,
-                  id,
-                  itemDataList[id].title,
-                  itemDataList[id].website,
-                  itemDataList[id].password,
-                  itemDataList[id].username,
-                );
-                if (error) {
-                  toast.error(error);
-                } else {
-                  updateItem(
-                    itemDataList[id].vault_id,
-                    id,
-                    'icon',
-                    `https://cool-rose-moth.faviconkit.com/${itemDataList[id].website}/256`,
-                  );
-                  toast.success('Vault item updated successfully!');
-                }
+                  console.log("Saving", itemDataView);
+                  await updateItemData.mutateAsync(
+                    {
+                      vaultId: selectedVault,
+                      id: id,
+                      title: itemDataView.title,
+                      website: itemDataView.website,
+                      password: itemDataView.password,
+                      username: itemDataView.username,
+                      iek: itemDataView.iek
+                    },
+                    {
+                      onError: (error)=> {
+                        toast.error(error);
+                      },
+                      onSuccess: ()=> {
+                        toast.success("Item updated!");
+                        queryClient.invalidateQueries({
+                          queries: [
+                            // change selectedVault to itemDataView.vaultId
+                            {queryKey: ['vaults', selectedVault, 'items']},
+                            ]
+                        });
+                      }
+                    })
               }
               setItemUpdating(false);
             }
@@ -801,15 +831,27 @@ export const ItemPanel = () => {
         {itemFormDisabled && !itemUpdating && id != 'new' && (
           <Button
             onClick={async () => {
-              const { error } = await deleteVaultItem(selectedVault, id);
-              if (error) {
-                toast.error(error);
-              } else {
-                deleteItem(itemDataList[id].vault_id, id);
-                toast.success('Vault item deleted successfully!');
-                navigate(-1);
-              }
-              navigate(-1);
+              await deleteItemData.mutateAsync(
+                {
+                  vaultId: selectedVault,
+                  id: id,
+                },
+                {
+                  onError: (error)=> {
+                    toast.error(error);
+                    navigate(-1);
+                  },
+                  onSuccess: ()=> {
+                    toast.success("Item deleted!");
+                    queryClient.invalidateQueries({
+                      queries: [
+                        // change selectedVault to itemDataView.vaultId
+                        {queryKey: ['vaults', selectedVault, 'items']},
+                        ]
+                    });
+                    navigate(-1);
+                  }
+                })
             }}
             label='Delete'
             buttonType='link'
@@ -823,17 +865,17 @@ export const ItemPanel = () => {
           <img
             className='w-[88px] h-[88px] overflow-hidden object-cover'
             alt=''
-            src={itemDataList[id] ? itemDataList[id].icon : null}
+            src={itemDataView?.icon ?? null}
           />
         </div>
         <input
           className={`flex self-stretch flex-1 relative rounded-lg w-8/12 text-5xl font-medium bg-[transparent] rounded-3xs w-11/12 overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center ${
             itemFormDisabled ? '' : 'border-2 border-blue-100 bg-blue-50 bg-opacity-40'
           }`}
-          value={itemDataList[id] ? itemDataList[id].title : ''}
+          value={itemDataView?.title ?? ''}
           placeholder='title'
           onChange={(e) => {
-            updateItem(itemDataList[id].vault_id, id, 'title', e.target.value);
+            setItemDataView({...itemDataView, title: e.target.value});
           }}
           disabled={itemFormDisabled}
         />
@@ -843,10 +885,10 @@ export const ItemPanel = () => {
             itemFormDisabled ? '' : 'border-2 border-blue-100 bg-blue-50 bg-opacity-40'
           }`}
           type='text'
-          value={itemDataList[id] ? itemDataList[id].username : ''}
+          value={itemDataView?.username ?? ''}
           placeholder='Username'
           onChange={(e) => {
-            updateItem(itemDataList[id].vault_id, id, 'username', e.target.value);
+            setItemDataView({...itemDataView, username: e.target.value});
           }}
           disabled={itemFormDisabled}
         />
@@ -857,10 +899,10 @@ export const ItemPanel = () => {
               itemFormDisabled ? '' : 'border-2 border-blue-100 bg-blue-50 bg-opacity-40'
             }`}
             type={showPassword ? 'text' : 'password'}
-            value={itemDataList[id] ? itemDataList[id].password : ''}
+            value={itemDataView?.password ?? ''}
             placeholder='Password'
             onChange={(e) => {
-              updateItem(itemDataList[id].vault_id, id, 'password', e.target.value);
+              setItemDataView({...itemDataView, password: e.target.value});
             }}
             disabled={itemFormDisabled}
           />
@@ -882,10 +924,10 @@ export const ItemPanel = () => {
             itemFormDisabled ? '' : 'border-2 border-blue-100 bg-blue-50 bg-opacity-40'
           }`}
           type='text'
-          value={itemDataList[id] ? itemDataList[id].website : ''}
+          value={itemDataView?.website ?? ''}
           placeholder='Website'
           onChange={(e) => {
-            updateItem(itemDataList[id].vault_id, id, 'website', e.target.value);
+            setItemDataView({...itemDataView, website: e.target.value});
           }}
           disabled={itemFormDisabled}
         />
@@ -900,8 +942,22 @@ export const ItemPanel = () => {
   );
 };
 
+const decryptedItemData = (itemData, keyWrappingKeyPair) => {
+  const iek = keyWrappingKeyPair.private.decrypt(
+    itemData.encryptedEncryptionKey,
+  );
+  return {
+    id: itemData.id,
+    title: decryptData(itemData.title, iek),
+    website: decryptData(itemData.website, iek),
+    username: decryptData(itemData.username, iek),
+    password: decryptData(itemData.password, iek),
+    iek: iek,
+    icon: `https://cool-rose-moth.faviconkit.com/${decryptData(itemData.website, iek)}/256`
+  }
+}
+
 const NavigationPanel = ({
-  itemDataList,
   vaultList,
   selectedVault,
   setSelectedVault,
@@ -911,12 +967,20 @@ const NavigationPanel = ({
 }) => {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
+  const [itemDataListView, setItemDataListView] = useState(null);
 
-  // useEffect(()=>{
+  const queryClient = useQueryClient();
+  const queryState = queryClient.getQueryState(["vaults", selectedVault, "items"]);
 
-  // }, search)
-
-  console.log('NavigationPanel.itemDataList', itemDataList);
+  useEffect(()=>{
+    const itemListRaw = queryClient.getQueryData(["vaults", selectedVault, "items"]);
+    console.log("itemListRaw", itemListRaw);
+    if(itemListRaw){
+      const keyWrappingKeyPair = getKeyWrappingKeyPair();
+      const itemDataListDecrypted = itemListRaw.map(itemData=>decryptedItemData(itemData, keyWrappingKeyPair));
+      setItemDataListView(itemDataListDecrypted);
+    }
+  }, [selectedVault, queryState])
 
   return (
     <div
@@ -954,7 +1018,7 @@ const NavigationPanel = ({
         id='item-list'
       >
         {
-          Object.entries(itemDataList)
+          Object.entries(itemDataListView ?? [])
           //eslint-disable-next-line
             .filter(([id, itemData]) => {
               return search.toLowerCase() === ''
@@ -1006,147 +1070,78 @@ const NavigationPanel = ({
 };
 
 const AppHome = () => {
-  const [selectedVault, setSelectedVault] = useState(null);
-  const [itemDataList, setItemDataList] = useState({});
-  // const [vaultList, setVaultList] = useState({all: {name: "all", id: "all"}});
-  const [vaultList, setVaultList] = useState(null);
-  const shouldLoad = useRef(true);
 
   useTokenExpiration();
 
-  useEffect(() => {
-    if (shouldLoad.current) {
-      (async () => {
-        console.log('Vault List loading!');
-        const { response } = await getVaults();
-        const vaultData = response;
-        let morphedVaultData = {};
-        for (let idx = 0; idx < vaultData.length; idx += 1) {
-          const vault_id = vaultData[idx].id;
-          morphedVaultData[vault_id] = { ...vaultData[idx], itemList: {} };
+  const [selectedVault, setSelectedVault] = useState(null);
+  const [vaultListView, setVaultListView] = useState(null);
+  const location = useLocation();
+  const defaultVault = useRef(null);
 
-          const { response } = await getVaultItems(vault_id);
-          const vault_items = response;
-          console.log('useEffect.vault_items', vault_items);
-          for (let idx = 0; idx < vault_items.length; idx += 1) {
-            const item_id = vault_items[idx].id;
-            const key_wrapping_key_pair = getKeyWrappingKeyPair();
-            const iek = key_wrapping_key_pair.private.decrypt(
-              vault_items[idx].encrypted_encryption_key,
-            );
-            morphedVaultData[vault_id]['itemList'][item_id] = vault_items[idx];
-            morphedVaultData[vault_id]['itemList'][item_id].title = decryptData(
-              vault_items[idx].title,
-              iek,
-            );
-            morphedVaultData[vault_id]['itemList'][item_id].website = decryptData(
-              vault_items[idx].website,
-              iek,
-            );
-            morphedVaultData[vault_id]['itemList'][item_id].username = decryptData(
-              vault_items[idx].username,
-              iek,
-            );
-            morphedVaultData[vault_id]['itemList'][item_id].password = decryptData(
-              vault_items[idx].password,
-              iek,
-            );
-            morphedVaultData[vault_id]['itemList'][item_id].iek = iek;
-            morphedVaultData[vault_id]['itemList'][
-              item_id
-            ].icon = `https://cool-rose-moth.faviconkit.com/${vault_items[idx].website}/256`;
-          }
+  useEffect(() => {
+    console.log("location", location, selectedVault, vaultListView);
+    if (selectedVault == null && defaultVault.current) {
+      setSelectedVault(defaultVault.current);
+    }
+  }, [vaultListView, location]);
+
+
+  const queryClient = useQueryClient();
+
+  const createVaultListView = (data)=>{
+    if(data){
+      var newState = {}
+      for(var i=0;i<data.length;i+=1){
+        newState[data[i].id] = data[i];
+        if(data[i].isDefault){
+          defaultVault.current = data[i].id
         }
-        // morphedVaultData["all"] = {name: "all", id: "all"};
-        setVaultList(morphedVaultData);
-      })();
-      shouldLoad.current = false;
-    }
-  }, []);
-
-  // useEffect(()=>{
-  //   console.log("useEffect.vaultList", vaultList);
-  // }, [vaultList])
-
-  useEffect(() => {
-    console.log('Vault view changed', selectedVault, vaultList);
-    if (selectedVault == null && vaultList != null) {
-      setSelectedVault(Object.entries(vaultList)[0][0]);
-      return;
-    }
-    if (vaultList == null) {
-      return;
-    }
-    let itemViewData = {};
-    if (selectedVault == 'all') {
-      Object.entries(vaultList).map(([vaultId, vault]) => {
-        if (vaultId != 'all') {
-          itemViewData = { ...vault['itemList'], ...itemViewData };
-        }
-      });
-    } else {
-      itemViewData = vaultList[selectedVault]['itemList'];
-      console.debug('Debug vaultList', vaultList[selectedVault]['itemList']);
-    }
-    setItemDataList(itemViewData);
-  }, [selectedVault, vaultList]);
-
-  useEffect(() => {
-    console.log('useEffect.itemDataList', itemDataList);
-  }, [itemDataList]);
-
-  const updateItem = (vaultId, itemId, attribute, value) => {
-    setVaultList((prevVaultList) => ({
-      ...prevVaultList,
-      [vaultId]: {
-        ...prevVaultList[vaultId],
-        itemList: {
-          ...prevVaultList[vaultId]['itemList'],
-          [itemId]: {
-            ...prevVaultList[vaultId]['itemList'][itemId],
-            [attribute]: value,
-          },
-        },
-      },
-    }));
-  };
-
-  const deleteItem = (vaultId, itemId) => {
-    console.log('Deletion attempt', vaultId, itemId);
-    setVaultList((prevVaultList) => {
-      const updatedVaultList = {
-        ...prevVaultList,
-        [vaultId]: {
-          ...prevVaultList[vaultId],
-          itemList: {
-            ...prevVaultList[vaultId].itemList,
-          },
-        },
-      };
-
-      if (updatedVaultList[vaultId] && updatedVaultList[vaultId].itemList[itemId]) {
-        delete updatedVaultList[vaultId].itemList[itemId];
       }
-
-      return updatedVaultList;
-    });
-  };
-
-  const addItem = (vaultId, itemData) => {
-    if (itemData['website']) {
-      itemData['icon'] = `https://cool-rose-moth.faviconkit.com/${itemData.website}/256`;
+      return newState;
+    } else{
+      return null;
     }
-    setVaultList((prevVaultList) => ({
-      ...prevVaultList,
-      [vaultId]: {
-        ...prevVaultList[vaultId],
-        itemList: { ...prevVaultList[vaultId]['itemList'], [itemData.id]: itemData },
-      },
-    }));
-    deleteItem(vaultId, 'new');
-  };
+  }
 
-  const updateVaultState = (vaultId, attribute, value) => {
+  const vaultListRaw = useQuery({
+    queryKey: ["vaults"],
+    queryFn: async ()=>{
+      const data = await getVaults2();
+      setVaultListView(()=>createVaultListView(data));
+      data.map(vaultData=>{
+        queryClient.setQueryData(["vaults", vaultData.id], vaultData);
+      })
+      return data;
+    },
+    refetchOnWindowFocus: false,
+    staleTime: 300000
+  })
+
+  useEffect(()=>{
+    const data = queryClient.getQueryData(["vaults"])
+    setVaultListView(()=>createVaultListView(data));
+  }, [])
+
+  const vaultItemsRaw = useQueries({
+    queries: (vaultListRaw?.data || [])
+    .map(({ id })=>{return {
+        queryKey: ["vaults", id, "items"],
+        queryFn: async ()=>{
+          const data = await getVaultItems2(id);
+          const keyWrappingKeyPair = getKeyWrappingKeyPair();
+          const decryptedItemList = data.map(vaultItem=>{
+            queryClient.setQueryData(["vaults", id, "items", vaultItem.id], vaultItem);
+            return decryptedItemData(vaultItem, keyWrappingKeyPair);
+          })
+          return data;
+        },
+        refetchOnWindowFocus: false,
+        staleTime: 300000,
+        enabled: !!vaultListRaw.data && !!id,
+      }})
+  })
+
+   const updateVaultState = (vaultId, attribute, value) => {
     setVaultList((prevVaultList) => ({
       ...prevVaultList,
       [vaultId]: {
@@ -1195,7 +1190,7 @@ const AppHome = () => {
           id='apphome-inner'
         >
           <ToastContainer />
-          <EditVaultPopup
+{/*          <EditVaultPopup
             open={openEditVaultPopup}
             setOpen={setOpenEditVault}
             selectedVault={selectedVault}
@@ -1214,17 +1209,16 @@ const AppHome = () => {
             selectedVault={selectedVault}
             vaultList={vaultList}
             deleteVaultState={deleteVaultState}
-          />
+          />*/}
           <NavigationPanel
-            vaultList={vaultList}
-            itemDataList={itemDataList}
+            vaultList={vaultListView}
             selectedVault={selectedVault}
             setSelectedVault={setSelectedVault}
             setOpenEditVault={setOpenEditVault}
             setOpenAddVault={setOpenAddVault}
             setOpenDeleteVault={setOpenDeleteVault}
           />
-          <Outlet context={[selectedVault, itemDataList, updateItem, deleteItem, addItem]} />
+          <Outlet context={[selectedVault, vaultListView]} />
         </div>
       </div>
     </div>

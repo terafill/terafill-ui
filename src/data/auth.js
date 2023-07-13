@@ -24,17 +24,17 @@ export const initateSignupProcess = async (email) => {
     const response = await axios(config);
     return { response: response?.data || {} };
   } catch (error) {
-    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    return { error: error_msg };
+    const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    return { error: errorMessage };
   }
 };
 
 export const completeSignupProcess = async (
   email,
   password,
-  verification_code,
-  first_name,
-  last_name,
+  verificationCode,
+  firstName,
+  lastName,
 ) => {
   try {
     // generate verifier and salt
@@ -44,16 +44,16 @@ export const completeSignupProcess = async (
       },
     );
 
-    const encrypted_key_wrapping_key = getRSAPrivateKey(password, true);
+    const encryptedKeyWrappingKey = getRSAPrivateKey(password, true);
 
     const data = JSON.stringify({
       email: email,
-      verification_code: verification_code,
-      first_name: first_name,
-      last_name: last_name,
+      verificationCode: verificationCode,
+      firstName: firstName,
+      lastName: lastName,
       verifier: verifier.toString('hex'),
       salt: salt.toString('hex'),
-      encrypted_key_wrapping_key: encrypted_key_wrapping_key,
+      encryptedKeyWrappingKey: encryptedKeyWrappingKey,
     });
 
     const config = {
@@ -71,8 +71,8 @@ export const completeSignupProcess = async (
     const response = await axios(config);
     return { response: response?.data || {} };
   } catch (error) {
-    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    return { error: error_msg };
+    const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    return { error: errorMessage };
   }
 };
 
@@ -95,10 +95,10 @@ const getSalt = (email) => {
   return axios(config);
 };
 
-const initiateLogin = (email, clientPubliKey) => {
+const initiateLogin = (email, clientPublicKey) => {
   var data = JSON.stringify({
     email: email,
-    client_public_key: clientPubliKey,
+    clientPublicKey: clientPublicKey,
   });
 
   var config = {
@@ -118,7 +118,7 @@ const initiateLogin = (email, clientPubliKey) => {
 const confirmLogin = (email, clientProof) => {
   var data = JSON.stringify({
     email: email,
-    client_proof: clientProof,
+    clientProof: clientProof,
   });
 
   var config = {
@@ -138,37 +138,37 @@ const confirmLogin = (email, clientProof) => {
 export const loginUser = async (email, password) => {
   try {
     // Get salt from server
-    const salt_response = await getSalt(email);
-    const { salt } = salt_response.data;
+    const saltResponse = await getSalt(email);
+    const { salt } = saltResponse.data;
 
     // Create SRP Client
     const client = await getSRPClient(email, password, salt);
     const clientPubliKey = client.computeA();
 
     // Send A to server and receive B
-    const login_response = await initiateLogin(email, Buffer.from(clientPubliKey).toString('hex'));
-    const { server_public_key } = login_response.data;
-    client.setB(Buffer.from(server_public_key, 'hex'));
+    const loginResponse = await initiateLogin(email, Buffer.from(clientPubliKey).toString('hex'));
+    const { serverPublicKey } = loginResponse.data;
+    client.setB(Buffer.from(serverPublicKey, 'hex'));
 
     const clientProof = client.computeM1();
 
     // Share proofs and complete login
-    const confirm_login_response = await confirmLogin(
+    const confirmLoginResponse = await confirmLogin(
       email,
       Buffer.from(clientProof).toString('hex'),
     );
-    const { server_proof, key_wrapping_key } = confirm_login_response.data;
-    if (client.checkM2(Buffer.from(server_proof, 'hex'))) {
+    const { serverProof, keyWrappingKey } = confirmLoginResponse.data;
+    if (client.checkM2(Buffer.from(serverProof, 'hex'))) {
       console.warn('Server verified!');
       return {
-        response: { key_wrapping_key: key_wrapping_key },
+        response: { keyWrappingKey: keyWrappingKey },
       };
     } else {
       return { error: 'Server not verified!' };
     }
   } catch (error) {
-    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    return { error: error_msg };
+    const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    return { error: errorMessage };
   }
 };
 
@@ -187,8 +187,8 @@ export const getLoginStatus = async () => {
     const response = await axios(config);
     return { response: response?.data || {} };
   } catch (error) {
-    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    return { error: error_msg };
+    const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    return { error: errorMessage };
   }
 };
 

@@ -18,8 +18,8 @@ export async function getProfile() {
     let response = await axios(config);
     return response?.data || {};
   } catch (error) {
-    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    throw Error(error_msg)
+    const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    throw Error(errorMessage)
   }
 }
 
@@ -39,8 +39,8 @@ export async function getProfileImage() {
     let response = await axios(config);
     return response?.data || {};
   } catch (error) {
-    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    throw Error(error_msg)
+    const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    throw Error(errorMessage)
   }
 }
 
@@ -73,7 +73,7 @@ export async function updateProfile({ firstName, lastName, phoneNo, file = null 
     let response = await axios(config);
     return response?.data || {};
   } catch (error) {
-    const error_msg = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    throw Error(error_msg)
+    const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    throw Error(errorMessage)
   }
 }

@@ -22,9 +22,9 @@ const ProfileMenu = () => {
       .catch(function (error) {
         console.log(error);
         if (error?.response?.data?.detail) {
-          const error_msg = error.response.data.detail;
-          console.log(error_msg);
-          alert([error_msg]);
+          const errorMessage = error.response.data.detail;
+          console.log(errorMessage);
+          alert([errorMessage]);
         } else {
           alert([`Something went wrong: ${error}.`]);
         }

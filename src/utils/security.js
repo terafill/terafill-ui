@@ -6,26 +6,36 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const getSRPClient = (username, password, salt) => {
   return new Promise((resolve, reject) => {
-    const params = SRP.params[1024];
+    try{
+      const params = SRP.params[1024];
 
-    var identity = Buffer.from(username);
-    var password_ = Buffer.from(password);
-    var salt_ = Buffer.from(salt, 'hex');
-    var verifier = SRP.computeVerifier(params, salt_, identity, password_);
-    var secret = Buffer.from(CryptoJS.lib.WordArray.random(32).toString(), 'hex');
-    const client = new SRP.Client(params, salt_, identity, password_, secret);
-    resolve(client);
+      var identity = Buffer.from(username);
+      var password_ = Buffer.from(password);
+      var salt_ = Buffer.from(salt, 'hex');
+      // var verifier = SRP.computeVerifier(params, salt_, identity, password_);
+      var secret = Buffer.from(CryptoJS.lib.WordArray.random(32).toString(), 'hex');
+      const client = new SRP.Client(params, salt_, identity, password_, secret);
+     resolve(client);
+    }
+    catch(error){
+      reject(error);
+    }
   });
 };
 
 export const getAuthClientDetails = (username, password) => {
   return new Promise((resolve, reject) => {
-    const params = SRP.params[1024];
-    var identity = Buffer.from(username);
-    var password_ = Buffer.from(password);
-    var salt = Buffer.from(CryptoJS.lib.WordArray.random(32).toString(), 'hex');
-    var verifier = SRP.computeVerifier(params, salt, identity, password_);
-    resolve([salt, verifier]);
+    try{
+      const params = SRP.params[1024];
+      var identity = Buffer.from(username);
+      var password_ = Buffer.from(password);
+      var salt = Buffer.from(CryptoJS.lib.WordArray.random(32).toString(), 'hex');
+      var verifier = SRP.computeVerifier(params, salt, identity, password_);
+      resolve([salt, verifier]);
+    }
+    catch(error){
+      reject(error);
+    }
   });
 };
 
@@ -35,7 +45,7 @@ export function getHash(passphrase, algorithm, salt = null) {
     return hash.toString(CryptoJS.enc.Hex);
   } else if (algorithm === 'PBKDF2') {
     if (salt === null) {
-      const salt = CryptoJS.lib.WordArray.random(128 / 8);
+      salt = CryptoJS.lib.WordArray.random(128 / 8);
     }
     const iterations = 1000;
     const keyLength = 256;
@@ -89,46 +99,46 @@ export const generateSecretKey = () => {
   return secret_key;
 };
 
-export const storeEncryptedData = (key, value, key_hash_salt, value_encryption_key) => {
-  localStorage.setItem(
-    deriveEncryptionKey(key, 'PBKDF2', key_hash_salt),
-    encryptData(value, value_encryption_key),
-  );
-};
+// export const storeEncryptedData = (key, value, key_hash_salt, value_encryption_key) => {
+//   localStorage.setItem(
+//     deriveEncryptionKey(key, 'PBKDF2', key_hash_salt),
+//     encryptData(value, value_encryption_key),
+//   );
+// };
 
-export const fetchDecryptedData = (key, key_hash_salt, value_encryption_key) => {
-  const encrypted_data = localStorage.getItem(deriveEncryptionKey(key, 'PBKDF2', key_hash_salt));
+// export const fetchDecryptedData = (key, key_hash_salt, value_encryption_key) => {
+//   const encrypted_data = localStorage.getItem(deriveEncryptionKey(key, 'PBKDF2', key_hash_salt));
 
-  return decryptData(encrypted_data, value_encryption_key);
-};
+//   return decryptData(encrypted_data, value_encryption_key);
+// };
 
 export const getKeyWrappingKeyPair = () => {
-  const key_wrapping_key = localStorage.getItem('key_wrapping_key');
-  const key_wrapping_key_public = localStorage.getItem('key_wrapping_key_public');
+  const keyWrappingKey = localStorage.getItem('keyWrappingKey');
+  const keyWrappingKeyPublic = localStorage.getItem('keyWrappingKeyPublic');
   return {
-    public: forge.pki.publicKeyFromPem(key_wrapping_key_public),
-    private: forge.pki.privateKeyFromPem(key_wrapping_key),
+    public: forge.pki.publicKeyFromPem(keyWrappingKeyPublic),
+    private: forge.pki.privateKeyFromPem(keyWrappingKey),
   };
 };
 
-export const storeAuthData = (email, password = null, key_wrapping_key = null) => {
+export const storeAuthData = (email, password = null, keyWrappingKey = null) => {
   localStorage.clear();
   localStorage.setItem('email', email);
-  if (key_wrapping_key) {
-    const hashed_password = getHash(password, 'SHA-256');
-    const key_wrapping_key_decypted = forge.pki.decryptRsaPrivateKey(
-      key_wrapping_key,
-      hashed_password,
+  if (keyWrappingKey) {
+    const hashedPassword = getHash(password, 'SHA-256');
+    const keyWrappingKeyDecypted = forge.pki.decryptRsaPrivateKey(
+      keyWrappingKey,
+      hashedPassword,
     );
-    const key_wrapping_key_pem = forge.pki.privateKeyToPem(key_wrapping_key_decypted);
-    localStorage.setItem('key_wrapping_key', key_wrapping_key_pem);
+    const keyWrappingKey_pem = forge.pki.privateKeyToPem(keyWrappingKeyDecypted);
+    localStorage.setItem('keyWrappingKey', keyWrappingKey_pem);
 
-    const key_wrapping_key_public = forge.pki.setRsaPublicKey(
-      key_wrapping_key_decypted.n,
-      key_wrapping_key_decypted.e,
+    const keyWrappingKeyPublic = forge.pki.setRsaPublicKey(
+      keyWrappingKeyDecypted.n,
+      keyWrappingKeyDecypted.e,
     );
-    var key_wrapping_key_public_pem = forge.pki.publicKeyToPem(key_wrapping_key_public);
-    localStorage.setItem('key_wrapping_key_public', key_wrapping_key_public_pem);
+    var keyWrappingKeyPublicPem = forge.pki.publicKeyToPem(keyWrappingKeyPublic);
+    localStorage.setItem('keyWrappingKeyPublic', keyWrappingKeyPublicPem);
   }
 };
 
@@ -140,7 +150,7 @@ export const getRSAPrivateKey = (password = null, encrypted = false) => {
     return privateKeyPem;
   }
 
-  const hashed_password = getHash(password, 'SHA-256');
-  const encryptedPrivateKeyPem = forge.pki.encryptRsaPrivateKey(privateKey, hashed_password);
+  const hashedPassword = getHash(password, 'SHA-256');
+  const encryptedPrivateKeyPem = forge.pki.encryptRsaPrivateKey(privateKey, hashedPassword);
   return encryptedPrivateKeyPem;
 };

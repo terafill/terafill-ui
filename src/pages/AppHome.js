@@ -31,7 +31,7 @@ import Navbar from '../components/Navbar';
 import SideNavbar from '../components/SideNavbar';
 import { useTokenExpiration } from '../components/TokenTools';
 import { updateVaultItem, createVaultItem, deleteVaultItem } from '../data/item';
-import { addVault, getVaults2, getVaults, getVaultItems2, getVaultItems, updateVault, deleteVault } from '../data/vault';
+import { addVault, getVaults, getVaultItems, updateVault, deleteVault } from '../data/vault';
 import { getKeyWrappingKeyPair, decryptData } from '../utils/security';
 import './AppHome.css';
 
@@ -39,16 +39,20 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-function MultiVaultDropown({ vaultList, selectedVault, setSelectedVault }) {
-  // console.log('MultiVaultDropown.selected', selectedVault, vaultList);
+function MultiVaultDropown({ vaultListView, selectedVault, setSelectedVault, resetSelectedVault }) {
+
+  useEffect(()=>{
+    resetSelectedVault();
+  }, [vaultListView]);
+
   return (
     <Listbox value={selectedVault} onChange={setSelectedVault}>
       {({ open }) => (
         <>
-          {vaultList && selectedVault ? (
+          {vaultListView && selectedVault && vaultListView[selectedVault] ? (
             <div className='w-11/12 my-2'>
               <Listbox.Button className='flex relative w-full rounded-md bg-white py-1.5 pl-3 pr-1.5 text-left text-black-700 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none sm:text-sm sm:leading-6'>
-                <span className='flex-1 block truncate'>{vaultList[selectedVault].name}</span>
+                <span className='flex-1 block truncate'>{vaultListView[selectedVault].name}</span>
                 <span className='flex-0 pointer-events-none inset-y-0 flex items-center'>
                   <ChevronUpDownIcon className='h-5 w-5 text-gray-400' aria-hidden='true' />
                 </span>
@@ -64,7 +68,7 @@ function MultiVaultDropown({ vaultList, selectedVault, setSelectedVault }) {
                 <Listbox.Options className='absolute z-10 mt-1 max-h-60 w-11/12 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm cursor-pointer'>
                   {
                     //eslint-disable-next-line
-                    Object.entries(vaultList).map(([vaultId, vault]) => (
+                    Object.entries(vaultListView).map(([vaultId, vault]) => (
                       <Listbox.Option
                         key={vault.id}
                         className={({ active }) =>
@@ -113,17 +117,23 @@ function MultiVaultDropown({ vaultList, selectedVault, setSelectedVault }) {
   );
 }
 
-function EditVaultPopup({ open, setOpen, selectedVault, vaultList, updateVaultState }) {
+function EditVaultPopup({ open, setOpen, selectedVault, vaultListView }) {
   const cancelButtonRef = useRef(null);
   const [vaultName, setVaultName] = useState('');
   const [vaultDescription, setVaultDescription] = useState('');
 
   useEffect(() => {
-    if (selectedVault != null) {
-      setVaultName(vaultList[selectedVault].name);
-      setVaultDescription(vaultList[selectedVault].description);
+    if (selectedVault) {
+      setVaultName(vaultListView[selectedVault].name);
+      setVaultDescription(vaultListView[selectedVault].description);
     }
   }, [selectedVault]);
+
+  const queryClient = useQueryClient();
+
+  const updateVaultMutation = useMutation({
+    mutationFn: updateVault
+  });
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -217,17 +227,23 @@ function EditVaultPopup({ open, setOpen, selectedVault, vaultList, updateVaultSt
                     type='button'
                     className='inline-flex w-2/3 justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2'
                     onClick={async () => {
-                      const { error } = await updateVault(
-                        selectedVault,
-                        vaultName,
-                        vaultDescription,
-                      );
-                      if(error){toast.error(error);}
-                      else{
-                        updateVaultState(selectedVault, 'name', vaultName);
-                        updateVaultState(selectedVault, 'description', vaultDescription);
-                        toast.success('Vault updated successfully!');
-                      }
+                      updateVaultMutation.mutateAsync({
+                        vaultId: selectedVault,
+                        name: vaultName,
+                        description: vaultDescription
+                      }, {
+                        onSuccess: ()=>{
+                          toast.success('Vault updated successfully!');
+                          queryClient.invalidateQueries({
+                            queries: [
+                              {queryKey: ['vaults']}
+                            ]
+                          });
+                        },
+                        onError: (error)=>{
+                          toast.error(error);
+                        }
+                      });
                       setOpen(false);
                     }}
                   >
@@ -243,10 +259,16 @@ function EditVaultPopup({ open, setOpen, selectedVault, vaultList, updateVaultSt
   );
 }
 
-function AddVaultPopup({ open, setOpen, addVaultState }) {
+function AddVaultPopup({ open, setOpen }) {
   const cancelButtonRef = useRef(null);
   const [vaultName, setVaultName] = useState('');
   const [vaultDescription, setVaultDescription] = useState('');
+
+  const queryClient = useQueryClient();
+
+  const addVaultMutation = useMutation({
+    mutationFn: addVault
+  });
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -340,13 +362,22 @@ function AddVaultPopup({ open, setOpen, addVaultState }) {
                     type='button'
                     className='inline-flex w-2/3 justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2'
                     onClick={async () => {
-                      const { response, error } = await addVault(vaultName, vaultDescription);
-                      if(error){
-                        toast.error(error);
-                      }
-                      else {
-                        addVaultState(response);
-                      }
+                      addVaultMutation.mutateAsync({
+                        name: vaultName,
+                        description: vaultDescription
+                      }, {
+                        onSuccess: ()=>{
+                          toast.success('Vault added successfully!');
+                          queryClient.invalidateQueries({
+                            queries: [
+                              {queryKey: ['vaults']}
+                            ]
+                          });
+                        },
+                        onError: (error)=>{
+                          toast.error(error);
+                        }
+                      });
                       setOpen(false);
                     }}
                   >
@@ -362,13 +393,19 @@ function AddVaultPopup({ open, setOpen, addVaultState }) {
   );
 }
 
-function DeleteVaultPopup({ open, setOpen, selectedVault, vaultList, deleteVaultState }) {
+function DeleteVaultPopup({ open, setOpen, selectedVault, vaultListView, resetSelectedVault }) {
   const cancelButtonRef = useRef(null);
   const [vaultName, setVaultName] = useState('');
 
   useEffect(() => {
     setVaultName('');
   }, [selectedVault]);
+
+  const queryClient = useQueryClient();
+
+  const deleteVaultMutation = useMutation({
+    mutationFn: deleteVault
+  });
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -441,18 +478,26 @@ function DeleteVaultPopup({ open, setOpen, selectedVault, vaultList, deleteVault
                       type='button'
                       className='inline-flex w-2/3 justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2'
                       onClick={async () => {
-                        if (vaultName != vaultList[selectedVault].name) {
+                        if (vaultName != vaultListView[selectedVault].name) {
                           toast.warn("Vault name doesn't match!");
                           return;
                         }
-
-                        const { error } = await deleteVault(selectedVault);
-                        if (error) {
-                          toast.error(error);
-                        } else {
-                          deleteVaultState(selectedVault);
-                          toast.success('Vault deleted successfully!');
-                        }
+                        deleteVaultMutation.mutateAsync({
+                          vaultId: selectedVault
+                        }, {
+                          onSuccess: ()=>{
+                            toast.success('Vault deleted successfully!');
+                            resetSelectedVault();
+                            queryClient.invalidateQueries({
+                              queries: [
+                                {queryKey: ['vaults']}
+                              ]
+                            });
+                          },
+                          onError: (error)=>{
+                            toast.error(error);
+                          }
+                        });
                         setOpen(false);
                       }}
                     >
@@ -509,7 +554,6 @@ function VaultSettingsMenu({
             <Menu.Item
               onClick={() => {
                 setOpenEditVault(true);
-                // console.log('clicked', 'edit');
               }}
             >
               {({ active }) => (
@@ -636,10 +680,9 @@ function VaultSettingsMenu({
           {!isDefault && (
             <div className='py-1'>
               <Menu.Item
-                disabled
+                // disabled
                 onClick={() => {
                   setOpenDeleteVault(true);
-                  // console.log('clicked', 'delete');
                 }}
               >
                 {({ active }) => (
@@ -783,7 +826,6 @@ export const ItemPanel = () => {
                   })
                   navigate(`/app/home/${response.data.id}`);
               } else {
-                  console.log("Saving", itemDataView);
                   await updateItemData.mutateAsync(
                     {
                       vaultId: selectedVault,
@@ -958,12 +1000,13 @@ const decryptedItemData = (itemData, keyWrappingKeyPair) => {
 }
 
 const NavigationPanel = ({
-  vaultList,
+  vaultListView,
   selectedVault,
   setSelectedVault,
   setOpenEditVault,
   setOpenAddVault,
   setOpenDeleteVault,
+  resetSelectedVault
 }) => {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
@@ -974,7 +1017,6 @@ const NavigationPanel = ({
 
   useEffect(()=>{
     const itemListRaw = queryClient.getQueryData(["vaults", selectedVault, "items"]);
-    console.log("itemListRaw", itemListRaw);
     if(itemListRaw){
       const keyWrappingKeyPair = getKeyWrappingKeyPair();
       const itemDataListDecrypted = itemListRaw.map(itemData=>decryptedItemData(itemData, keyWrappingKeyPair));
@@ -990,12 +1032,13 @@ const NavigationPanel = ({
       <div className='flex w-full items-center justify-around gap-2 px-2' id='vaul-bar'>
         {/*<p className="text-md">Vault</p>*/}
         <MultiVaultDropown
-          vaultList={vaultList}
+          vaultListView={vaultListView}
           selectedVault={selectedVault}
           setSelectedVault={setSelectedVault}
+          resetSelectedVault={resetSelectedVault}
         />
         <VaultSettingsMenu
-          vaultList={vaultList}
+          vaultListView={vaultListView}
           selectedVault={selectedVault}
           setOpenEditVault={setOpenEditVault}
           setOpenAddVault={setOpenAddVault}
@@ -1078,11 +1121,16 @@ const AppHome = () => {
   const location = useLocation();
   const defaultVault = useRef(null);
 
-  useEffect(() => {
-    console.log("location", location, selectedVault, vaultListView);
+  const resetSelectedVault = () =>{
     if (selectedVault == null && defaultVault.current) {
       setSelectedVault(defaultVault.current);
+    } else if (selectedVault && !vaultListView[selectedVault]){
+      setSelectedVault(defaultVault.current);
     }
+  };
+
+  useEffect(() => {
+    resetSelectedVault();
   }, [vaultListView, location]);
 
 
@@ -1106,7 +1154,7 @@ const AppHome = () => {
   const vaultListRaw = useQuery({
     queryKey: ["vaults"],
     queryFn: async ()=>{
-      const data = await getVaults2();
+      const data = await getVaults();
       setVaultListView(()=>createVaultListView(data));
       data.map(vaultData=>{
         queryClient.setQueryData(["vaults", vaultData.id], vaultData);
@@ -1127,7 +1175,7 @@ const AppHome = () => {
     .map(({ id })=>{return {
         queryKey: ["vaults", id, "items"],
         queryFn: async ()=>{
-          const data = await getVaultItems2(id);
+          const data = await getVaultItems(id);
           const keyWrappingKeyPair = getKeyWrappingKeyPair();
           const decryptedItemList = data.map(vaultItem=>{
             queryClient.setQueryData(["vaults", id, "items", vaultItem.id], vaultItem);
@@ -1141,40 +1189,20 @@ const AppHome = () => {
       }})
   })
 
-   const updateVaultState = (vaultId, attribute, value) => {
-    setVaultList((prevVaultList) => ({
-      ...prevVaultList,
-      [vaultId]: {
-        ...prevVaultList[vaultId],
-        [attribute]: value,
-      },
-    }));
-  };
-
-  const addVaultState = (vaultData) => {
-    setVaultList((prevVaultList) => ({
-      ...prevVaultList,
-      [vaultData.id]: {
-        ...vaultData,
-        itemList: [],
-      },
-    }));
-  };
-
-  const deleteVaultState = (vaultId) => {
-    if (Object.entries(vaultList)[0][0] != vaultId) {
-      setSelectedVault(Object.entries(vaultList)[0][0]);
-    } else {
-      setSelectedVault(Object.entries(vaultList)[1][0]);
-    }
-    setVaultList((prevVaultList) => {
-      const updatedVaultList = {
-        ...prevVaultList,
-      };
-      delete updatedVaultList[vaultId];
-      return updatedVaultList;
-    });
-  };
+  // const deleteVaultState = (vaultId) => {
+  //   if (Object.entries(vaultList)[0][0] != vaultId) {
+  //     setSelectedVault(Object.entries(vaultList)[0][0]);
+  //   } else {
+  //     setSelectedVault(Object.entries(vaultList)[1][0]);
+  //   }
+  //   setVaultList((prevVaultList) => {
+  //     const updatedVaultList = {
+  //       ...prevVaultList,
+  //     };
+  //     delete updatedVaultList[vaultId];
+  //     return updatedVaultList;
+  //   });
+  // };
 
   const [openEditVaultPopup, setOpenEditVault] = useState(false);
   const [openAddVaultPopup, setOpenAddVault] = useState(false);
@@ -1190,33 +1218,32 @@ const AppHome = () => {
           id='apphome-inner'
         >
           <ToastContainer />
-{/*          <EditVaultPopup
+          <EditVaultPopup
             open={openEditVaultPopup}
             setOpen={setOpenEditVault}
             selectedVault={selectedVault}
-            vaultList={vaultList}
-            updateVaultState={updateVaultState}
+            vaultListView={vaultListView}
           />
           <AddVaultPopup
             open={openAddVaultPopup}
             setOpen={setOpenAddVault}
-            vaultList={vaultList}
-            addVaultState={addVaultState}
+            vaultListView={vaultListView}
           />
           <DeleteVaultPopup
             open={openDeleteVaultPopup}
             setOpen={setOpenDeleteVault}
             selectedVault={selectedVault}
-            vaultList={vaultList}
-            deleteVaultState={deleteVaultState}
-          />*/}
+            vaultListView={vaultListView}
+            resetSelectedVault={resetSelectedVault}
+          />
           <NavigationPanel
-            vaultList={vaultListView}
+            vaultListView={vaultListView}
             selectedVault={selectedVault}
             setSelectedVault={setSelectedVault}
             setOpenEditVault={setOpenEditVault}
             setOpenAddVault={setOpenAddVault}
             setOpenDeleteVault={setOpenDeleteVault}
+            resetSelectedVault={resetSelectedVault}
           />
           <Outlet context={[selectedVault, vaultListView]} />
         </div>

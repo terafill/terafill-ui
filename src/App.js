@@ -1,165 +1,89 @@
-import {
-  Routes,
-  Route,
-  useNavigationType,
-  useLocation,
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
-import { useEffect } from "react";
+import React from 'react';
 
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-
-// Landing Page
-import LandingPage from "./pages/LandingPage";
-import ProductsPage from "./pages/ProductsPage";
-import PricingPage from "./pages/PricingPage";
-import WhitepaperPage from "./pages/WhitepaperPage";
-import FaqPage from "./pages/FaqPage";
-
-// Login and Signup
-import LoginPage from "./pages/LoginPage";
-import SignUpPage from "./pages/SignUpPage";
-import { CreateAccountForm, EmailConfirmationForm, RecoveryKitForm } from "./pages/SignUpPage";
-
-// App Home
-import AppHome, { ItemPanel, ItemPanelIndex, itemDataLoader } from "./pages/AppHome";
-
-// Settings
-import Settings from './pages/settings/Settings';
-import SettingsPersonalInfo from "./pages/settings/SettingsPersonalInfo";
-import SettingsDeviceManagement from "./pages/settings/SettingsDeviceManagement";
-import SettingsSecurity from "./pages/settings/SettingsSecurity";
-import SettingsSharing, { SettingsSharingByUser, SettingsSharingByPassword } from "./pages/settings/SettingsSharing";
-
-// Others
-import Import from "./pages/Import";
-import HelpSupport from "./pages/HelpSupport";
-
-
+import AppHome, { ItemPanel, ItemPanelIndex } from './pages/app/AppHome';
+import HelpSupport from './pages/app/HelpSupport';
+import Import from './pages/app/Import';
+import PersonalInfo from './pages/app/PersonalInfo';
+import LoginPage from './pages/auth/LoginPage';
+import SignUpPage, { CreateAccountForm, EmailConfirmationForm } from './pages/auth/SignUpPage';
+import FaqPage from './pages/marketing/FaqPage';
+import LandingPage from './pages/marketing/LandingPage';
+import PricingPage from './pages/marketing/PricingPage';
+import ProductsPage from './pages/marketing/ProductsPage';
+import WhitepaperPage from './pages/marketing/WhitepaperPage';
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element:  <LandingPage />,
+    path: '/',
+    element: <LandingPage />,
   },
   {
-    path: "/app",
+    path: '/app',
     children: [
       {
         // index: true,
-        path: "home",
+        path: 'home',
         element: <AppHome />,
         children: [
           {
-            path: ":id",
-            element: <ItemPanel/>,
+            path: ':id',
+            element: <ItemPanel />,
           },
           {
             index: true,
-            element: <ItemPanelIndex />
+            element: <ItemPanelIndex />,
           },
         ],
       },
       {
-        path: "profile",
-        element: <SettingsPersonalInfo />,
-      }
-    ]
-  },
-  // {
-  //   path: "/app-home",
-  //   element: <AppHome />,
-  //   children: [
-  //     {
-  //       path: ":id",
-  //       element: <ItemPanel/>,
-  //     },
-  //     {
-  //       index: true,
-  //       element: <ItemPanelIndex />
-  //     },
-  //   ],
-
-  // },
-  {
-    path: "/products",
-    element: <ProductsPage />
+        path: 'profile',
+        element: <PersonalInfo />,
+      },
+    ],
   },
   {
-    path: "/pricing",
-    element: <PricingPage />
+    path: '/products',
+    element: <ProductsPage />,
   },
   {
-    path: "/whitepaper",
-    element: <WhitepaperPage />
+    path: '/pricing',
+    element: <PricingPage />,
   },
   {
-    path: "/faq",
-    element: <FaqPage />
+    path: '/whitepaper',
+    element: <WhitepaperPage />,
   },
   {
-    path: "/login",
-    element: <LoginPage />
+    path: '/faq',
+    element: <FaqPage />,
   },
   {
-    path: "/signup",
+    path: '/login',
+    element: <LoginPage />,
+  },
+  {
+    path: '/signup',
     element: <SignUpPage />,
     children: [
       {
         index: true,
-        element: <CreateAccountForm />
+        element: <CreateAccountForm />,
       },
       {
-        path: "email-confirmation",
-        element: <EmailConfirmationForm />
+        path: 'email-confirmation',
+        element: <EmailConfirmationForm />,
       },
-      {
-        path: "recovery-kit",
-        element: <RecoveryKitForm />
-      },
-    ]
+    ],
   },
   {
-    path: "/settings",
-    element: <Settings />,
-    children: [
-      {
-        index: true,
-        element: <SettingsPersonalInfo />
-      },
-      {
-        path: "security",
-        element: <SettingsSecurity />
-      },
-      {
-        path: "sharing",
-        element: <SettingsSharing />,
-        children: [
-          {
-            index: true,
-            path: "by-password",
-            element: <SettingsSharingByPassword />
-          },
-          {
-            path: "by-user",
-            element: <SettingsSharingByUser />
-          },
-        ]
-      },
-      {
-        path: "device-management",
-        element: <SettingsDeviceManagement />
-      },
-    ]
+    path: '/import',
+    element: <Import />,
   },
   {
-    path: "/import",
-    element: <Import />
-  },
-  {
-    path: "/help-and-support",
-    element: <HelpSupport />
+    path: '/help-and-support',
+    element: <HelpSupport />,
   },
 ]);
 
@@ -191,46 +115,6 @@ function App() {
   //       title = "";
   //       metaDescription = "";
   //       break;
-  //     case "/settings-device-management":
-  //       title = "";
-  //       metaDescription = "";
-  //       break;
-  //     case "/app-home":
-  //       title = "";
-  //       metaDescription = "";
-  //       break;
-  //     case "/email-confirmation":
-  //       title = "";
-  //       metaDescription = "";
-  //       break;
-  //     case "/import":
-  //       title = "";
-  //       metaDescription = "";
-  //       break;
-  //     case "/settings-sharing-by-user":
-  //       title = "";
-  //       metaDescription = "";
-  //       break;
-  //     case "/settings-sharing-by-password":
-  //       title = "";
-  //       metaDescription = "";
-  //       break;
-  //     case "/settings-security":
-  //       title = "";
-  //       metaDescription = "";
-  //       break;
-  //     case "/settings-personal-info":
-  //       title = "";
-  //       metaDescription = "";
-  //       break;
-  //     case "/create-password":
-  //       title = "";
-  //       metaDescription = "";
-  //       break;
-  //     case "/signup-page":
-  //       title = "";
-  //       metaDescription = "";
-  //       break;
   //   }
 
   //   if (title) {
@@ -247,50 +131,6 @@ function App() {
   //   }
   // }, [pathname]);
 
-  return (
-    <RouterProvider router={router} />
-    // <Routes>
-    //   <Route path="/" element={<LandingPage />} />
-
-    //   <Route path="/recovery-kit" element={<RecoveryKit />} />
-
-    //   <Route path="/help-and-support" element={<HelpSupport />} />
-
-    //   <Route
-    //     path="/settings-device-management"
-    //     element={<SettingsDeviceManagement />}
-    //   />
-
-    //   <Route path="/app-home" element={<AppHome />} >
-    //     <Route
-    //       path=":id"
-    //       element={<PasswordPanel/>}
-    //       loader={passwordDataLoader}
-    //     />
-    //   </Route>
-
-    //   <Route path="/email-confirmation" element={<EmailConfirmation />} />
-
-    //   <Route path="/import" element={<Import />} />
-
-    //   <Route
-    //     path="/settings-sharing-by-user"
-    //     element={<SettingsSharingByUser />}
-    //   />
-
-    //   <Route
-    //     path="/settings-sharing-by-password"
-    //     element={<SettingsSharingByPassword />}
-    //   />
-
-    //   <Route path="/settings-security" element={<SettingsSecurity />} />
-
-    //   <Route path="/settings-personal-info" element={<SettingsPersonalInfo />} />
-
-    //   <Route path="/create-password" element={<CreatePassword />} />
-
-    //   <Route path="/signup-page" element={<SignUpPage />} />
-    // </Routes>
-  );
+  return <RouterProvider router={router} />;
 }
 export default App;

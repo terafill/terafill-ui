@@ -1,11 +1,9 @@
- /* eslint-disable */
+/* eslint-disable */
 import { useEffect, useState } from 'react';
-
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import hash from 'object-hash';
 import { ToastContainer, toast } from 'react-toastify';
-
 
 import 'react-toastify/dist/ReactToastify.css';
 import Avatar from '../../components/Avatar';
@@ -15,9 +13,8 @@ import SideNavbar from '../../components/SideNavbar';
 //eslint-disable-next-line
 import { getProfile, updateProfile, getProfileImage } from '../../data/user';
 
-const SettingsPersonalInfo = () => {
-
-    // Access the client
+const PersonalInfo = () => {
+  // Access the client
   const queryClient = useQueryClient();
 
   const [userProfileView, setUserProfileView] = useState({
@@ -34,25 +31,25 @@ const SettingsPersonalInfo = () => {
     queryKey: ['profile'],
     queryFn: getProfile,
     refetchOnWindowFocus: false,
-    staleTime: 300000
+    staleTime: 300000,
   });
 
   const userProfileImageRaw = useQuery({
     queryKey: ['profileImage'],
     queryFn: getProfileImage,
     refetchOnWindowFocus: false,
-    staleTime: 300000
+    staleTime: 300000,
   });
 
-  const loadUserProfileView = ({ loadProfile=false, loadProfileImage=false}) => {
-    if (loadProfile && userProfileRaw.isSuccess){
+  const loadUserProfileView = ({ loadProfile = false, loadProfileImage = false }) => {
+    if (loadProfile && userProfileRaw.isSuccess) {
       setUserProfileView((prevState) => ({
         ...prevState,
-        ...userProfileRaw.data
+        ...userProfileRaw.data,
       }));
     }
 
-    if(loadProfileImage && userProfileImageRaw.isSuccess){
+    if (loadProfileImage && userProfileImageRaw.isSuccess) {
       setUserProfileView((prevState) => ({
         ...prevState,
         profileImage: userProfileImageRaw.data.profileImage
@@ -60,30 +57,32 @@ const SettingsPersonalInfo = () => {
           : '',
       }));
     }
-  }
+  };
 
-  useEffect(()=>{
-    loadUserProfileView({loadProfile:true});
-  }, [userProfileRaw.dataUpdatedAt])
+  useEffect(() => {
+    loadUserProfileView({ loadProfile: true });
+  }, [userProfileRaw.dataUpdatedAt]);
 
-  useEffect(()=>{
-    loadUserProfileView({loadProfileImage:true});
-  }, [userProfileImageRaw.dataUpdatedAt])
+  useEffect(() => {
+    loadUserProfileView({ loadProfileImage: true });
+  }, [userProfileImageRaw.dataUpdatedAt]);
 
   const updateUserProfile = useMutation({
-    mutationFn: updateProfile
-  })
+    mutationFn: updateProfile,
+  });
 
   const [saveButtonEnabled, setSaveButtonEnabled] = useState(false);
 
   useEffect(() => {
     console.log(userProfileView);
     (async () => {
-      if (userProfileRaw.data && userProfileImageRaw.data.profileImage){
+      if (userProfileRaw.data && userProfileImageRaw.data.profileImage) {
         const userProfileRawTemp = {
           ...userProfileRaw.data,
-          profileImage: userProfileImageRaw.data.profileImage?`data:image/jpeg;base64,${userProfileImageRaw.data.profileImage}`:''
-        }
+          profileImage: userProfileImageRaw.data.profileImage
+            ? `data:image/jpeg;base64,${userProfileImageRaw.data.profileImage}`
+            : '',
+        };
         if (hash(userProfileRawTemp) !== hash(userProfileView)) {
           setSaveButtonEnabled(true);
         } else {
@@ -251,7 +250,7 @@ const SettingsPersonalInfo = () => {
                   buttonType='light'
                   labelClassName='text-gray-700'
                   onClick={() => {
-                    loadUserProfileView({loadProfile: true, loadProfileImage:true});
+                    loadUserProfileView({ loadProfile: true, loadProfileImage: true });
                   }}
                 />
                 <Button
@@ -259,28 +258,26 @@ const SettingsPersonalInfo = () => {
                   buttonType='dark'
                   buttonClassName={!saveButtonEnabled ? 'pointer-events-none bg-gray-500' : ''}
                   onClick={async () => {
-                    console.log("Saving", userProfileView);
+                    console.log('Saving', userProfileView);
                     await updateUserProfile.mutateAsync(
                       {
                         firstName: userProfileView.firstName,
                         lastName: userProfileView.lastName,
                         phoneNo: userProfileView.phoneNo,
-                        file: file
+                        file: file,
                       },
                       {
-                        onError: (error)=> {
+                        onError: (error) => {
                           toast.error(error);
                         },
-                        onSuccess: ()=> {
-                          toast.success("User profile updated!");
+                        onSuccess: () => {
+                          toast.success('User profile updated!');
                           queryClient.invalidateQueries({
-                            queries: [
-                              {queryKey: ['profile']},
-                              {queryKey: ['profileImage']}
-                              ]
+                            queries: [{ queryKey: ['profile'] }, { queryKey: ['profileImage'] }],
                           });
-                        }
-                      })
+                        },
+                      },
+                    );
                   }}
                 />
               </div>
@@ -292,4 +289,4 @@ const SettingsPersonalInfo = () => {
   );
 };
 
-export default SettingsPersonalInfo;
+export default PersonalInfo;

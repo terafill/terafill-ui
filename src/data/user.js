@@ -2,7 +2,6 @@ import axios from 'axios';
 
 const baseUrl = 'http://localhost:8000/api/v1';
 
-
 export async function getProfile() {
   const requestUrl = `${baseUrl}/users/me/`;
   var config = {
@@ -19,7 +18,7 @@ export async function getProfile() {
     return response?.data || {};
   } catch (error) {
     const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    throw Error(errorMessage)
+    throw Error(errorMessage);
   }
 }
 
@@ -40,7 +39,7 @@ export async function getProfileImage() {
     return response?.data || {};
   } catch (error) {
     const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    throw Error(errorMessage)
+    throw Error(errorMessage);
   }
 }
 
@@ -74,6 +73,6 @@ export async function updateProfile({ firstName, lastName, phoneNo, file = null 
     return response?.data || {};
   } catch (error) {
     const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    throw Error(errorMessage)
+    throw Error(errorMessage);
   }
 }

@@ -2,24 +2,17 @@ import React from 'react';
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import AppHome, { ItemPanel, ItemPanelIndex } from './pages/AppHome';
-import FaqPage from './pages/FaqPage';
-import HelpSupport from './pages/HelpSupport';
-import Import from './pages/Import';
-import LandingPage from './pages/LandingPage';
-import LoginPage from './pages/LoginPage';
-import PricingPage from './pages/PricingPage';
-import ProductsPage from './pages/ProductsPage';
-import Settings from './pages/settings/Settings';
-import SettingsDeviceManagement from './pages/settings/SettingsDeviceManagement';
-import SettingsPersonalInfo from './pages/settings/SettingsPersonalInfo';
-import SettingsSecurity from './pages/settings/SettingsSecurity';
-import SettingsSharing, {
-  SettingsSharingByUser,
-  SettingsSharingByPassword,
-} from './pages/settings/SettingsSharing';
-import SignUpPage, { CreateAccountForm, EmailConfirmationForm } from './pages/SignUpPage';
-import WhitepaperPage from './pages/WhitepaperPage';
+import AppHome, { ItemPanel, ItemPanelIndex } from './pages/app/AppHome';
+import HelpSupport from './pages/app/HelpSupport';
+import Import from './pages/app/Import';
+import PersonalInfo from './pages/app/PersonalInfo';
+import LoginPage from './pages/auth/LoginPage';
+import SignUpPage, { CreateAccountForm, EmailConfirmationForm } from './pages/auth/SignUpPage';
+import FaqPage from './pages/marketing/FaqPage';
+import LandingPage from './pages/marketing/LandingPage';
+import PricingPage from './pages/marketing/PricingPage';
+import ProductsPage from './pages/marketing/ProductsPage';
+import WhitepaperPage from './pages/marketing/WhitepaperPage';
 
 const router = createBrowserRouter([
   {
@@ -46,7 +39,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'profile',
-        element: <SettingsPersonalInfo />,
+        element: <PersonalInfo />,
       },
     ],
   },
@@ -81,39 +74,6 @@ const router = createBrowserRouter([
       {
         path: 'email-confirmation',
         element: <EmailConfirmationForm />,
-      },
-    ],
-  },
-  {
-    path: '/settings',
-    element: <Settings />,
-    children: [
-      {
-        index: true,
-        element: <SettingsPersonalInfo />,
-      },
-      {
-        path: 'security',
-        element: <SettingsSecurity />,
-      },
-      {
-        path: 'sharing',
-        element: <SettingsSharing />,
-        children: [
-          {
-            index: true,
-            path: 'by-password',
-            element: <SettingsSharingByPassword />,
-          },
-          {
-            path: 'by-user',
-            element: <SettingsSharingByUser />,
-          },
-        ],
-      },
-      {
-        path: 'device-management',
-        element: <SettingsDeviceManagement />,
       },
     ],
   },

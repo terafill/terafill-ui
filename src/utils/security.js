@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const getSRPClient = (username, password, salt) => {
   return new Promise((resolve, reject) => {
-    try{
+    try {
       const params = SRP.params[1024];
 
       var identity = Buffer.from(username);
@@ -15,9 +15,8 @@ export const getSRPClient = (username, password, salt) => {
       // var verifier = SRP.computeVerifier(params, salt_, identity, password_);
       var secret = Buffer.from(CryptoJS.lib.WordArray.random(32).toString(), 'hex');
       const client = new SRP.Client(params, salt_, identity, password_, secret);
-     resolve(client);
-    }
-    catch(error){
+      resolve(client);
+    } catch (error) {
       reject(error);
     }
   });
@@ -25,15 +24,14 @@ export const getSRPClient = (username, password, salt) => {
 
 export const getAuthClientDetails = (username, password) => {
   return new Promise((resolve, reject) => {
-    try{
+    try {
       const params = SRP.params[1024];
       var identity = Buffer.from(username);
       var password_ = Buffer.from(password);
       var salt = Buffer.from(CryptoJS.lib.WordArray.random(32).toString(), 'hex');
       var verifier = SRP.computeVerifier(params, salt, identity, password_);
       resolve([salt, verifier]);
-    }
-    catch(error){
+    } catch (error) {
       reject(error);
     }
   });
@@ -126,10 +124,7 @@ export const storeAuthData = (email, password = null, keyWrappingKey = null) => 
   localStorage.setItem('email', email);
   if (keyWrappingKey) {
     const hashedPassword = getHash(password, 'SHA-256');
-    const keyWrappingKeyDecypted = forge.pki.decryptRsaPrivateKey(
-      keyWrappingKey,
-      hashedPassword,
-    );
+    const keyWrappingKeyDecypted = forge.pki.decryptRsaPrivateKey(keyWrappingKey, hashedPassword);
     const keyWrappingKey_pem = forge.pki.privateKeyToPem(keyWrappingKeyDecypted);
     localStorage.setItem('keyWrappingKey', keyWrappingKey_pem);
 

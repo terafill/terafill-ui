@@ -2,8 +2,8 @@ import React from 'react';
 
 import { CheckCircleIcon, InformationCircleIcon } from '@heroicons/react/20/solid';
 
-import KeylanceFooterContainer from '../components/KeylanceFooterContainer';
-import Navbar from '../components/Navbar';
+import KeylanceFooterContainer from '../../components/KeylanceFooterContainer';
+import Navbar from '../../components/Navbar';
 
 const WhitepaperPage = () => {
   return (

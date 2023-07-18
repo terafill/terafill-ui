@@ -2,9 +2,9 @@ import React from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
-import Button from '../components/Button';
-import KeylanceFooterContainer from '../components/KeylanceFooterContainer';
-import Navbar from '../components/Navbar';
+import Button from '../../components/Button';
+import KeylanceFooterContainer from '../../components/KeylanceFooterContainer';
+import Navbar from '../../components/Navbar';
 
 const LandingPage = () => {
   const navigate = useNavigate();

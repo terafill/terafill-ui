@@ -4,10 +4,10 @@ import { Outlet, useNavigate, useOutletContext } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
-import Button from '../components/Button';
-import Navbar from '../components/Navbar';
-import { initateSignupProcess, completeSignupProcess } from '../data/auth';
-import { storeAuthData } from '../utils/security';
+import Button from '../../components/Button';
+import Navbar from '../../components/Navbar';
+import { initateSignupProcess, completeSignupProcess } from '../../data/auth';
+import { storeAuthData } from '../../utils/security';
 
 const countries = [
   'India',

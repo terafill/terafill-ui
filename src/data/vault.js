@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const baseUrl = 'http://localhost:8000/api/v1';
-const clientId = "b980b13c-4db8-4e8a-859c-4544fd70825f"
+const clientId = 'b980b13c-4db8-4e8a-859c-4544fd70825f';
 
 export async function getVaults() {
   const requestUrl = `${baseUrl}/users/me/vaults/`;
@@ -18,10 +18,10 @@ export async function getVaults() {
 
   try {
     let response = await axios(config);
-    return response?.data || {}
+    return response?.data || {};
   } catch (error) {
     const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    throw Error(errorMessage)
+    throw Error(errorMessage);
   }
 }
 
@@ -40,10 +40,10 @@ export async function getVaultItems(vaultId) {
 
   try {
     let response = await axios(config);
-    return response?.data || {}
+    return response?.data || {};
   } catch (error) {
     const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    throw Error(errorMessage)
+    throw Error(errorMessage);
   }
 }
 
@@ -127,7 +127,7 @@ export async function deleteVault({ vaultId }) {
 
   try {
     let response = await axios(config);
-    return response?.data || {} ;
+    return response?.data || {};
   } catch (error) {
     const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
     throw Error(errorMessage);

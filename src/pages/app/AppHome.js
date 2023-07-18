@@ -1,4 +1,4 @@
- /* eslint-disable */
+/* eslint-disable */
 import React, { useEffect, useState, useRef, Fragment } from 'react';
 
 import { Dialog, Listbox, Transition, Menu } from '@headlessui/react';
@@ -24,15 +24,21 @@ import MoonLoader from 'react-spinners/MoonLoader';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
-import { useQueries, useQuery, useQueryClient, useMutation, useIsFetching } from "@tanstack/react-query";
+import {
+  useQueries,
+  useQuery,
+  useQueryClient,
+  useMutation,
+  useIsFetching,
+} from '@tanstack/react-query';
 
-import Button from '../components/Button';
-import Navbar from '../components/Navbar';
-import SideNavbar from '../components/SideNavbar';
-import { useTokenExpiration } from '../components/TokenTools';
-import { updateVaultItem, createVaultItem, deleteVaultItem } from '../data/item';
-import { addVault, getVaults, getVaultItems, updateVault, deleteVault } from '../data/vault';
-import { getKeyWrappingKeyPair, decryptData } from '../utils/security';
+import Button from '../../components/Button';
+import Navbar from '../../components/Navbar';
+import SideNavbar from '../../components/SideNavbar';
+import { useTokenExpiration } from '../../components/TokenTools';
+import { updateVaultItem, createVaultItem, deleteVaultItem } from '../../data/item';
+import { addVault, getVaults, getVaultItems, updateVault, deleteVault } from '../../data/vault';
+import { getKeyWrappingKeyPair, decryptData } from '../../utils/security';
 import './AppHome.css';
 
 function classNames(...classes) {
@@ -40,8 +46,7 @@ function classNames(...classes) {
 }
 
 function MultiVaultDropown({ vaultListView, selectedVault, setSelectedVault, resetSelectedVault }) {
-
-  useEffect(()=>{
+  useEffect(() => {
     resetSelectedVault();
   }, [vaultListView]);
 
@@ -132,7 +137,7 @@ function EditVaultPopup({ open, setOpen, selectedVault, vaultListView }) {
   const queryClient = useQueryClient();
 
   const updateVaultMutation = useMutation({
-    mutationFn: updateVault
+    mutationFn: updateVault,
   });
 
   return (
@@ -147,7 +152,7 @@ function EditVaultPopup({ open, setOpen, selectedVault, vaultListView }) {
           leaveFrom='opacity-100'
           leaveTo='opacity-0'
         >
-          <div className='fixed inset-0 bg-opacity-75 transition-opacity' />
+          <div className='fixed inset-0 bg-black bg-opacity-10 transition-opacity' />
         </Transition.Child>
 
         <div className='fixed inset-0 z-10 overflow-y-auto'>
@@ -227,23 +232,24 @@ function EditVaultPopup({ open, setOpen, selectedVault, vaultListView }) {
                     type='button'
                     className='inline-flex w-2/3 justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2'
                     onClick={async () => {
-                      updateVaultMutation.mutateAsync({
-                        vaultId: selectedVault,
-                        name: vaultName,
-                        description: vaultDescription
-                      }, {
-                        onSuccess: ()=>{
-                          toast.success('Vault updated successfully!');
-                          queryClient.invalidateQueries({
-                            queries: [
-                              {queryKey: ['vaults']}
-                            ]
-                          });
+                      updateVaultMutation.mutateAsync(
+                        {
+                          vaultId: selectedVault,
+                          name: vaultName,
+                          description: vaultDescription,
                         },
-                        onError: (error)=>{
-                          toast.error(error);
-                        }
-                      });
+                        {
+                          onSuccess: () => {
+                            toast.success('Vault updated successfully!');
+                            queryClient.invalidateQueries({
+                              queries: [{ queryKey: ['vaults'] }],
+                            });
+                          },
+                          onError: (error) => {
+                            toast.error(error);
+                          },
+                        },
+                      );
                       setOpen(false);
                     }}
                   >
@@ -267,7 +273,7 @@ function AddVaultPopup({ open, setOpen }) {
   const queryClient = useQueryClient();
 
   const addVaultMutation = useMutation({
-    mutationFn: addVault
+    mutationFn: addVault,
   });
 
   return (
@@ -282,7 +288,10 @@ function AddVaultPopup({ open, setOpen }) {
           leaveFrom='opacity-100'
           leaveTo='opacity-0'
         >
-          <div className='fixed inset-0 bg-opacity-75 transition-opacity' />
+          <div
+            className='fixed inset-0 bg-black bg-opacity-10 transition-opacity'
+            aria-hidden='true'
+          />
         </Transition.Child>
 
         <div className='fixed inset-0 z-10 overflow-y-auto'>
@@ -304,6 +313,9 @@ function AddVaultPopup({ open, setOpen }) {
                   >
                     Enter new vault details
                   </Dialog.Title>
+                  {/*                  <Dialog.Description>
+                    This will permanently deactivate your account
+                  </Dialog.Description>*/}
                   <div className='relative w-full'>
                     <label
                       htmlFor='vaultName'
@@ -362,22 +374,23 @@ function AddVaultPopup({ open, setOpen }) {
                     type='button'
                     className='inline-flex w-2/3 justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2'
                     onClick={async () => {
-                      addVaultMutation.mutateAsync({
-                        name: vaultName,
-                        description: vaultDescription
-                      }, {
-                        onSuccess: ()=>{
-                          toast.success('Vault added successfully!');
-                          queryClient.invalidateQueries({
-                            queries: [
-                              {queryKey: ['vaults']}
-                            ]
-                          });
+                      addVaultMutation.mutateAsync(
+                        {
+                          name: vaultName,
+                          description: vaultDescription,
                         },
-                        onError: (error)=>{
-                          toast.error(error);
-                        }
-                      });
+                        {
+                          onSuccess: () => {
+                            toast.success('Vault added successfully!');
+                            queryClient.invalidateQueries({
+                              queries: [{ queryKey: ['vaults'] }],
+                            });
+                          },
+                          onError: (error) => {
+                            toast.error(error);
+                          },
+                        },
+                      );
                       setOpen(false);
                     }}
                   >
@@ -404,7 +417,7 @@ function DeleteVaultPopup({ open, setOpen, selectedVault, vaultListView, resetSe
   const queryClient = useQueryClient();
 
   const deleteVaultMutation = useMutation({
-    mutationFn: deleteVault
+    mutationFn: deleteVault,
   });
 
   return (
@@ -419,7 +432,7 @@ function DeleteVaultPopup({ open, setOpen, selectedVault, vaultListView, resetSe
           leaveFrom='opacity-100'
           leaveTo='opacity-0'
         >
-          <div className='fixed inset-0 bg-opacity-75 transition-opacity' />
+          <div className='fixed inset-0 bg-black bg-opacity-10 transition-opacity' />
         </Transition.Child>
 
         <div className='fixed inset-0 z-10 overflow-y-auto'>
@@ -482,22 +495,23 @@ function DeleteVaultPopup({ open, setOpen, selectedVault, vaultListView, resetSe
                           toast.warn("Vault name doesn't match!");
                           return;
                         }
-                        deleteVaultMutation.mutateAsync({
-                          vaultId: selectedVault
-                        }, {
-                          onSuccess: ()=>{
-                            toast.success('Vault deleted successfully!');
-                            resetSelectedVault();
-                            queryClient.invalidateQueries({
-                              queries: [
-                                {queryKey: ['vaults']}
-                              ]
-                            });
+                        deleteVaultMutation.mutateAsync(
+                          {
+                            vaultId: selectedVault,
                           },
-                          onError: (error)=>{
-                            toast.error(error);
-                          }
-                        });
+                          {
+                            onSuccess: () => {
+                              toast.success('Vault deleted successfully!');
+                              resetSelectedVault();
+                              queryClient.invalidateQueries({
+                                queries: [{ queryKey: ['vaults'] }],
+                              });
+                            },
+                            onError: (error) => {
+                              toast.error(error);
+                            },
+                          },
+                        );
                         setOpen(false);
                       }}
                     >
@@ -733,14 +747,14 @@ export const ItemPanel = () => {
 
   const queryClient = useQueryClient();
 
-  const itemDataRaw = queryClient.getQueryData(["vaults", selectedVault, "items", id])
+  const itemDataRaw = queryClient.getQueryData(['vaults', selectedVault, 'items', id]);
 
-  useEffect(()=>{
-    if(itemDataRaw){
+  useEffect(() => {
+    if (itemDataRaw) {
       const keyWrappingKeyPair = getKeyWrappingKeyPair();
       setItemDataView(decryptedItemData(itemDataRaw, keyWrappingKeyPair));
     }
-  }, [itemDataRaw])
+  }, [itemDataRaw, location]);
 
   useEffect(() => {
     if (id === 'new') {
@@ -761,16 +775,16 @@ export const ItemPanel = () => {
   }, [location]);
 
   const updateItemData = useMutation({
-    mutationFn: updateVaultItem
+    mutationFn: updateVaultItem,
   });
 
   const createItemData = useMutation({
-    mutationFn: createVaultItem
+    mutationFn: createVaultItem,
   });
 
   const deleteItemData = useMutation({
-    mutationFn: deleteVaultItem
-  })
+    mutationFn: deleteVaultItem,
+  });
 
   return (
     <div
@@ -809,47 +823,47 @@ export const ItemPanel = () => {
                     website: itemDataView.website,
                     password: itemDataView.password,
                     username: itemDataView.username,
-                    iek: iek
+                    iek: iek,
                   },
                   {
-                    onError: (error)=> {
+                    onError: (error) => {
                       toast.error(error);
                     },
-                    onSuccess: ()=> {
-                      toast.success("Item created!");
+                    onSuccess: () => {
+                      toast.success('Item created!');
+                      queryClient.invalidateQueries({
+                        queries: [{ queryKey: ['vaults', selectedVault, 'items'] }],
+                      });
+                    },
+                  },
+                );
+                navigate(`/app/home/${response.data.id}`);
+              } else {
+                await updateItemData.mutateAsync(
+                  {
+                    vaultId: selectedVault,
+                    id: id,
+                    title: itemDataView.title,
+                    website: itemDataView.website,
+                    password: itemDataView.password,
+                    username: itemDataView.username,
+                    iek: itemDataView.iek,
+                  },
+                  {
+                    onError: (error) => {
+                      toast.error(error);
+                    },
+                    onSuccess: () => {
+                      toast.success('Item updated!');
                       queryClient.invalidateQueries({
                         queries: [
-                          {queryKey: ['vaults', selectedVault, 'items']},
-                          ]
+                          // change selectedVault to itemDataView.vaultId
+                          { queryKey: ['vaults', selectedVault, 'items'] },
+                        ],
                       });
-                    }
-                  })
-                  navigate(`/app/home/${response.data.id}`);
-              } else {
-                  await updateItemData.mutateAsync(
-                    {
-                      vaultId: selectedVault,
-                      id: id,
-                      title: itemDataView.title,
-                      website: itemDataView.website,
-                      password: itemDataView.password,
-                      username: itemDataView.username,
-                      iek: itemDataView.iek
                     },
-                    {
-                      onError: (error)=> {
-                        toast.error(error);
-                      },
-                      onSuccess: ()=> {
-                        toast.success("Item updated!");
-                        queryClient.invalidateQueries({
-                          queries: [
-                            // change selectedVault to itemDataView.vaultId
-                            {queryKey: ['vaults', selectedVault, 'items']},
-                            ]
-                        });
-                      }
-                    })
+                  },
+                );
               }
               setItemUpdating(false);
             }
@@ -879,21 +893,22 @@ export const ItemPanel = () => {
                   id: id,
                 },
                 {
-                  onError: (error)=> {
+                  onError: (error) => {
                     toast.error(error);
                     navigate(-1);
                   },
-                  onSuccess: ()=> {
-                    toast.success("Item deleted!");
+                  onSuccess: () => {
+                    toast.success('Item deleted!');
                     queryClient.invalidateQueries({
                       queries: [
                         // change selectedVault to itemDataView.vaultId
-                        {queryKey: ['vaults', selectedVault, 'items']},
-                        ]
+                        { queryKey: ['vaults', selectedVault, 'items'] },
+                      ],
                     });
                     navigate(-1);
-                  }
-                })
+                  },
+                },
+              );
             }}
             label='Delete'
             buttonType='link'
@@ -917,7 +932,7 @@ export const ItemPanel = () => {
           value={itemDataView?.title ?? ''}
           placeholder='title'
           onChange={(e) => {
-            setItemDataView({...itemDataView, title: e.target.value});
+            setItemDataView({ ...itemDataView, title: e.target.value });
           }}
           disabled={itemFormDisabled}
         />
@@ -930,7 +945,7 @@ export const ItemPanel = () => {
           value={itemDataView?.username ?? ''}
           placeholder='Username'
           onChange={(e) => {
-            setItemDataView({...itemDataView, username: e.target.value});
+            setItemDataView({ ...itemDataView, username: e.target.value });
           }}
           disabled={itemFormDisabled}
         />
@@ -944,7 +959,7 @@ export const ItemPanel = () => {
             value={itemDataView?.password ?? ''}
             placeholder='Password'
             onChange={(e) => {
-              setItemDataView({...itemDataView, password: e.target.value});
+              setItemDataView({ ...itemDataView, password: e.target.value });
             }}
             disabled={itemFormDisabled}
           />
@@ -969,7 +984,7 @@ export const ItemPanel = () => {
           value={itemDataView?.website ?? ''}
           placeholder='Website'
           onChange={(e) => {
-            setItemDataView({...itemDataView, website: e.target.value});
+            setItemDataView({ ...itemDataView, website: e.target.value });
           }}
           disabled={itemFormDisabled}
         />
@@ -985,9 +1000,7 @@ export const ItemPanel = () => {
 };
 
 const decryptedItemData = (itemData, keyWrappingKeyPair) => {
-  const iek = keyWrappingKeyPair.private.decrypt(
-    itemData.encryptedEncryptionKey,
-  );
+  const iek = keyWrappingKeyPair.private.decrypt(itemData.encryptedEncryptionKey);
   return {
     id: itemData.id,
     title: decryptData(itemData.title, iek),
@@ -995,9 +1008,9 @@ const decryptedItemData = (itemData, keyWrappingKeyPair) => {
     username: decryptData(itemData.username, iek),
     password: decryptData(itemData.password, iek),
     iek: iek,
-    icon: `https://cool-rose-moth.faviconkit.com/${decryptData(itemData.website, iek)}/256`
-  }
-}
+    icon: `https://cool-rose-moth.faviconkit.com/${decryptData(itemData.website, iek)}/256`,
+  };
+};
 
 const NavigationPanel = ({
   vaultListView,
@@ -1006,23 +1019,25 @@ const NavigationPanel = ({
   setOpenEditVault,
   setOpenAddVault,
   setOpenDeleteVault,
-  resetSelectedVault
+  resetSelectedVault,
 }) => {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [itemDataListView, setItemDataListView] = useState(null);
 
   const queryClient = useQueryClient();
-  const queryState = queryClient.getQueryState(["vaults", selectedVault, "items"]);
+  const queryState = queryClient.getQueryState(['vaults', selectedVault, 'items']);
 
-  useEffect(()=>{
-    const itemListRaw = queryClient.getQueryData(["vaults", selectedVault, "items"]);
-    if(itemListRaw){
+  useEffect(() => {
+    const itemListRaw = queryClient.getQueryData(['vaults', selectedVault, 'items']);
+    if (itemListRaw) {
       const keyWrappingKeyPair = getKeyWrappingKeyPair();
-      const itemDataListDecrypted = itemListRaw.map(itemData=>decryptedItemData(itemData, keyWrappingKeyPair));
+      const itemDataListDecrypted = itemListRaw.map((itemData) =>
+        decryptedItemData(itemData, keyWrappingKeyPair),
+      );
       setItemDataListView(itemDataListDecrypted);
     }
-  }, [selectedVault, queryState])
+  }, [selectedVault, queryState]);
 
   return (
     <div
@@ -1060,47 +1075,45 @@ const NavigationPanel = ({
         className='self-stretch flex-1 overflow-y-auto px-2 py-2 flex flex-col items-center justify-start z-[1] border-[2px] border-solid'
         id='item-list'
       >
-        {
-          Object.entries(itemDataListView ?? [])
+        {Object.entries(itemDataListView ?? [])
           //eslint-disable-next-line
-            .filter(([id, itemData]) => {
-              return search.toLowerCase() === ''
-                ? true
-                : itemData.username.toLowerCase().includes(search) ||
-                    itemData.website.toLowerCase().includes(search) ||
-                    itemData.title.toLowerCase().includes(search);
-            })
-            .map(
-              ([id, itemData]) =>
-                id != 'new' && (
-                  <NavLink
-                    to={`${itemData.id}`}
-                    key={itemData.id}
-                    className={({ isActive }) =>
-                      isActive
-                        ? 'bg-gray-200 mt-1 mb-1 px-[16px] rounded-lg hover:bg-gray-200'
-                        : 'mt-1 mb-1 px-[16px] rounded-lg hover:bg-gray-100'
-                    }
-                  >
-                    <button className='cursor-pointer rounded-lg [border:none] overflow-hidden flex flex-row items-center justify-start'>
-                      <img
-                        className='relative w-[40px] h-[40px] shrink-0 overflow-hidden object-cover'
-                        alt=''
-                        src={itemData.icon}
-                      />
-                      <div className='flex flex-col text-left px-[8px] py-[8px]'>
-                        <label className='cursor-pointer relative text-xl tracking-[0.03em] font-bold w-[230px] h-[23px] shrink-0 truncate overflow-hidden line-clamp-2'>
-                          {itemData.title}
-                        </label>
-                        <label className='cursor-pointer relative text-base tracking-[0.03em] w-[230px] h-[23px] shrink-0 truncate overflow-hidden line-clamp-2'>
-                          {itemData.username}
-                        </label>
-                      </div>
-                    </button>
-                  </NavLink>
-                ),
-            )
-        }
+          .filter(([id, itemData]) => {
+            return search.toLowerCase() === ''
+              ? true
+              : itemData.username.toLowerCase().includes(search) ||
+                  itemData.website.toLowerCase().includes(search) ||
+                  itemData.title.toLowerCase().includes(search);
+          })
+          .map(
+            ([id, itemData]) =>
+              id != 'new' && (
+                <NavLink
+                  to={`${itemData.id}`}
+                  key={itemData.id}
+                  className={({ isActive }) =>
+                    isActive
+                      ? 'bg-gray-200 mt-1 mb-1 px-[16px] rounded-lg hover:bg-gray-200'
+                      : 'mt-1 mb-1 px-[16px] rounded-lg hover:bg-gray-100'
+                  }
+                >
+                  <button className='cursor-pointer rounded-lg [border:none] overflow-hidden flex flex-row items-center justify-start'>
+                    <img
+                      className='relative w-[40px] h-[40px] shrink-0 overflow-hidden object-cover'
+                      alt=''
+                      src={itemData.icon}
+                    />
+                    <div className='flex flex-col text-left px-[8px] py-[8px]'>
+                      <label className='cursor-pointer relative text-xl tracking-[0.03em] font-bold w-[230px] h-[23px] shrink-0 truncate overflow-hidden line-clamp-2'>
+                        {itemData.title}
+                      </label>
+                      <label className='cursor-pointer relative text-base tracking-[0.03em] w-[230px] h-[23px] shrink-0 truncate overflow-hidden line-clamp-2'>
+                        {itemData.username}
+                      </label>
+                    </div>
+                  </button>
+                </NavLink>
+              ),
+          )}
       </div>
       <Button
         buttonType='blue'
@@ -1113,7 +1126,6 @@ const NavigationPanel = ({
 };
 
 const AppHome = () => {
-
   useTokenExpiration();
 
   const [selectedVault, setSelectedVault] = useState(null);
@@ -1121,10 +1133,10 @@ const AppHome = () => {
   const location = useLocation();
   const defaultVault = useRef(null);
 
-  const resetSelectedVault = () =>{
+  const resetSelectedVault = () => {
     if (selectedVault == null && defaultVault.current) {
       setSelectedVault(defaultVault.current);
-    } else if (selectedVault && !vaultListView[selectedVault]){
+    } else if (selectedVault && !vaultListView[selectedVault]) {
       setSelectedVault(defaultVault.current);
     }
   };
@@ -1133,61 +1145,61 @@ const AppHome = () => {
     resetSelectedVault();
   }, [vaultListView, location]);
 
-
   const queryClient = useQueryClient();
 
-  const createVaultListView = (data)=>{
-    if(data){
-      var newState = {}
-      for(var i=0;i<data.length;i+=1){
+  const createVaultListView = (data) => {
+    if (data) {
+      var newState = {};
+      for (var i = 0; i < data.length; i += 1) {
         newState[data[i].id] = data[i];
-        if(data[i].isDefault){
-          defaultVault.current = data[i].id
+        if (data[i].isDefault) {
+          defaultVault.current = data[i].id;
         }
       }
       return newState;
-    } else{
+    } else {
       return null;
     }
-  }
+  };
 
   const vaultListRaw = useQuery({
-    queryKey: ["vaults"],
-    queryFn: async ()=>{
+    queryKey: ['vaults'],
+    queryFn: async () => {
       const data = await getVaults();
-      setVaultListView(()=>createVaultListView(data));
-      data.map(vaultData=>{
-        queryClient.setQueryData(["vaults", vaultData.id], vaultData);
-      })
+      setVaultListView(() => createVaultListView(data));
+      data.map((vaultData) => {
+        queryClient.setQueryData(['vaults', vaultData.id], vaultData);
+      });
       return data;
     },
     refetchOnWindowFocus: false,
-    staleTime: 300000
-  })
+    staleTime: 300000,
+  });
 
-  useEffect(()=>{
-    const data = queryClient.getQueryData(["vaults"])
-    setVaultListView(()=>createVaultListView(data));
-  }, [])
+  useEffect(() => {
+    const data = queryClient.getQueryData(['vaults']);
+    setVaultListView(() => createVaultListView(data));
+  }, []);
 
   const vaultItemsRaw = useQueries({
-    queries: (vaultListRaw?.data || [])
-    .map(({ id })=>{return {
-        queryKey: ["vaults", id, "items"],
-        queryFn: async ()=>{
+    queries: (vaultListRaw?.data || []).map(({ id }) => {
+      return {
+        queryKey: ['vaults', id, 'items'],
+        queryFn: async () => {
           const data = await getVaultItems(id);
           const keyWrappingKeyPair = getKeyWrappingKeyPair();
-          const decryptedItemList = data.map(vaultItem=>{
-            queryClient.setQueryData(["vaults", id, "items", vaultItem.id], vaultItem);
+          const decryptedItemList = data.map((vaultItem) => {
+            queryClient.setQueryData(['vaults', id, 'items', vaultItem.id], vaultItem);
             return decryptedItemData(vaultItem, keyWrappingKeyPair);
-          })
+          });
           return data;
         },
         refetchOnWindowFocus: false,
         staleTime: 300000,
         enabled: !!vaultListRaw.data && !!id,
-      }})
-  })
+      };
+    }),
+  });
 
   // const deleteVaultState = (vaultId) => {
   //   if (Object.entries(vaultList)[0][0] != vaultId) {

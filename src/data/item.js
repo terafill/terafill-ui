@@ -1,13 +1,12 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
-import { getVDEK, encryptData } from './auth';
 
-const baseUrl = "http://localhost:8000/api/v1"
+import { getKeyWrappingKeyPair, encryptData } from '../utils/security';
 
+const baseUrl = 'http://localhost:8000/api/v1';
+const clientId = 'b980b13c-4db8-4e8a-859c-4544fd70825f';
 
-export async function updateVaultItem(vault_id, id, title, website, password, username){
-  const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}/items/${id}`;
-  const vdek = getVDEK();
+export async function updateVaultItem({ vaultId, id, title, website, password, username, iek }) {
+  const requestUrl = `${baseUrl}/users/me/vaults/${vaultId}/items/${id}`;
 
   var config = {
     withCredentials: true,
@@ -15,31 +14,30 @@ export async function updateVaultItem(vault_id, id, title, website, password, us
     url: requestUrl,
     headers: {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': `Bearer ${Cookies.get("accessToken")}`
+      Accept: 'application/json',
+      'client-id': clientId,
     },
     data: {
-      title: encryptData(title, vdek),
-      website: encryptData(website, vdek),
-      password: encryptData(password, vdek),
-      username: encryptData(username, vdek),
-    }
+      title: encryptData(title, iek),
+      website: encryptData(website, iek),
+      password: encryptData(password, iek),
+      username: encryptData(username, iek),
+    },
   };
 
   try {
     let response = await axios(config);
-    console.log("Item updated !")
-    return response
+    return response?.data || {};
   } catch (error) {
-    console.log(error);
+    const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    throw Error(errorMessage);
   }
-
-  return {}
 }
 
-export async function createVaultItem(vault_id, title, website, password, username){
-  const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}/items/`;
-  const vdek = getVDEK();
+export async function createVaultItem({ vaultId, title, website, password, username, iek }) {
+  const requestUrl = `${baseUrl}/users/me/vaults/${vaultId}/items/`;
+  const keyWrappingKeyPair = getKeyWrappingKeyPair();
+  const iekEnc = keyWrappingKeyPair.public.encrypt(iek);
 
   var config = {
     withCredentials: true,
@@ -47,31 +45,30 @@ export async function createVaultItem(vault_id, title, website, password, userna
     url: requestUrl,
     headers: {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': `Bearer ${Cookies.get("accessToken")}`
+      Accept: 'application/json',
+      'client-id': clientId,
     },
     data: {
-      title: encryptData(title, vdek),
-      website: encryptData(website, vdek),
-      password: encryptData(password, vdek),
-      username: encryptData(username, vdek),
-      type: "PASSWORD"
-    }
+      title: encryptData(title, iek),
+      website: encryptData(website, iek),
+      password: encryptData(password, iek),
+      username: encryptData(username, iek),
+      encryptedEncryptionKey: iekEnc,
+      type: 'PASSWORD',
+    },
   };
 
   try {
     let response = await axios(config);
-    console.log("Item created successfully !")
-    return response
+    return response?.data || {};
   } catch (error) {
-    console.log(error);
+    const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    throw Error(errorMessage);
   }
-
-  return {}
 }
 
-export async function deleteVaultItem(vault_id, id){
-  const requestUrl = `${baseUrl}/users/me/vaults/${vault_id}/items/${id}`;
+export async function deleteVaultItem({ vaultId, id }) {
+  const requestUrl = `${baseUrl}/users/me/vaults/${vaultId}/items/${id}`;
   console.log(requestUrl);
 
   var config = {
@@ -80,19 +77,16 @@ export async function deleteVaultItem(vault_id, id){
     url: requestUrl,
     headers: {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': `Bearer ${Cookies.get("accessToken")}`
+      Accept: 'application/json',
+      'client-id': clientId,
     },
   };
 
   try {
     let response = await axios(config);
-    console.log("Item deleted successfully !")
-    return response
+    return response?.data || {};
   } catch (error) {
-    console.log(error);
+    const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    throw Error(errorMessage);
   }
-
-  return {}
 }
-

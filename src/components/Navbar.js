@@ -14,9 +14,9 @@ const Navbar = ({ navbarType = 'landing' }) => {
   const notificationsMenuButtonRef = useRef(null);
   const [isProfilePopupOpen, setProfilePopupOpen] = useState(false);
 
-  const openNotificationsPopup = useCallback(() => {
-    setNotificationsPopupOpen(true);
-  }, []);
+  // const openNotificationsPopup = useCallback(() => {
+  //   setNotificationsPopupOpen(true);
+  // }, []);
 
   const closeNotificationsPopup = useCallback(() => {
     setNotificationsPopupOpen(false);
@@ -81,13 +81,14 @@ const Navbar = ({ navbarType = 'landing' }) => {
         )}
         {navbarType === 'app' ? (
           <div className='box-border flex flex-row px-4 items-center justify-center gap-[8px] border-l-[0.8px]'>
+{/*
             <button
               className='cursor-pointer [border:none] py-2 px-2 bg-gray hover:bg-gray-800 rounded-xl shadow-[0px_0px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-start gap-[8px]'
               ref={notificationsMenuButtonRef}
               onClick={openNotificationsPopup}
             >
               <img className='relative w-6 h-6 shrink-0' alt='' src='/bell.svg' />
-            </button>
+            </button>*/}
             <button
               className='cursor-pointer [border:none] py-2 px-2 bg-gray hover:bg-gray-800 rounded-xl shadow-[0px_0px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-start gap-[8px]'
               ref={profileMenuButtonRef}

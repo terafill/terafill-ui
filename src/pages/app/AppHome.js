@@ -123,6 +123,197 @@ function MultiVaultDropown({ vaultListView, selectedVault, setSelectedVault }) {
   );
 }
 
+function AddVaultItemPopup({ open, setOpen, selectedVault }) {
+  const cancelButtonRef = useRef(null);
+  const queryClient = useQueryClient();
+  const [itemDataView, setItemDataView] = useState({
+    username: '',
+    website: '',
+    password: '',
+    title: ''
+  });
+  const navigate = useNavigate();
+
+  const createItemData = useMutation({
+    mutationFn: createVaultItem,
+  });
+
+  return (
+    <Transition.Root show={open} as={Fragment}>
+      <Dialog as='div' className='relative z-10' initialFocus={cancelButtonRef} onClose={setOpen}>
+        <Transition.Child
+          as={Fragment}
+          enter='ease-out duration-300'
+          enterFrom='opacity-0'
+          enterTo='opacity-100'
+          leave='ease-in duration-200'
+          leaveFrom='opacity-100'
+          leaveTo='opacity-0'
+        >
+          <div className='fixed inset-0 bg-black bg-opacity-10 transition-opacity' />
+        </Transition.Child>
+
+        <div className='fixed inset-0 z-10 overflow-y-auto'>
+          <div className='flex min-h-full items-end justify-center p-4 text-center items-center'>
+            <Transition.Child
+              as={Fragment}
+              enter='ease-out duration-300'
+              enterFrom='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
+              enterTo='opacity-100 translate-y-0 sm:scale-100'
+              leave='ease-in duration-200'
+              leaveFrom='opacity-100 translate-y-0 sm:scale-100'
+              leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
+            >
+              <Dialog.Panel className='flex flex-col w-80 justify-center items-center gap-6 relative transform overflow-hidden rounded-lg bg-white p-4 text-left shadow-2xl transition-all'>
+                <div className='flex flex-col w-5/6 items-center gap-8 text-center' id='popup-body'>
+                  <Dialog.Title
+                    as='h3'
+                    className='w-full text-base font-semibold leading-6 text-gray-900'
+                  >
+                    <div className="flex flex-row justify-center items-center gap-2">
+                      <SquaresPlusIcon className="w-10 h-10"/>
+                      Add new item
+                    </div>
+                  </Dialog.Title>
+                  <div className='relative w-full'>
+                    <label
+                      htmlFor='title'
+                      className='absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700'
+                    >
+                      Title
+                    </label>
+                    <input
+                      type='text'
+                      name='title'
+                      id='title'
+                      className='w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6'
+                      placeholder='Enter title'
+                      value={itemDataView.title}
+                      onChange={(e) => {
+                        setItemDataView(prevState=>({...prevState, title: e.target.value}));
+                      }}
+                      required
+                      title='Please enter title'
+                    />
+                  </div>
+                  <div className='relative w-full'>
+                    <label
+                      htmlFor='username'
+                      className='absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700'
+                    >
+                      Username
+                    </label>
+                    <input
+                      type='text'
+                      name='username'
+                      id='username'
+                      className='w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6'
+                      placeholder='Enter username'
+                      value={itemDataView.username}
+                      onChange={(e) => {
+                        setItemDataView(prevState=>({...prevState, username: e.target.value}));
+                      }}
+                      required
+                      title='Please enter username'
+                    />
+                  </div>
+                  <div className='relative w-full'>
+                    <label
+                      htmlFor='password'
+                      className='absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700'
+                    >
+                      Password
+                    </label>
+                    <input
+                      type='password'
+                      name='password'
+                      id='password'
+                      className='w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6'
+                      placeholder='Enter password'
+                      value={itemDataView.password}
+                      onChange={(e) => {
+                        setItemDataView(prevState=>({...prevState, password: e.target.value}));
+                      }}
+                      required
+                      title='Please enter password'
+                    />
+                  </div>
+                  <div className='relative w-full'>
+                    <label
+                      htmlFor='website'
+                      className='absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700'
+                    >
+                      Website
+                    </label>
+                    <input
+                      type='text'
+                      name='website'
+                      id='website'
+                      className='w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6'
+                      placeholder='Enter website'
+                      value={itemDataView.website}
+                      onChange={(e) => {
+                        setItemDataView(prevState=>({...prevState, website: e.target.value}));
+                      }}
+                      required
+                      title='Please enter website'
+                    />
+                  </div>
+                </div>
+                <div
+                  className='flex flex-row w-5/6 justify-center items-center gap-2'
+                  id='button-group'
+                >
+                  <button
+                    type='button'
+                    className='mt-3 inline-flex w-2/3 justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0'
+                    onClick={() => setOpen(false)}
+                    ref={cancelButtonRef}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type='button'
+                    className='inline-flex w-2/3 justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2'
+                    onClick={async () => {
+                      const iek = uuidv4();
+                      await createItemData.mutateAsync(
+                        {
+                          vaultId: selectedVault,
+                          title: itemDataView.title,
+                          website: itemDataView.website,
+                          password: itemDataView.password,
+                          username: itemDataView.username,
+                          iek: iek,
+                        },
+                        {
+                          onError: (error) => {
+                            toast.error(error);
+                          },
+                          onSuccess: (data) => {
+                            toast.success('Item created!');
+                            queryClient.invalidateQueries({
+                              queries: [{ queryKey: ['vaults', selectedVault, 'items'] }],
+                            });
+                            navigate(`/app/home/${data.id}`);
+                          },
+                        },
+                      );
+                      setOpen(false);
+                    }}
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition.Root>
+  );
+}
+
 function EditVaultPopup({ open, setOpen, selectedVault }) {
   const cancelButtonRef = useRef(null);
   const queryClient = useQueryClient();
@@ -572,7 +763,7 @@ function VaultSettingsMenu({
         leaveFrom='transform opacity-100 scale-100'
         leaveTo='transform opacity-0 scale-95'
       >
-        <Menu.Items className='absolute left-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
+        <Menu.Items className='absolute left-0 z-10 mt-2 w-64 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
           <div className='py-1'>
             <Menu.Item
               onClick={() => {
@@ -682,6 +873,7 @@ function VaultSettingsMenu({
                     aria-hidden='true'
                   />
                   Share vault
+                  <p className='ml-2 text-sm text-blue-400 bg-gray-100 p-1 rounded-full'>coming soon</p>
                 </a>
               )}
             </Menu.Item>
@@ -902,14 +1094,14 @@ export const ItemPanel = () => {
         >
           <MoonLoader loading={itemUpdating && true} size={15} />
         </Button>
-        {itemFormDisabled && shareButtonVisible && (
+{/*        {itemFormDisabled && shareButtonVisible && (
           <Button
             label='Share'
             buttonType='link'
             buttonClassName='relative top-[0rem] right-[0rem] z-[100]'
             labelClassName='text-xl'
           />
-        )}
+        )}*/}
         {itemFormDisabled && !itemUpdating && id != 'new' && (
           <Button
             onClick={async () => {
@@ -1045,6 +1237,7 @@ const NavigationPanel = ({
   setOpenEditVault,
   setOpenAddVault,
   setOpenDeleteVault,
+  setOpenAddVaultItem
 }) => {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
@@ -1143,7 +1336,7 @@ const NavigationPanel = ({
         buttonType='blue'
         icon='/icbaselineplus.svg'
         buttonClassName='absolute bottom-[1.2rem] right-[1.2rem] h-[3rem] w-[3rem] z-[100] rounded-[rem]'
-        onClick={() => navigate('new')}
+        onClick={() => setOpenAddVaultItem(true)}
       />
     </div>
   );
@@ -1228,6 +1421,8 @@ const AppHome = () => {
   const [openEditVaultPopup, setOpenEditVault] = useState(false);
   const [openAddVaultPopup, setOpenAddVault] = useState(false);
   const [openDeleteVaultPopup, setOpenDeleteVault] = useState(false);
+  const [openAddVaultItemPopup, setOpenAddVaultItem] = useState(false);
+
 
   return (
     <div className='w-full h-screen flex flex-col justify-start items-stretch text-left'>
@@ -1239,6 +1434,11 @@ const AppHome = () => {
           id='apphome-inner'
         >
           <ToastContainer />
+          <AddVaultItemPopup
+            open={openAddVaultItemPopup}
+            setOpen={setOpenAddVaultItem}
+            selectedVault={selectedVault}
+          />
           <EditVaultPopup
             open={openEditVaultPopup}
             setOpen={setOpenEditVault}
@@ -1263,6 +1463,7 @@ const AppHome = () => {
             setOpenEditVault={setOpenEditVault}
             setOpenAddVault={setOpenAddVault}
             setOpenDeleteVault={setOpenDeleteVault}
+            setOpenAddVaultItem={setOpenAddVaultItem}
           />
           <Outlet context={[selectedVault, vaultListView]} />
         </div>

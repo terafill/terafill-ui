@@ -36,7 +36,7 @@ import Button from '../../components/Button';
 import Navbar from '../../components/Navbar';
 import SideNavbar from '../../components/SideNavbar';
 import { useTokenExpiration } from '../../components/TokenTools';
-import { updateVaultItem, createVaultItem, deleteVaultItem } from '../../data/item';
+import { getVaultItem, updateVaultItem, createVaultItem, deleteVaultItem } from '../../data/item';
 import { addVault, getVaults, getVaultItems, updateVault, deleteVault } from '../../data/vault';
 import { getKeyWrappingKeyPair, decryptData } from '../../utils/security';
 import './AppHome.css';
@@ -45,13 +45,14 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-function MultiVaultDropown({ vaultListView, selectedVault, setSelectedVault, resetSelectedVault }) {
-  useEffect(() => {
-    resetSelectedVault();
-  }, [vaultListView]);
+function MultiVaultDropown({ vaultListView, selectedVault, setSelectedVault }) {
+
+  const navigate = useNavigate();
 
   return (
-    <Listbox value={selectedVault} onChange={setSelectedVault}>
+    <Listbox value={selectedVault} onChange={
+      (e)=>{setSelectedVault(e); navigate("/app/home/");}
+    }>
       {({ open }) => (
         <>
           {vaultListView && selectedVault && vaultListView[selectedVault] ? (
@@ -122,19 +123,19 @@ function MultiVaultDropown({ vaultListView, selectedVault, setSelectedVault, res
   );
 }
 
-function EditVaultPopup({ open, setOpen, selectedVault, vaultListView }) {
+function EditVaultPopup({ open, setOpen, selectedVault }) {
   const cancelButtonRef = useRef(null);
+  const queryClient = useQueryClient();
+  const vaultData = queryClient.getQueryData(["vaults", selectedVault]);
   const [vaultName, setVaultName] = useState('');
   const [vaultDescription, setVaultDescription] = useState('');
 
   useEffect(() => {
     if (selectedVault) {
-      setVaultName(vaultListView[selectedVault].name);
-      setVaultDescription(vaultListView[selectedVault].description);
+      setVaultName(vaultData?.name ?? '');
+      setVaultDescription(vaultData?.description ?? '');
     }
   }, [selectedVault]);
-
-  const queryClient = useQueryClient();
 
   const updateVaultMutation = useMutation({
     mutationFn: updateVault,
@@ -265,10 +266,11 @@ function EditVaultPopup({ open, setOpen, selectedVault, vaultListView }) {
   );
 }
 
-function AddVaultPopup({ open, setOpen }) {
+function AddVaultPopup({ open, setOpen, setSelectedVault }) {
   const cancelButtonRef = useRef(null);
   const [vaultName, setVaultName] = useState('');
   const [vaultDescription, setVaultDescription] = useState('');
+  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -374,17 +376,21 @@ function AddVaultPopup({ open, setOpen }) {
                     type='button'
                     className='inline-flex w-2/3 justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2'
                     onClick={async () => {
-                      addVaultMutation.mutateAsync(
+                      await addVaultMutation.mutateAsync(
                         {
                           name: vaultName,
                           description: vaultDescription,
                         },
                         {
-                          onSuccess: () => {
+                          onSuccess: (data) => {
                             toast.success('Vault added successfully!');
+                            queryClient.setQueryData(['vaults', data.id], data);
                             queryClient.invalidateQueries({
                               queries: [{ queryKey: ['vaults'] }],
                             });
+                            console.log(`Vault ${data.name} created.`, data.id)
+                            setSelectedVault(data.id);
+                            navigate("/app/home");
                           },
                           onError: (error) => {
                             toast.error(error);
@@ -406,15 +412,17 @@ function AddVaultPopup({ open, setOpen }) {
   );
 }
 
-function DeleteVaultPopup({ open, setOpen, selectedVault, vaultListView, resetSelectedVault }) {
+function DeleteVaultPopup({ open, setOpen, selectedVault, defaultVault, setSelectedVault }) {
   const cancelButtonRef = useRef(null);
   const [vaultName, setVaultName] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     setVaultName('');
   }, [selectedVault]);
 
   const queryClient = useQueryClient();
+  const vaultData = queryClient.getQueryData(["vaults", selectedVault])
 
   const deleteVaultMutation = useMutation({
     mutationFn: deleteVault,
@@ -491,7 +499,7 @@ function DeleteVaultPopup({ open, setOpen, selectedVault, vaultListView, resetSe
                       type='button'
                       className='inline-flex w-2/3 justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2'
                       onClick={async () => {
-                        if (vaultName != vaultListView[selectedVault].name) {
+                        if (vaultName != vaultData.name) {
                           toast.warn("Vault name doesn't match!");
                           return;
                         }
@@ -502,10 +510,11 @@ function DeleteVaultPopup({ open, setOpen, selectedVault, vaultListView, resetSe
                           {
                             onSuccess: () => {
                               toast.success('Vault deleted successfully!');
-                              resetSelectedVault();
                               queryClient.invalidateQueries({
                                 queries: [{ queryKey: ['vaults'] }],
                               });
+                              setSelectedVault(defaultVault);
+                              navigate("/app/home");
                             },
                             onError: (error) => {
                               toast.error(error);
@@ -738,23 +747,40 @@ export const ItemPanel = () => {
   const [showPassword, setPasswordVisibility] = useState(false);
   const [itemUpdating, setItemUpdating] = useState(false);
 
-  const [itemDataView, setItemDataView] = useState(null);
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [selectedVault, vaultListView] = useOutletContext();
+  const [selectedVault] = useOutletContext();
 
   const queryClient = useQueryClient();
 
-  const itemDataRaw = queryClient.getQueryData(['vaults', selectedVault, 'items', id]);
+  const itemDataRaw = useQuery({
+    queryKey: ['vaults', selectedVault, 'items', id],
+    queryFn: ()=> getVaultItem({
+      vaultId: selectedVault,
+      id: id
+    })
+  });
+
+  let initDataEncrypted = {
+    id: itemDataRaw?.data?.id ?? '',
+    title: itemDataRaw?.data?.title ?? '',
+    website: itemDataRaw?.data?.website ?? '',
+    username: itemDataRaw?.data?.username ?? '',
+    password: itemDataRaw?.data?.password ?? '',
+    encryptedEncryptionKey: itemDataRaw?.data?.encryptedEncryptionKey ?? '',
+  }
+
+  const [itemDataView, setItemDataView] = useState(null);
 
   useEffect(() => {
-    if (itemDataRaw) {
+    if (itemDataRaw.isSuccess && itemDataRaw.data) {
       const keyWrappingKeyPair = getKeyWrappingKeyPair();
-      setItemDataView(decryptedItemData(itemDataRaw, keyWrappingKeyPair));
+      const itemData = decryptedItemData(itemDataRaw.data, keyWrappingKeyPair);
+      setItemDataView(itemData);
     }
-  }, [itemDataRaw, location]);
+  }, [itemDataRaw.dataUpdatedAt, location]);
 
   useEffect(() => {
     if (id === 'new') {
@@ -1019,7 +1045,6 @@ const NavigationPanel = ({
   setOpenEditVault,
   setOpenAddVault,
   setOpenDeleteVault,
-  resetSelectedVault,
 }) => {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
@@ -1050,7 +1075,6 @@ const NavigationPanel = ({
           vaultListView={vaultListView}
           selectedVault={selectedVault}
           setSelectedVault={setSelectedVault}
-          resetSelectedVault={resetSelectedVault}
         />
         <VaultSettingsMenu
           vaultListView={vaultListView}
@@ -1128,45 +1152,43 @@ const NavigationPanel = ({
 const AppHome = () => {
   useTokenExpiration();
 
+  const [defaultVault, setDefaultVault] = useState(null);
   const [selectedVault, setSelectedVault] = useState(null);
+  const [selectedVaultItem, setSelectedVaultItem] = useState(null);
   const [vaultListView, setVaultListView] = useState(null);
   const location = useLocation();
-  const defaultVault = useRef(null);
-
-  const resetSelectedVault = () => {
-    if (selectedVault == null && defaultVault.current) {
-      setSelectedVault(defaultVault.current);
-    } else if (selectedVault && !vaultListView[selectedVault]) {
-      setSelectedVault(defaultVault.current);
-    }
-  };
-
-  useEffect(() => {
-    resetSelectedVault();
-  }, [vaultListView, location]);
-
   const queryClient = useQueryClient();
 
-  const createVaultListView = (data) => {
+  const getVaultListView = (data) => {
     if (data) {
       var newState = {};
+      var defaultId = null;
       for (var i = 0; i < data.length; i += 1) {
         newState[data[i].id] = data[i];
-        if (data[i].isDefault) {
-          defaultVault.current = data[i].id;
+        if (data[i].isDefault){
+          defaultId = data[i].id;
         }
       }
-      return newState;
+      return { vaultList: newState, defaultId: defaultId };
     } else {
-      return null;
+      return { vaultList: null, defaultId: null };
     }
   };
 
+  const setVaultDefaults = (vaultListDataRaw, selectedVault=null) => {
+    const { vaultList, defaultId } = getVaultListView(vaultListDataRaw);
+    setVaultListView(vaultList);
+    setDefaultVault(defaultId);
+    if (selectedVault === null){
+      setSelectedVault(defaultId);
+    }
+  }
+
+  // Fetch list of vaults
   const vaultListRaw = useQuery({
     queryKey: ['vaults'],
     queryFn: async () => {
       const data = await getVaults();
-      setVaultListView(() => createVaultListView(data));
       data.map((vaultData) => {
         queryClient.setQueryData(['vaults', vaultData.id], vaultData);
       });
@@ -1177,10 +1199,12 @@ const AppHome = () => {
   });
 
   useEffect(() => {
-    const data = queryClient.getQueryData(['vaults']);
-    setVaultListView(() => createVaultListView(data));
-  }, []);
+    if (vaultListRaw.data){
+      setVaultDefaults(vaultListRaw.data, selectedVault);
+    }
+  }, [vaultListRaw.dataUpdatedAt]);
 
+  // Fetch raw vault item list
   const vaultItemsRaw = useQueries({
     queries: (vaultListRaw?.data || []).map(({ id }) => {
       return {
@@ -1201,21 +1225,6 @@ const AppHome = () => {
     }),
   });
 
-  // const deleteVaultState = (vaultId) => {
-  //   if (Object.entries(vaultList)[0][0] != vaultId) {
-  //     setSelectedVault(Object.entries(vaultList)[0][0]);
-  //   } else {
-  //     setSelectedVault(Object.entries(vaultList)[1][0]);
-  //   }
-  //   setVaultList((prevVaultList) => {
-  //     const updatedVaultList = {
-  //       ...prevVaultList,
-  //     };
-  //     delete updatedVaultList[vaultId];
-  //     return updatedVaultList;
-  //   });
-  // };
-
   const [openEditVaultPopup, setOpenEditVault] = useState(false);
   const [openAddVaultPopup, setOpenAddVault] = useState(false);
   const [openDeleteVaultPopup, setOpenDeleteVault] = useState(false);
@@ -1234,19 +1243,18 @@ const AppHome = () => {
             open={openEditVaultPopup}
             setOpen={setOpenEditVault}
             selectedVault={selectedVault}
-            vaultListView={vaultListView}
           />
           <AddVaultPopup
             open={openAddVaultPopup}
             setOpen={setOpenAddVault}
-            vaultListView={vaultListView}
+            setSelectedVault={setSelectedVault}
           />
           <DeleteVaultPopup
             open={openDeleteVaultPopup}
             setOpen={setOpenDeleteVault}
             selectedVault={selectedVault}
-            vaultListView={vaultListView}
-            resetSelectedVault={resetSelectedVault}
+            defaultVault={defaultVault}
+            setSelectedVault={setSelectedVault}
           />
           <NavigationPanel
             vaultListView={vaultListView}
@@ -1255,7 +1263,6 @@ const AppHome = () => {
             setOpenEditVault={setOpenEditVault}
             setOpenAddVault={setOpenAddVault}
             setOpenDeleteVault={setOpenDeleteVault}
-            resetSelectedVault={resetSelectedVault}
           />
           <Outlet context={[selectedVault, vaultListView]} />
         </div>

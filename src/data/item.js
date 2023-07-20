@@ -5,6 +5,31 @@ import { getKeyWrappingKeyPair, encryptData } from '../utils/security';
 const baseUrl = 'http://localhost:8000/api/v1';
 const clientId = 'b980b13c-4db8-4e8a-859c-4544fd70825f';
 
+
+export async function getVaultItem({ vaultId, id }) {
+  const requestUrl = `${baseUrl}/users/me/vaults/${vaultId}/items/${id}`;
+
+  var config = {
+    withCredentials: true,
+    method: 'get',
+    url: requestUrl,
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      'client-id': clientId,
+    },
+  };
+
+  try {
+    let response = await axios(config);
+    return response?.data || {};
+  } catch (error) {
+    const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+    throw Error(errorMessage);
+  }
+}
+
+
 export async function updateVaultItem({ vaultId, id, title, website, password, username, iek }) {
   const requestUrl = `${baseUrl}/users/me/vaults/${vaultId}/items/${id}`;
 

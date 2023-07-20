@@ -46,9 +46,9 @@ const ProfileMenu = () => {
         <div className='px-2 py-2 w-[200px] overflow-hidden flex flex-col items-center justify-center gap-2'>
           <MenuItem menuItem='Home' onClick={() => navigate('/app/home')} />
           {/*<MenuItem menuItem="Settings" onClick={()=>navigate("/settings")}/>*/}
-          <MenuItem menuItem='Download App' />
-          <MenuItem menuItem='Import' onClick={() => navigate('/import')} />
-          <MenuItem menuItem={`Help & Support`} onClick={() => navigate('/help-and-support')} />
+          {/*<MenuItem menuItem='Download App' />*/}
+          {/*<MenuItem menuItem='Import' onClick={() => navigate('/import')} />*/}
+          {/*<MenuItem menuItem={`Help & Support`} onClick={() => navigate('/help-and-support')} />*/}
           <MenuItem menuItem='Sign Out' onClick={openSignoutPopup} />
         </div>
       </div>

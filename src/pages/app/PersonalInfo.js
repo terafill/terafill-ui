@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import hash from 'object-hash';
@@ -17,16 +17,6 @@ const PersonalInfo = () => {
   // Access the client
   const queryClient = useQueryClient();
 
-  const [userProfileView, setUserProfileView] = useState({
-    email: '',
-    firstName: '',
-    lastName: '',
-    phoneNo: '',
-    birthday: '',
-    gender: '',
-    profileImage: '',
-  });
-
   const userProfileRaw = useQuery({
     queryKey: ['profile'],
     queryFn: getProfile,
@@ -40,6 +30,18 @@ const PersonalInfo = () => {
     refetchOnWindowFocus: false,
     staleTime: 300000,
   });
+
+  const initData = {
+    email: userProfileRaw?.data?.email ?? '',
+    firstName: userProfileRaw?.data?.firstName ?? '',
+    lastName: userProfileRaw?.data?.lastName ?? '',
+    phoneNo: userProfileRaw?.data?.phoneNo ?? '',
+    birthday: userProfileRaw?.data?.birthday ?? '',
+    gender: userProfileRaw?.data?.gender ?? '',
+    profileImage: '',
+  }
+
+  const [userProfileView, setUserProfileView] = useState(initData);
 
   const loadUserProfileView = ({ loadProfile = false, loadProfileImage = false }) => {
     if (loadProfile && userProfileRaw.isSuccess) {
@@ -73,24 +75,32 @@ const PersonalInfo = () => {
 
   const [saveButtonEnabled, setSaveButtonEnabled] = useState(false);
 
-  useEffect(() => {
-    console.log(userProfileView);
-    (async () => {
-      if (userProfileRaw.data && userProfileImageRaw.data.profileImage) {
-        const userProfileRawTemp = {
-          ...userProfileRaw.data,
-          profileImage: userProfileImageRaw.data.profileImage
-            ? `data:image/jpeg;base64,${userProfileImageRaw.data.profileImage}`
-            : '',
-        };
-        if (hash(userProfileRawTemp) !== hash(userProfileView)) {
-          setSaveButtonEnabled(true);
-        } else {
-          setSaveButtonEnabled(false);
-        }
+  // TODO --- IMPLEMENT THIS USING WEBWORKER //
+  const syncSaveButton = () => {
+    if (userProfileRaw?.data && userProfileImageRaw?.data?.profileImage) {
+      const userProfileRawTemp = {
+        ...userProfileRaw.data,
+        profileImage: userProfileImageRaw.data.profileImage
+          ? `data:image/jpeg;base64,${userProfileImageRaw.data.profileImage}`
+          : '',
+      };
+      if (hash(userProfileRawTemp) !== hash(userProfileView)) {
+        setSaveButtonEnabled(true);
+      } else {
+        setSaveButtonEnabled(false);
       }
-    })();
+    }
+  }
+
+  const timeoutId = useRef(null);
+
+  useEffect(()=>{
+    clearTimeout(timeoutId.current);
+    timeoutId.current = setTimeout(()=>{
+      syncSaveButton();
+    }, 500);
   }, [userProfileView]);
+
 
   const [file, setFile] = useState(null);
 
@@ -142,6 +152,7 @@ const PersonalInfo = () => {
                   type='file'
                   onChange={onFileChange}
                   className='cursor-pointer absolute opacity-0'
+                  id='profileImage'
                 />
               </Button>
               {/*<Button label="Remove Photo" buttonType="light" labelClassName="text-red-500"/>*/}

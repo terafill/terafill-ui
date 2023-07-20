@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, memo } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
@@ -99,4 +99,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default memo(LoginPage);

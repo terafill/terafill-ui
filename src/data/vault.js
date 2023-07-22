@@ -1,10 +1,11 @@
 import axios from 'axios';
 
-const baseUrl = 'http://localhost:8000/api/v1';
+// const baseUrl = 'http://localhost:8000/api/v1';
+const baseUrl = 'https://keylance-backend-svc-dev.up.railway.app/api/v1'
 const clientId = 'b980b13c-4db8-4e8a-859c-4544fd70825f';
 
 export async function getVaults() {
-  const requestUrl = `${baseUrl}/users/me/vaults/`;
+  const requestUrl = `${baseUrl}/users/me/vaults`;
   var config = {
     withCredentials: true,
     method: 'get',
@@ -26,7 +27,7 @@ export async function getVaults() {
 }
 
 export async function getVaultItems(vaultId) {
-  const requestUrl = `${baseUrl}/users/me/vaults/${vaultId}/items/`;
+  const requestUrl = `${baseUrl}/users/me/vaults/${vaultId}/items`;
   var config = {
     withCredentials: true,
     method: 'get',
@@ -87,7 +88,7 @@ export async function updateVault({ vaultId, name, description }) {
 }
 
 export async function addVault({ name, description }) {
-  const requestUrl = `${baseUrl}/users/me/vaults/`;
+  const requestUrl = `${baseUrl}/users/me/vaults`;
   var config = {
     withCredentials: true,
     method: 'post',

@@ -1,9 +1,10 @@
 import axios from 'axios';
 
-const baseUrl = 'http://localhost:8000/api/v1';
+// const baseUrl = 'http://localhost:8000/api/v1';
+const baseUrl = 'https://keylance-backend-svc-dev.up.railway.app/api/v1'
 
 export async function getProfile() {
-  const requestUrl = `${baseUrl}/users/me/`;
+  const requestUrl = `${baseUrl}/users/me`;
   var config = {
     withCredentials: true,
     method: 'get',
@@ -23,7 +24,7 @@ export async function getProfile() {
 }
 
 export async function getProfileImage() {
-  const requestUrl = `${baseUrl}/users/me/profile-image/`;
+  const requestUrl = `${baseUrl}/users/me/profile-image`;
   var config = {
     withCredentials: true,
     method: 'get',
@@ -55,7 +56,7 @@ export async function updateProfile({ firstName, lastName, phoneNo, file = null 
     formData.append('file', file);
   }
 
-  const requestUrl = `${baseUrl}/users/me/`;
+  const requestUrl = `${baseUrl}/users/me`;
   var config = {
     withCredentials: true,
     method: 'put',

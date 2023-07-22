@@ -4,7 +4,8 @@ import { Buffer } from 'buffer/';
 
 import { getAuthClientDetails, getRSAPrivateKey, getSRPClient } from '../utils/security';
 
-const baseUrl = 'http://localhost:8000/api/v1';
+// const baseUrl = 'http://localhost:8000/api/v1';
+const baseUrl = 'https://keylance-backend-svc-dev.up.railway.app/api/v1'
 const clientId = 'b980b13c-4db8-4e8a-859c-4544fd70825f';
 
 export const initateSignupProcess = async (email) => {

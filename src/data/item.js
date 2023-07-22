@@ -2,7 +2,8 @@ import axios from 'axios';
 
 import { getKeyWrappingKeyPair, encryptData } from '../utils/security';
 
-const baseUrl = 'http://localhost:8000/api/v1';
+// const baseUrl = 'http://localhost:8000/api/v1';
+const baseUrl = 'https://keylance-backend-svc-dev.up.railway.app/api/v1'
 const clientId = 'b980b13c-4db8-4e8a-859c-4544fd70825f';
 
 
@@ -60,7 +61,7 @@ export async function updateVaultItem({ vaultId, id, title, website, password, u
 }
 
 export async function createVaultItem({ vaultId, title, website, password, username, iek }) {
-  const requestUrl = `${baseUrl}/users/me/vaults/${vaultId}/items/`;
+  const requestUrl = `${baseUrl}/users/me/vaults/${vaultId}/items`;
   const keyWrappingKeyPair = getKeyWrappingKeyPair();
   const iekEnc = keyWrappingKeyPair.public.encrypt(iek);
 

@@ -63,19 +63,19 @@ export const CreateAccountForm = () => {
 
   return (
     <form
-      className='bg-white w-2/3 rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[16px]'
+      className='flex w-2/3 flex-col items-center justify-center gap-[16px] overflow-hidden rounded-xl bg-white px-32 py-8 shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)]'
       onSubmit={createAccountAction}
     >
       <ToastContainer style={{ zIndex: 9999 }} />
-      <h4 className='m-0 relative text-3xl leading-[120%] font-bold text-black text-center'>
+      <h4 className='relative m-0 text-center text-3xl font-bold leading-[120%] text-black'>
         Create Account
       </h4>
 
-      <span className='relative w-2/3 flex-auto flex flex-row justify-center gap-2' id='name'>
+      <span className='relative flex w-2/3 flex-auto flex-row justify-center gap-2' id='name'>
         <div className='relative w-full' id='first-name'>
           <label
             htmlFor='firstName'
-            className='absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700'
+            className='absolute -top-3 left-1 inline-block rounded bg-white px-1 text-sm font-medium text-gray-700'
           >
             First Name
           </label>
@@ -97,7 +97,7 @@ export const CreateAccountForm = () => {
         <div className='relative w-full' id='last-name'>
           <label
             htmlFor='lastName'
-            className='absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700'
+            className='absolute -top-3 left-1 inline-block rounded bg-white px-1 text-sm font-medium text-gray-700'
           >
             Last Name
           </label>
@@ -118,7 +118,7 @@ export const CreateAccountForm = () => {
       <div className='relative w-2/3'>
         <label
           htmlFor='email'
-          className='absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700'
+          className='absolute -top-3 left-1 inline-block rounded bg-white px-1 text-sm font-medium text-gray-700'
         >
           Email
         </label>
@@ -139,7 +139,7 @@ export const CreateAccountForm = () => {
       <div className='relative w-2/3'>
         <label
           htmlFor='password'
-          className='absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700'
+          className='absolute -top-3 left-1 inline-block rounded bg-white px-1 text-sm font-medium text-gray-700'
         >
           Master Password
         </label>
@@ -159,7 +159,7 @@ export const CreateAccountForm = () => {
       <div className='relative w-2/3'>
         <label
           htmlFor='name'
-          className='absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700'
+          className='absolute -top-3 left-1 inline-block rounded bg-white px-1 text-sm font-medium text-gray-700'
         >
           Re-enter Master Password
         </label>
@@ -173,7 +173,7 @@ export const CreateAccountForm = () => {
           required
         />
       </div>
-      <p className='m-0 relative text-md text-red-500 font-bold text-center flex items-center justify-center w-[538px] h-12 shrink-0'>
+      <p className='text-md relative m-0 flex h-12 w-[538px] shrink-0 items-center justify-center text-center font-bold text-red-500'>
         Note: Memorise this password and keep it safe.
       </p>
       <Button id='submit-button' buttonType='dark' label='Create Account' type='submit' />
@@ -281,20 +281,20 @@ export const EmailConfirmationForm = () => {
 
   return (
     <form
-      className='bg-white rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-8 px-32 items-center justify-center gap-[32px]'
+      className='flex flex-col items-center justify-center gap-[32px] overflow-hidden rounded-xl bg-white px-32 py-8 shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)]'
       onSubmit={signupConfirmationAction}
     >
       <ToastContainer style={{ zIndex: 9999 }} />
-      <h4 className='m-0 relative text-4xl leading-[120%] font-bold text-black text-center'>
+      <h4 className='relative m-0 text-center text-4xl font-bold leading-[120%] text-black'>
         Verify your email address
       </h4>
-      <p className='m-0 relative text-xl text-background-dark text-center flex items-center w-[538px] h-12 shrink-0'>
+      <p className='text-background-dark relative m-0 flex h-12 w-[538px] shrink-0 items-center text-center text-xl'>
         <span className='w-full'>
           <span>Enter verification code sent to email address</span>
           <b> {userData.email}</b>
         </span>
       </p>
-      <div className='w-full flex flex-row justify-evenly'>
+      <div className='flex w-full flex-row justify-evenly'>
         {pinInputRefs.map((_, index) => (
           <input
             key={index}
@@ -304,7 +304,7 @@ export const EmailConfirmationForm = () => {
             id={`pin-${index}`}
             value={pinState[index]}
             maxLength={1}
-            className='h-[4rem] w-[4rem] rounded-md px-2 py-2 overflow-hidden resize-none appearance-none text-3xl text-center text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400'
+            className='h-[4rem] w-[4rem] resize-none appearance-none overflow-hidden rounded-md px-2 py-2 text-center text-3xl text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400'
             placeholder='0'
             onKeyDown={handleKeyDown}
             // onChange={(e)=>{console.log(`Change ${e.target.value}, id: ${event.target.id}`);}}
@@ -364,25 +364,25 @@ const SignUpPage = () => {
   });
 
   return (
-    <div className='bg-gray-100 w-screen h-screen flex flex-col items-center justify-center'>
+    <div className='flex h-screen w-screen flex-col items-center justify-center bg-gray-100'>
       <Navbar navbarType='signup' />
-      <div className='self-stretch flex-1 overflow-hidden flex flex-col items-center justify-center'>
-        <nav aria-label='Progress' className='w-2/3 mb-4'>
+      <div className='flex flex-1 flex-col items-center justify-center self-stretch overflow-hidden'>
+        <nav aria-label='Progress' className='mb-4 w-2/3'>
           <ol role='list' className='space-y-4 md:flex md:space-x-16 md:space-y-0'>
             {
               // eslint-disable-next-line no-unused-vars
               Object.entries(steps).map(([idx, step]) => (
                 <li key={step.name} className='md:flex-1'>
                   {stepStatus[idx] === 'completed' ? (
-                    <span className='flex flex-col items-center py-2 border-t-4 rounded-lg bg-gray-200'>
+                    <span className='flex flex-col items-center rounded-lg border-t-4 bg-gray-200 py-2'>
                       <span className='text-sm font-medium text-black'>{step.name}</span>
                     </span>
                   ) : stepStatus[idx] === 'current' ? (
-                    <span className='flex flex-col items-center items-center py-2 border-black border-t-4 bg-gray-200 rounded-lg'>
+                    <span className='flex flex-col items-center items-center rounded-lg border-t-4 border-black bg-gray-200 py-2'>
                       <span className='text-sm font-medium text-black'>{step.name}</span>
                     </span>
                   ) : (
-                    <span className='flex flex-col items-center border-gray-200 py-2 border-t-4 rounded-lg'>
+                    <span className='flex flex-col items-center rounded-lg border-t-4 border-gray-200 py-2'>
                       <span className='text-sm font-medium text-gray-500'>{step.name}</span>
                     </span>
                   )}

@@ -2,10 +2,10 @@ import React from 'react';
 export const MenuItem = ({ menuItem, onClick }) => {
   return (
     <button
-      className='cursor-pointer rounded [border:none] p-2 bg-font-light self-stretch h-8 shrink-0 flex flex-row box-border items-center justify-center hover:bg-gray-100'
+      className='bg-font-light box-border flex h-8 shrink-0 cursor-pointer flex-row items-center justify-center self-stretch rounded p-2 [border:none] hover:bg-gray-100'
       onClick={onClick}
     >
-      <b className='self-stretch flex-1 relative text-xs flex font-label-xlarge-bold text-background-dark text-center items-center justify-center'>
+      <b className='font-label-xlarge-bold text-background-dark relative flex flex-1 items-center justify-center self-stretch text-center text-xs'>
         {menuItem}
       </b>
     </button>

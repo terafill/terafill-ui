@@ -52,9 +52,9 @@ function MultiVaultDropown({ vaultListView, selectedVault, setSelectedVault }) {
       {({ open }) => (
         <>
           {vaultListView && selectedVault && vaultListView[selectedVault] ? (
-            <div className='w-11/12 my-2'>
-              <Listbox.Button className='flex relative w-full rounded-md bg-white py-1.5 pl-3 pr-1.5 text-left text-black-700 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none sm:text-sm sm:leading-6'>
-                <span className='flex-1 block truncate'>{vaultListView[selectedVault].name}</span>
+            <div className='my-2 w-11/12'>
+              <Listbox.Button className='text-black-700 relative flex w-full rounded-md bg-white py-1.5 pl-3 pr-1.5 text-left shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none sm:text-sm sm:leading-6'>
+                <span className='block flex-1 truncate'>{vaultListView[selectedVault].name}</span>
                 <span className='flex-0 pointer-events-none inset-y-0 flex items-center'>
                   <ChevronUpDownIcon className='h-5 w-5 text-gray-400' aria-hidden='true' />
                 </span>
@@ -67,7 +67,7 @@ function MultiVaultDropown({ vaultListView, selectedVault, setSelectedVault }) {
                 leaveFrom='opacity-100'
                 leaveTo='opacity-0'
               >
-                <Listbox.Options className='absolute z-10 mt-1 max-h-60 w-11/12 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm cursor-pointer'>
+                <Listbox.Options className='absolute z-10 mt-1 max-h-60 w-11/12 cursor-pointer overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm'>
                   {
                     //eslint-disable-next-line
                     Object.entries(vaultListView).map(([vaultId, vault]) => (
@@ -75,7 +75,7 @@ function MultiVaultDropown({ vaultListView, selectedVault, setSelectedVault }) {
                         key={vault.id}
                         className={({ active }) =>
                           classNames(
-                            active ? 'bg-gray-100 text-black-900' : 'text-black-700',
+                            active ? 'text-black-900 bg-gray-100' : 'text-black-700',
                             'relative select-none py-2 pl-3 pr-9',
                           )
                         }
@@ -150,7 +150,7 @@ function AddVaultItemPopup({ open, setOpen, selectedVault }) {
         </Transition.Child>
 
         <div className='fixed inset-0 z-10 overflow-y-auto'>
-          <div className='flex min-h-full items-end justify-center p-4 text-center items-center'>
+          <div className='flex min-h-full items-end items-center justify-center p-4 text-center'>
             <Transition.Child
               as={Fragment}
               enter='ease-out duration-300'
@@ -160,21 +160,21 @@ function AddVaultItemPopup({ open, setOpen, selectedVault }) {
               leaveFrom='opacity-100 translate-y-0 sm:scale-100'
               leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
             >
-              <Dialog.Panel className='flex flex-col w-80 justify-center items-center gap-6 relative transform overflow-hidden rounded-lg bg-white p-4 text-left shadow-2xl transition-all'>
-                <div className='flex flex-col w-5/6 items-center gap-8 text-center' id='popup-body'>
+              <Dialog.Panel className='relative flex w-80 transform flex-col items-center justify-center gap-6 overflow-hidden rounded-lg bg-white p-4 text-left shadow-2xl transition-all'>
+                <div className='flex w-5/6 flex-col items-center gap-8 text-center' id='popup-body'>
                   <Dialog.Title
                     as='h3'
                     className='w-full text-base font-semibold leading-6 text-gray-900'
                   >
-                    <div className='flex flex-row justify-center items-center gap-2'>
-                      <SquaresPlusIcon className='w-10 h-10' />
+                    <div className='flex flex-row items-center justify-center gap-2'>
+                      <SquaresPlusIcon className='h-10 w-10' />
                       Add new item
                     </div>
                   </Dialog.Title>
                   <div className='relative w-full'>
                     <label
                       htmlFor='title'
-                      className='absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700'
+                      className='absolute -top-3 left-1 inline-block rounded bg-white px-1 text-sm font-medium text-gray-700'
                     >
                       Title
                     </label>
@@ -195,7 +195,7 @@ function AddVaultItemPopup({ open, setOpen, selectedVault }) {
                   <div className='relative w-full'>
                     <label
                       htmlFor='username'
-                      className='absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700'
+                      className='absolute -top-3 left-1 inline-block rounded bg-white px-1 text-sm font-medium text-gray-700'
                     >
                       Username
                     </label>
@@ -219,7 +219,7 @@ function AddVaultItemPopup({ open, setOpen, selectedVault }) {
                   <div className='relative w-full'>
                     <label
                       htmlFor='password'
-                      className='absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700'
+                      className='absolute -top-3 left-1 inline-block rounded bg-white px-1 text-sm font-medium text-gray-700'
                     >
                       Password
                     </label>
@@ -243,7 +243,7 @@ function AddVaultItemPopup({ open, setOpen, selectedVault }) {
                   <div className='relative w-full'>
                     <label
                       htmlFor='website'
-                      className='absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700'
+                      className='absolute -top-3 left-1 inline-block rounded bg-white px-1 text-sm font-medium text-gray-700'
                     >
                       Website
                     </label>
@@ -263,7 +263,7 @@ function AddVaultItemPopup({ open, setOpen, selectedVault }) {
                   </div>
                 </div>
                 <div
-                  className='flex flex-row w-5/6 justify-center items-center gap-2'
+                  className='flex w-5/6 flex-row items-center justify-center gap-2'
                   id='button-group'
                 >
                   <button
@@ -350,7 +350,7 @@ function EditVaultPopup({ open, setOpen, selectedVault }) {
         </Transition.Child>
 
         <div className='fixed inset-0 z-10 overflow-y-auto'>
-          <div className='flex min-h-full items-end justify-center p-4 text-center items-center'>
+          <div className='flex min-h-full items-end items-center justify-center p-4 text-center'>
             <Transition.Child
               as={Fragment}
               enter='ease-out duration-300'
@@ -360,8 +360,8 @@ function EditVaultPopup({ open, setOpen, selectedVault }) {
               leaveFrom='opacity-100 translate-y-0 sm:scale-100'
               leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
             >
-              <Dialog.Panel className='flex flex-col w-80 justify-center items-center gap-6 relative transform overflow-hidden rounded-lg bg-white p-4 text-left shadow-2xl transition-all'>
-                <div className='flex flex-col w-5/6 items-center gap-8 text-center' id='popup-body'>
+              <Dialog.Panel className='relative flex w-80 transform flex-col items-center justify-center gap-6 overflow-hidden rounded-lg bg-white p-4 text-left shadow-2xl transition-all'>
+                <div className='flex w-5/6 flex-col items-center gap-8 text-center' id='popup-body'>
                   <Dialog.Title
                     as='h3'
                     className='w-full text-base font-semibold leading-6 text-gray-900'
@@ -371,7 +371,7 @@ function EditVaultPopup({ open, setOpen, selectedVault }) {
                   <div className='relative w-full'>
                     <label
                       htmlFor='vaultName'
-                      className='absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700'
+                      className='absolute -top-3 left-1 inline-block rounded bg-white px-1 text-sm font-medium text-gray-700'
                     >
                       Name
                     </label>
@@ -392,7 +392,7 @@ function EditVaultPopup({ open, setOpen, selectedVault }) {
                   <div className='relative w-full'>
                     <label
                       htmlFor='description'
-                      className='absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700'
+                      className='absolute -top-3 left-1 inline-block rounded bg-white px-1 text-sm font-medium text-gray-700'
                     >
                       Description
                     </label>
@@ -411,7 +411,7 @@ function EditVaultPopup({ open, setOpen, selectedVault }) {
                   </div>
                 </div>
                 <div
-                  className='flex flex-row w-5/6 justify-center items-center gap-2'
+                  className='flex w-5/6 flex-row items-center justify-center gap-2'
                   id='button-group'
                 >
                   <button
@@ -490,7 +490,7 @@ function AddVaultPopup({ open, setOpen, setSelectedVault }) {
         </Transition.Child>
 
         <div className='fixed inset-0 z-10 overflow-y-auto'>
-          <div className='flex min-h-full items-end justify-center p-4 text-center items-center'>
+          <div className='flex min-h-full items-end items-center justify-center p-4 text-center'>
             <Transition.Child
               as={Fragment}
               enter='ease-out duration-300'
@@ -500,8 +500,8 @@ function AddVaultPopup({ open, setOpen, setSelectedVault }) {
               leaveFrom='opacity-100 translate-y-0 sm:scale-100'
               leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
             >
-              <Dialog.Panel className='flex flex-col w-80 justify-center items-center gap-6 relative transform overflow-hidden rounded-lg bg-white p-4 text-left shadow-2xl transition-all'>
-                <div className='flex flex-col w-5/6 items-center gap-8 text-center' id='popup-body'>
+              <Dialog.Panel className='relative flex w-80 transform flex-col items-center justify-center gap-6 overflow-hidden rounded-lg bg-white p-4 text-left shadow-2xl transition-all'>
+                <div className='flex w-5/6 flex-col items-center gap-8 text-center' id='popup-body'>
                   <Dialog.Title
                     as='h3'
                     className='w-full text-base font-semibold leading-6 text-gray-900'
@@ -514,7 +514,7 @@ function AddVaultPopup({ open, setOpen, setSelectedVault }) {
                   <div className='relative w-full'>
                     <label
                       htmlFor='vaultName'
-                      className='absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700'
+                      className='absolute -top-3 left-1 inline-block rounded bg-white px-1 text-sm font-medium text-gray-700'
                     >
                       Name
                     </label>
@@ -535,7 +535,7 @@ function AddVaultPopup({ open, setOpen, setSelectedVault }) {
                   <div className='relative w-full'>
                     <label
                       htmlFor='description'
-                      className='absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700'
+                      className='absolute -top-3 left-1 inline-block rounded bg-white px-1 text-sm font-medium text-gray-700'
                     >
                       Description
                     </label>
@@ -554,7 +554,7 @@ function AddVaultPopup({ open, setOpen, setSelectedVault }) {
                   </div>
                 </div>
                 <div
-                  className='flex flex-row w-5/6 justify-center items-center gap-2'
+                  className='flex w-5/6 flex-row items-center justify-center gap-2'
                   id='button-group'
                 >
                   <button
@@ -637,7 +637,7 @@ function DeleteVaultPopup({ open, setOpen, selectedVault, defaultVault, setSelec
         </Transition.Child>
 
         <div className='fixed inset-0 z-10 overflow-y-auto'>
-          <div className='flex min-h-full items-end justify-center p-4 text-center items-center'>
+          <div className='flex min-h-full items-end items-center justify-center p-4 text-center'>
             <Transition.Child
               as={Fragment}
               enter='ease-out duration-300'
@@ -647,8 +647,8 @@ function DeleteVaultPopup({ open, setOpen, selectedVault, defaultVault, setSelec
               leaveFrom='opacity-100 translate-y-0 sm:scale-100'
               leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
             >
-              <Dialog.Panel className='flex flex-col w-80 justify-center items-center gap-6 relative transform overflow-hidden rounded-lg bg-white p-4 text-left shadow-2xl transition-all'>
-                <div className='flex flex-col w-5/6 items-center gap-8 text-center' id='popup-body'>
+              <Dialog.Panel className='relative flex w-80 transform flex-col items-center justify-center gap-6 overflow-hidden rounded-lg bg-white p-4 text-left shadow-2xl transition-all'>
+                <div className='flex w-5/6 flex-col items-center gap-8 text-center' id='popup-body'>
                   <Dialog.Title
                     as='h3'
                     className='w-full text-base font-semibold leading-6 text-gray-900'
@@ -658,7 +658,7 @@ function DeleteVaultPopup({ open, setOpen, selectedVault, defaultVault, setSelec
                   <div className='relative w-full'>
                     <label
                       htmlFor='vaultName'
-                      className='absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700'
+                      className='absolute -top-3 left-1 inline-block rounded bg-white px-1 text-sm font-medium text-gray-700'
                     >
                       Confirm vault name
                     </label>
@@ -677,7 +677,7 @@ function DeleteVaultPopup({ open, setOpen, selectedVault, defaultVault, setSelec
                     />
                   </div>
                   <div
-                    className='flex flex-row w-5/6 justify-center items-center gap-2'
+                    className='flex w-5/6 flex-row items-center justify-center gap-2'
                     id='button-group'
                   >
                     <button
@@ -751,7 +751,7 @@ function VaultSettingsMenu({
   return (
     <Menu as='div' className='relative inline-block text-left'>
       <div>
-        <Menu.Button className='inline-flex w-full justify-center rounded-md bg-white px-2 py-2 text-sm font-normal text-black-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50'>
+        <Menu.Button className='text-black-900 inline-flex w-full justify-center rounded-md bg-white px-2 py-2 text-sm font-normal shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50'>
           <CogIcon className='h-5 w-5 text-gray-800' aria-hidden='true' />
         </Menu.Button>
       </div>
@@ -776,12 +776,12 @@ function VaultSettingsMenu({
                 <a
                   href='#'
                   className={classNames(
-                    active ? 'bg-gray-100 text-black-900' : 'text-black-700',
+                    active ? 'text-black-900 bg-gray-100' : 'text-black-700',
                     'group flex items-center px-4 py-2 text-sm',
                   )}
                 >
                   <PencilSquareIcon
-                    className='mr-3 h-5 w-5 text-black-400 group-hover:text-black-500'
+                    className='text-black-400 group-hover:text-black-500 mr-3 h-5 w-5'
                     aria-hidden='true'
                   />
                   Edit vault
@@ -793,12 +793,12 @@ function VaultSettingsMenu({
                 <a
                   href='#'
                   className={classNames(
-                    active ? 'bg-gray-100 text-black-900' : 'text-black-700',
+                    active ? 'text-black-900 bg-gray-100' : 'text-black-700',
                     'group flex items-center px-4 py-2 text-sm',
                   )}
                 >
                   <SquaresPlusIcon
-                    className='mr-3 h-5 w-5 text-black-400 group-hover:text-black-500'
+                    className='text-black-400 group-hover:text-black-500 mr-3 h-5 w-5'
                     aria-hidden='true'
                   />
                   Add vault
@@ -866,16 +866,16 @@ function VaultSettingsMenu({
                 <a
                   href='#'
                   className={classNames(
-                    active ? 'bg-gray-100 text-black-900' : 'text-black-700',
+                    active ? 'text-black-900 bg-gray-100' : 'text-black-700',
                     'group flex items-center px-4 py-2 text-sm',
                   )}
                 >
                   <UserPlusIcon
-                    className='mr-3 h-5 w-5 text-black-400 group-hover:text-black-500'
+                    className='text-black-400 group-hover:text-black-500 mr-3 h-5 w-5'
                     aria-hidden='true'
                   />
                   Share vault
-                  <p className='ml-2 text-sm text-blue-400 bg-gray-100 p-1 rounded-full'>
+                  <p className='ml-2 rounded-full bg-gray-100 p-1 text-sm text-blue-400'>
                     coming soon
                   </p>
                 </a>
@@ -930,7 +930,7 @@ function VaultSettingsMenu({
 
 export const ItemPanelIndex = () => {
   return (
-    <div className='self-stretch flex-1 overflow-hidden flex flex-col py-[32px] px-[16px] h-1/1 items-center justify-center z-[0] text-4xl'>
+    <div className='h-1/1 z-[0] flex flex-1 flex-col items-center justify-center self-stretch overflow-hidden px-[16px] py-[32px] text-4xl'>
       <h1>Good Morning!</h1>
     </div>
   );
@@ -1010,13 +1010,13 @@ export const ItemPanel = () => {
 
   return (
     <div
-      className='self-stretch flex-1 overflow-hidden flex flex-col py-[32px] px-[16px] h-1/1 items-center justify-between z-[0]'
+      className='h-1/1 z-[0] flex flex-1 flex-col items-center justify-between self-stretch overflow-hidden px-[16px] py-[32px]'
       id='right-panel'
     >
       {/*      <div className="absolute">
         <ToastContainer />
       </div>*/}
-      <div className='self-end flex flex-row'>
+      <div className='flex flex-row self-end'>
         {!itemFormDisabled && !itemUpdating && (
           <Button
             onClick={() => {
@@ -1139,15 +1139,15 @@ export const ItemPanel = () => {
         )}
       </div>
       <div className='grid grid-cols-2 grid-rows-4 items-center justify-center justify-items-center gap-4'>
-        <div className='self-stretch flex-1' id='iconframe'>
+        <div className='flex-1 self-stretch' id='iconframe'>
           <img
-            className='w-[88px] h-[88px] overflow-hidden object-cover'
+            className='h-[88px] w-[88px] overflow-hidden object-cover'
             alt=''
             src={itemDataView?.icon ?? null}
           />
         </div>
         <input
-          className={`flex self-stretch flex-1 relative rounded-lg w-8/12 text-5xl font-medium bg-[transparent] rounded-3xs w-11/12 overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center ${
+          className={`rounded-3xs relative box-border flex w-11/12 w-8/12 flex-1 flex-row items-center justify-center self-stretch overflow-hidden rounded-lg bg-[transparent] px-[7px] py-0.5 text-5xl font-medium ${
             itemFormDisabled ? '' : 'border-2 border-blue-100 bg-blue-50 bg-opacity-40'
           }`}
           value={itemDataView?.title ?? ''}
@@ -1159,7 +1159,7 @@ export const ItemPanel = () => {
         />
         <label className='text-center font-medium'>USERNAME</label>
         <input
-          className={`flex text-[23.04px] bg-[transparent] rounded w-8/12 overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center ${
+          className={`box-border flex w-8/12 flex-row items-center justify-center overflow-hidden rounded bg-[transparent] px-[7px] py-0.5 text-[23.04px] ${
             itemFormDisabled ? '' : 'border-2 border-blue-100 bg-blue-50 bg-opacity-40'
           }`}
           type='text'
@@ -1171,9 +1171,9 @@ export const ItemPanel = () => {
           disabled={itemFormDisabled}
         />
         <label className='text-center font-medium'>PASSWORD</label>
-        <div className='w-8/12 flex-1 flex flex-row box-border items-stretch justify-items-stretch'>
+        <div className='box-border flex w-8/12 flex-1 flex-row items-stretch justify-items-stretch'>
           <input
-            className={`w-full flex text-[23.04px] bg-[transparent] rounded overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center ${
+            className={`box-border flex w-full flex-row items-center justify-center overflow-hidden rounded bg-[transparent] px-[7px] py-0.5 text-[23.04px] ${
               itemFormDisabled ? '' : 'border-2 border-blue-100 bg-blue-50 bg-opacity-40'
             }`}
             type={showPassword ? 'text' : 'password'}
@@ -1189,16 +1189,16 @@ export const ItemPanel = () => {
             onClick={() => setPasswordVisibility(!showPassword)}
           >
             {showPassword ? (
-              <AiFillEyeInvisible className='w-5 h-5' aria-hidden='true' />
+              <AiFillEyeInvisible className='h-5 w-5' aria-hidden='true' />
             ) : (
-              <AiFillEye className='w-5 h-5' aria-hidden='true' />
+              <AiFillEye className='h-5 w-5' aria-hidden='true' />
             )}
           </button>
         </div>
 
         <label className='text-center font-medium'>WEBSITE</label>
         <input
-          className={`flex text-[23.04px] bg-[transparent] rounded w-8/12 overflow-hidden flex-row py-0.5 px-[7px] box-border items-center justify-center ${
+          className={`box-border flex w-8/12 flex-row items-center justify-center overflow-hidden rounded bg-[transparent] px-[7px] py-0.5 text-[23.04px] ${
             itemFormDisabled ? '' : 'border-2 border-blue-100 bg-blue-50 bg-opacity-40'
           }`}
           type='text'
@@ -1262,7 +1262,7 @@ const NavigationPanel = ({
 
   return (
     <div
-      className='self-stretch shadow-[1px_0px_4px_rgba(0,_0,_0,_0.25)] w-3/12 flex flex-col grow-0 shrink-0 items-center justify-start relative z-[1]'
+      className='relative z-[1] flex w-3/12 shrink-0 grow-0 flex-col items-center justify-start self-stretch shadow-[1px_0px_4px_rgba(0,_0,_0,_0.25)]'
       id='left-panel'
     >
       <div className='flex w-full items-center justify-around gap-2 px-2' id='vaul-bar'>
@@ -1280,9 +1280,9 @@ const NavigationPanel = ({
           setOpenDeleteVault={setOpenDeleteVault}
         />
       </div>
-      <div className='self-stretch overflow-hidden flex flex-col p-2 items-center justify-center z-[0] border-[1px]'>
+      <div className='z-[0] flex flex-col items-center justify-center self-stretch overflow-hidden border-[1px] p-2'>
         <input
-          className='[border:none] rounded-lg px-2 py-2 flex text-[23.04px] bg-gray-200 w-full overflow-hidden flex-row items-center justify-center'
+          className='flex w-full flex-row items-center justify-center overflow-hidden rounded-lg bg-gray-200 px-2 py-2 text-[23.04px] [border:none]'
           type='text'
           placeholder=' 🔎 Quick Search'
           value={search}
@@ -1292,7 +1292,7 @@ const NavigationPanel = ({
         />
       </div>
       <div
-        className='self-stretch flex-1 overflow-y-auto px-2 py-2 flex flex-col items-center justify-start z-[1] border-[2px] border-solid'
+        className='z-[1] flex flex-1 flex-col items-center justify-start self-stretch overflow-y-auto border-[2px] border-solid px-2 py-2'
         id='item-list'
       >
         {Object.entries(itemDataListView ?? [])
@@ -1312,21 +1312,21 @@ const NavigationPanel = ({
                   key={itemData.id}
                   className={({ isActive }) =>
                     isActive
-                      ? 'bg-gray-200 mt-1 mb-1 px-[16px] rounded-lg hover:bg-gray-200'
-                      : 'mt-1 mb-1 px-[16px] rounded-lg hover:bg-gray-100'
+                      ? 'mb-1 mt-1 rounded-lg bg-gray-200 px-[16px] hover:bg-gray-200'
+                      : 'mb-1 mt-1 rounded-lg px-[16px] hover:bg-gray-100'
                   }
                 >
-                  <button className='cursor-pointer rounded-lg [border:none] overflow-hidden flex flex-row items-center justify-start'>
+                  <button className='flex cursor-pointer flex-row items-center justify-start overflow-hidden rounded-lg [border:none]'>
                     <img
-                      className='relative w-[40px] h-[40px] shrink-0 overflow-hidden object-cover'
+                      className='relative h-[40px] w-[40px] shrink-0 overflow-hidden object-cover'
                       alt=''
                       src={itemData.icon}
                     />
-                    <div className='flex flex-col text-left px-[8px] py-[8px]'>
-                      <label className='cursor-pointer relative text-xl tracking-[0.03em] font-bold w-[230px] h-[23px] shrink-0 truncate overflow-hidden line-clamp-2'>
+                    <div className='flex flex-col px-[8px] py-[8px] text-left'>
+                      <label className='relative line-clamp-2 h-[23px] w-[230px] shrink-0 cursor-pointer overflow-hidden truncate text-xl font-bold tracking-[0.03em]'>
                         {itemData.title}
                       </label>
-                      <label className='cursor-pointer relative text-base tracking-[0.03em] w-[230px] h-[23px] shrink-0 truncate overflow-hidden line-clamp-2'>
+                      <label className='relative line-clamp-2 h-[23px] w-[230px] shrink-0 cursor-pointer overflow-hidden truncate text-base tracking-[0.03em]'>
                         {itemData.username}
                       </label>
                     </div>
@@ -1427,12 +1427,12 @@ const AppHome = () => {
   const [openAddVaultItemPopup, setOpenAddVaultItem] = useState(false);
 
   return (
-    <div className='w-full h-screen flex flex-col justify-start items-stretch text-left'>
+    <div className='flex h-screen w-full flex-col items-stretch justify-start text-left'>
       <Navbar navbarType='app' />
-      <div className='h-full flex flex-row items-stretch' id='app-screen'>
+      <div className='flex h-full flex-row items-stretch' id='app-screen'>
         <SideNavbar />
         <div
-          className='self-stretch flex-1 overflow-hidden flex flex-row items-center justify-center'
+          className='flex flex-1 flex-row items-center justify-center self-stretch overflow-hidden'
           id='apphome-inner'
         >
           <ToastContainer />

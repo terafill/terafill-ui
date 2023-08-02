@@ -38,22 +38,22 @@ const LoginPage = () => {
   };
 
   return (
-    <div className='bg-gray-100 w-screen h-screen flex flex-col items-center justify-center'>
+    <div className='flex h-screen w-screen flex-col items-center justify-center bg-gray-100'>
       <Navbar navbarType='login' />
-      <div className='self-stretch flex-1 overflow-hidden flex flex-col items-center justify-center'>
+      <div className='flex flex-1 flex-col items-center justify-center self-stretch overflow-hidden'>
         <form
-          className='bg-white w-1/2 rounded-xl shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-16 px-16 items-center justify-center gap-[32px]'
+          className='flex w-1/2 flex-col items-center justify-center gap-[32px] overflow-hidden rounded-xl bg-white px-16 py-16 shadow-[0px_0px_10px_rgba(0,_0,_0,_0.25)]'
           onSubmit={attemptLogin}
         >
           <ToastContainer />
-          <h4 className='m-0 relative text-3xl leading-[120%] font-bold text-black text-center'>
+          <h4 className='relative m-0 text-center text-3xl font-bold leading-[120%] text-black'>
             Welcome
           </h4>
 
           <div className='relative w-2/3'>
             <label
               htmlFor='email'
-              className='absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700'
+              className='absolute -top-3 left-1 inline-block rounded bg-white px-1 text-sm font-medium text-gray-700'
             >
               Email
             </label>
@@ -75,7 +75,7 @@ const LoginPage = () => {
           <div className='relative w-2/3'>
             <label
               htmlFor='password'
-              className='absolute rounded -top-3 left-1 inline-block bg-white px-1 text-sm font-medium text-gray-700'
+              className='absolute -top-3 left-1 inline-block rounded bg-white px-1 text-sm font-medium text-gray-700'
             >
               Password
             </label>

@@ -68,7 +68,7 @@ const faqs = [
 
 const FaqPage = () => {
   return (
-    <div className='flex items-stretch flex-col justify-start w-screen h-screen' id='main'>
+    <div className='flex h-screen w-screen flex-col items-stretch justify-start' id='main'>
       <Navbar />
       <div className='bg-white'>
         <div className='mx-auto max-w-7xl px-6 py-16 sm:py-24 lg:px-8'>

@@ -120,14 +120,14 @@ const PersonalInfo = () => {
   };
 
   return (
-    <div className='h-screen w-full flex flex-col justify-start items-stretch text-left'>
+    <div className='flex h-screen w-full flex-col items-stretch justify-start text-left'>
       <Navbar navbarType='app' />
-      <div className='h-full w-full flex flex-row items-stretch' id='app-screen'>
+      <div className='flex h-full w-full flex-row items-stretch' id='app-screen'>
         <SideNavbar />
         <div className='flex flex-1 items-center justify-center' id='page-content-outer'>
           <ToastContainer />
           <div
-            className='h-5/6 w-2/3 flex flex-0 flex-col justify-center items-center border-2 rounded-lg bg-gray-50'
+            className='flex-0 flex h-5/6 w-2/3 flex-col items-center justify-center rounded-lg border-2 bg-gray-50'
             id='page-content-inner'
           >
             <div
@@ -136,12 +136,12 @@ const PersonalInfo = () => {
             >
               {userProfileView.profileImage ? (
                 <img
-                  className='relative w-32 h-32 shrink-0 overflow-hidden border-2 rounded-lg bg-white'
+                  className='relative h-32 w-32 shrink-0 overflow-hidden rounded-lg border-2 bg-white'
                   alt=''
                   src={userProfileView.profileImage}
                 />
               ) : (
-                <div className='flex w-32 h-32 justify-center items-center overflow-hidden border-2 rounded-lg bg-white'>
+                <div className='flex h-32 w-32 items-center justify-center overflow-hidden rounded-lg border-2 bg-white'>
                   <Avatar email={userProfileView.email} />
                 </div>
               )}
@@ -149,21 +149,21 @@ const PersonalInfo = () => {
                 <input
                   type='file'
                   onChange={onFileChange}
-                  className='cursor-pointer absolute opacity-0'
+                  className='absolute cursor-pointer opacity-0'
                   id='profileImage'
                 />
               </Button>
               {/*<Button label="Remove Photo" buttonType="light" labelClassName="text-red-500"/>*/}
             </div>
             <div
-              className='flex flex-1 flex-col justify-center items-stretch gap-10'
+              className='flex flex-1 flex-col items-stretch justify-center gap-10'
               id='profile-data-section'
             >
-              <span className='relative w-full flex flex-row justify-center gap-2' id='name'>
+              <span className='relative flex w-full flex-row justify-center gap-2' id='name'>
                 <div className='relative w-full' id='first-name'>
                   <label
                     htmlFor='firstName'
-                    className='absolute rounded -top-5 left-0 inline-block bg-gray-50 px-1 text-sm font-medium text-gray-700'
+                    className='absolute -top-5 left-0 inline-block rounded bg-gray-50 px-1 text-sm font-medium text-gray-700'
                   >
                     First Name
                   </label>
@@ -188,7 +188,7 @@ const PersonalInfo = () => {
                 <div className='relative w-full' id='last-name'>
                   <label
                     htmlFor='lastName'
-                    className='absolute rounded -top-5 left-0 inline-block bg-gray-50 px-1 text-sm font-medium text-gray-700'
+                    className='absolute -top-5 left-0 inline-block rounded bg-gray-50 px-1 text-sm font-medium text-gray-700'
                   >
                     Last Name
                   </label>
@@ -212,7 +212,7 @@ const PersonalInfo = () => {
               <div className='relative flex'>
                 <label
                   htmlFor='email'
-                  className='absolute rounded -top-5 left-0 inline-block bg-gray-50 px-1 text-sm font-medium text-gray-700'
+                  className='absolute -top-5 left-0 inline-block rounded bg-gray-50 px-1 text-sm font-medium text-gray-700'
                 >
                   Email
                 </label>
@@ -233,7 +233,7 @@ const PersonalInfo = () => {
               <div className='relative flex'>
                 <label
                   htmlFor='email'
-                  className='absolute rounded -top-5 left-0 inline-block bg-gray-50 px-1 text-sm font-medium text-gray-700'
+                  className='absolute -top-5 left-0 inline-block rounded bg-gray-50 px-1 text-sm font-medium text-gray-700'
                 >
                   Phone No.
                 </label>
@@ -251,7 +251,7 @@ const PersonalInfo = () => {
                 />
               </div>
               <div
-                className='flex flex-1 flex-row justify-center items-center gap-4'
+                className='flex flex-1 flex-row items-center justify-center gap-4'
                 id='form-button-group'
               >
                 <Button

@@ -7,7 +7,7 @@ import Button from '../components/Button';
 const SettingsPanel = ({ activeSettingsPanel, setActiveSettingsPanel }) => {
   // const extraBoxShadow = '0px 0px 4px rgba(0, 0, 0, 0.25) inset';
   return (
-    <nav className='self-stretch bg-white bg-font-light shadow-[2px_4px_4px_rgba(0,_0,_0,_0.25)] overflow-hidden flex flex-col py-0 px-4 items-center justify-center gap-[64px] z-[1]'>
+    <nav className='bg-font-light z-[1] flex flex-col items-center justify-center gap-[64px] self-stretch overflow-hidden bg-white px-4 py-0 shadow-[2px_4px_4px_rgba(0,_0,_0,_0.25)]'>
       <NavLink to='' onClick={() => setActiveSettingsPanel('Personal Info')}>
         <Button
           buttonType='panel'

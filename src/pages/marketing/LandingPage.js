@@ -10,20 +10,20 @@ const LandingPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className='relative w-screen h-screen overflow-y-auto flex flex-col items-center justify-start text-center'>
-      <div className='w-full h-screen' id='intro-section-wrapper'>
+    <div className='relative flex h-screen w-screen flex-col items-center justify-start overflow-y-auto text-center'>
+      <div className='h-screen w-full' id='intro-section-wrapper'>
         <Navbar navbarType='landing' />
-        <div className='self-stretch shrink-0 overflow-hidden flex flex-row items-center justify-center text-left'>
-          <div className='self-stretch flex-1 flex flex-col px-8 items-center justify-center gap-[24px]'>
-            <div className='self-stretch flex flex-col items-center justify-center gap-[24px]'>
+        <div className='flex shrink-0 flex-row items-center justify-center self-stretch overflow-hidden text-left'>
+          <div className='flex flex-1 flex-col items-center justify-center gap-[24px] self-stretch px-8'>
+            <div className='flex flex-col items-center justify-center gap-[24px] self-stretch'>
               <h4
-                className='m-0 self-stretch relative text-[inherit] text-3xl font-bold font-inherit flex items-center shrink-0'
+                className='font-inherit relative m-0 flex shrink-0 items-center self-stretch text-3xl font-bold text-[inherit]'
                 id='heading'
               >
                 Forgot your password again?
               </h4>
               <p
-                className='m-0 self-stretch relative text-lg font-medium text-justify flex items-center h-[118px] shrink-0'
+                className='relative m-0 flex h-[118px] shrink-0 items-center self-stretch text-justify text-lg font-medium'
                 id='para'
               >
                 Keylance Password Manager can help you store all your passwords effortlessly. Enjoy
@@ -31,7 +31,7 @@ const LandingPage = () => {
               </p>
             </div>
             <div
-              className='self-stretch flex flex-row items-center justify-start gap-[16px]'
+              className='flex flex-row items-center justify-start gap-[16px] self-stretch'
               id='button-group'
             >
               <Button
@@ -49,65 +49,65 @@ const LandingPage = () => {
             </div>
           </div>
           <img
-            className='self-stretch max-h-full w-2/5 shrink-0 overflow-hidden object-cover'
+            className='max-h-full w-2/5 shrink-0 self-stretch overflow-hidden object-cover'
             alt=''
             src='../right-intro-section@2x.png'
           />
         </div>
       </div>
       <div
-        className='self-stretch h-screen shrink-0 flex flex-col py-[131px] px-0 box-border items-start justify-start bg-[url(/public/madeinindiasection@3x.png)] bg-cover bg-no-repeat bg-[top]'
+        className='box-border flex h-screen shrink-0 flex-col items-start justify-start self-stretch bg-[url(/public/madeinindiasection@3x.png)] bg-cover bg-[top] bg-no-repeat px-0 py-[131px]'
         id='made-in-india-section'
       >
         <div
-          className='w-[482px] h-[240px] shrink-0 flex flex-col items-center justify-between'
+          className='flex h-[240px] w-[482px] shrink-0 flex-col items-center justify-between'
           id='india-infographic-container'
         >
-          <b className='self-stretch relative leading-[120%] text-3xl [text-shadow:0px_0px_2px_rgba(0,_0,_0,_0.25)]'>
+          <b className='relative self-stretch text-3xl leading-[120%] [text-shadow:0px_0px_2px_rgba(0,_0,_0,_0.25)]'>
             <span>{`Made with `}</span>
             <span className='love'>love</span>
             <span> in India</span>
           </b>
           <img
-            className='self-stretch relative max-w-full overflow-hidden h-[176px] shrink-0 object-cover'
+            className='relative h-[176px] max-w-full shrink-0 self-stretch overflow-hidden object-cover'
             alt=''
             src='../india-flag@2x.png'
           />
         </div>
       </div>
       <div
-        className='self-stretch h-screen shrink-0 flex flex-row py-11 px-[75px] box-border items-center justify-center gap-[32px]'
+        className='box-border flex h-screen shrink-0 flex-row items-center justify-center gap-[32px] self-stretch px-[75px] py-11'
         id='India-map-section'
       >
         <div
-          className='self-stretch flex-1 flex flex-col items-center justify-center'
+          className='flex flex-1 flex-col items-center justify-center self-stretch'
           id='data-centre-info-container'
         >
-          <b className='self-stretch relative leading-[120%] text-2xl flex items-center justify-center h-[202px] shrink-0 [backdrop-filter:blur(10px)]'>
+          <b className='relative flex h-[202px] shrink-0 items-center justify-center self-stretch text-2xl leading-[120%] [backdrop-filter:blur(10px)]'>
             We store data securely in data centres located in Delhi and Bangalore
           </b>
           <img
-            className='relative w-20 h-20 shrink-0 overflow-hidden'
+            className='relative h-20 w-20 shrink-0 overflow-hidden'
             alt=''
             src='../trusted-icon.svg'
           />
         </div>
         <img
-          className='self-stretch flex-1 max-w-full overflow-hidden max-h-full object-cover bg-contain bg-[center]'
+          className='max-h-full max-w-full flex-1 self-stretch overflow-hidden bg-contain bg-[center] object-cover'
           alt=''
           src='../india-map-tagged@2x.png'
         />
       </div>
       <div
-        className='self-stretch h-screen bg-gray-100 h-[720px] shrink-0 flex flex-col py-[72px] px-36 box-border items-center justify-center gap-[96px] text-[22.66px] font-source-sans-pro'
+        className='font-source-sans-pro box-border flex h-[720px] h-screen shrink-0 flex-col items-center justify-center gap-[96px] self-stretch bg-gray-100 px-36 py-[72px] text-[22.66px]'
         id='login-faster-section'
       >
         <div
-          className='self-stretch h-[168px] shrink-0 flex flex-col py-2 px-0 box-border items-center justify-between'
+          className='box-border flex h-[168px] shrink-0 flex-col items-center justify-between self-stretch px-0 py-2'
           id='ButtonMesh'
         >
           <div
-            className='w-[992px] flex flex-row py-2 px-32 box-border items-center justify-between'
+            className='box-border flex w-[992px] flex-row items-center justify-between px-32 py-2'
             id='ButtonGroup'
           >
             <Button buttonType='dark' label='Desktop' buttonClassName='py-2 px-4' />
@@ -115,7 +115,7 @@ const LandingPage = () => {
             <Button buttonType='dark' label='iOS' buttonClassName='py-2 px-4' />
           </div>
           <div
-            className='w-[992px] flex flex-row py-2 px-64 box-border items-center justify-between'
+            className='box-border flex w-[992px] flex-row items-center justify-between px-64 py-2'
             id='ButtonGroup'
           >
             <Button buttonType='dark' label='WearOS' buttonClassName='py-2 px-4' />
@@ -127,20 +127,20 @@ const LandingPage = () => {
           id='LoginFasterInfographic'
         >
           <img
-            className='max-w-full overflow-hidden max-h-full object-cover'
+            className='max-h-full max-w-full overflow-hidden object-cover'
             alt=''
             src='../login-faster-initial-screen@2x.png'
           />
           <div className='flex flex-col items-center justify-center gap-[8px]'>
-            <b className='relative flex items-center justify-center w-[115px] h-12 shrink-0'>{`Fast Login!`}</b>
+            <b className='relative flex h-12 w-[115px] shrink-0 items-center justify-center'>{`Fast Login!`}</b>
             <img
-              className='relative w-[101.5px] h-[22.09px] shrink-0'
+              className='relative h-[22.09px] w-[101.5px] shrink-0'
               alt=''
               src='../arrow-1.svg'
             />
           </div>
           <img
-            className='max-w-full overflow-hidden max-h-full object-cover'
+            className='max-h-full max-w-full overflow-hidden object-cover'
             alt=''
             src='../login-faster-after-login-screen@2x.png'
           />

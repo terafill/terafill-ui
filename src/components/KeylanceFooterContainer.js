@@ -9,10 +9,10 @@ const KeylanceFooterContainer = () => {
   const navigate = useNavigate();
   return (
     <div
-      className='p-8 bg-gray-50 flex flex-row items-center self-stretch justify-start'
+      className='flex flex-row items-center justify-start self-stretch bg-gray-50 p-8'
       id='footer'
     >
-      <div className='pl-4 flex-1 flex flex-col gap-2'>
+      <div className='flex flex-1 flex-col gap-2 pl-4'>
         <div className='flex flex-row items-center gap-3' id='keylance-logo'>
           <img className='h-[3rem]' id='keylance-icon' alt='' src='/subtract1.svg' />
           <div className='text-5xl'>Keylance</div>
@@ -21,7 +21,7 @@ const KeylanceFooterContainer = () => {
           login faster
         </i>
       </div>
-      <div className='flex-1 flex flex-row justify-around' id='right-footer'>
+      <div className='flex flex-1 flex-row justify-around' id='right-footer'>
         <div className='flex flex-col items-center' id='support-group'>
           <h6 className='text-lg font-bold' id='Support'>
             SUPPORT

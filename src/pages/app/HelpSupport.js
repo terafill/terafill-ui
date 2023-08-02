@@ -11,9 +11,9 @@ const HelpSupport = () => {
   useTokenExpiration();
 
   return (
-    <div className='relative bg-background-light-gray w-full h-screen flex flex-col items-center justify-start'>
+    <div className='bg-background-light-gray relative flex h-screen w-full flex-col items-center justify-start'>
       <Navbar navbarType='app' />
-      <div className='self-stretch flex-1 relative bg-font-light overflow-hidden flex flex-row items-center justify-center gap-8'>
+      <div className='bg-font-light relative flex flex-1 flex-row items-center justify-center gap-8 self-stretch overflow-hidden'>
         <Button
           label='Request a feature'
           buttonType='light'

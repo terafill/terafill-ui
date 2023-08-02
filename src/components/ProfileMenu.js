@@ -42,8 +42,8 @@ const ProfileMenu = () => {
 
   return (
     <>
-      <div className='relative shadow-[0px_0px_4px_rgba(0,_0,_0,_0.25)] rounded-md bg-white overflow-hidden flex flex-col items-center justify-center max-w-full max-h-full'>
-        <div className='px-2 py-2 w-[200px] overflow-hidden flex flex-col items-center justify-center gap-2'>
+      <div className='relative flex max-h-full max-w-full flex-col items-center justify-center overflow-hidden rounded-md bg-white shadow-[0px_0px_4px_rgba(0,_0,_0,_0.25)]'>
+        <div className='flex w-[200px] flex-col items-center justify-center gap-2 overflow-hidden px-2 py-2'>
           <MenuItem menuItem='Home' onClick={() => navigate('/app/home')} />
           {/*<MenuItem menuItem="Settings" onClick={()=>navigate("/settings")}/>*/}
           {/*<MenuItem menuItem='Download App' />*/}

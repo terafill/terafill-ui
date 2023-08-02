@@ -24,8 +24,8 @@ function classNames(...classes) {
 export default function SideNavbar() {
   return (
     <>
-      <div className='h-full w-24 flex flex-0 justify-center bg-gray-900'>
-        <ul role='list' className='flex flex-col flex-1 p-4 justify-around items-center'>
+      <div className='flex-0 flex h-full w-24 justify-center bg-gray-900'>
+        <ul role='list' className='flex flex-1 flex-col items-center justify-around p-4'>
           {navigation.map((item) => (
             <NavLink
               key={item.name}
@@ -34,19 +34,19 @@ export default function SideNavbar() {
               className={item.comingSoon ? 'pointer-events-none' : ''}
             >
               {({ isActive }) => (
-                <li key={item.name} className='cursor-pointer flex flex-1 p-2 h-24 w-24'>
+                <li key={item.name} className='flex h-24 w-24 flex-1 cursor-pointer p-2'>
                   <div
                     className={classNames(
                       isActive
-                        ? 'flex flex-col flex-1 justify-around items-center bg-gray-800 text-white'
-                        : 'flex flex-col flex-1 justify-around items-center text-gray-400 hover:text-white hover:bg-gray-800',
+                        ? 'flex flex-1 flex-col items-center justify-around bg-gray-800 text-white'
+                        : 'flex flex-1 flex-col items-center justify-around text-gray-400 hover:bg-gray-800 hover:text-white',
                       'group rounded-md text-sm font-semibold',
                     )}
                   >
-                    <item.icon className='flex flex-0 h-8 w-8' />
+                    <item.icon className='flex-0 flex h-8 w-8' />
                     <p className='flex'>{item.name}</p>
                     {item.comingSoon && (
-                      <p className='text-xs bg-black p-1 rounded-full'>coming soon</p>
+                      <p className='rounded-full bg-black p-1 text-xs'>coming soon</p>
                     )}
                   </div>
                 </li>

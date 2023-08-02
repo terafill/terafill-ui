@@ -39,7 +39,7 @@ const features = [
 
 const ProductsPage = () => {
   return (
-    <div className='flex items-stretch flex-col justify-start w-screen h-screen' id='main'>
+    <div className='flex h-screen w-screen flex-col items-stretch justify-start' id='main'>
       <Navbar />
       <div className='bg-white py-24 sm:py-32'>
         <div className='mx-auto max-w-7xl px-6 lg:px-8'>

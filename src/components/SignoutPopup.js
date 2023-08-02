@@ -4,11 +4,11 @@ import Button from '../components/Button';
 
 const SignoutPopup = ({ onConfirm, onClose }) => {
   return (
-    <div className='bg-white relative rounded-md overflow-hidden px-8 py-8 flex flex-col items-center justify-center gap-4 max-w-full max-h-full'>
-      <b className='relative flex items-center justify-center shrink-0 text-lg'>
+    <div className='relative flex max-h-full max-w-full flex-col items-center justify-center gap-4 overflow-hidden rounded-md bg-white px-8 py-8'>
+      <b className='relative flex shrink-0 items-center justify-center text-lg'>
         Confirm sign out ?
       </b>
-      <div className='self-stretch flex flex-row items-center justify-center gap-4'>
+      <div className='flex flex-row items-center justify-center gap-4 self-stretch'>
         <Button onClick={onConfirm} label='Confirm' />
         <Button onClick={onClose} label='Cancel' />
       </div>

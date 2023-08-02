@@ -33,22 +33,22 @@ const Navbar = ({ navbarType = 'landing' }) => {
   return (
     <>
       <div
-        className='self-stretch bg-black shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-between text-center text-[33.18px] text-font-light font-dm-serif-display'
+        className='text-font-light font-dm-serif-display flex flex-row items-center justify-between self-stretch bg-black text-center text-[33.18px] shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)]'
         id='navbar'
       >
         <div className='flex flex-row items-center justify-start gap-[24px]' id='left-navbar'>
-          <div className='relative w-[200px] h-12 shrink-0'>
-            <img className='absolute top-[8px] left-[8px] w-7 h-7' alt='' src='/subtract.svg' />
+          <div className='relative h-12 w-[200px] shrink-0'>
+            <img className='absolute left-[8px] top-[8px] h-7 w-7' alt='' src='/subtract.svg' />
             <Link
               to='/'
-              className='text-white absolute top-[8px] left-[44px] flex items-center justify-center w-[136px] h-7'
+              className='absolute left-[44px] top-[8px] flex h-7 w-[136px] items-center justify-center text-white'
             >
               Keylance
             </Link>
           </div>
           {navbarType === 'landing' || navbarType === 'signup' || navbarType === 'login' ? (
             <div
-              className='flex flex-row items-center justify-center gap-[16px] lg:items-center lg:justify-start lg:pl-[7%] lg:box-border'
+              className='flex flex-row items-center justify-center gap-[16px] lg:box-border lg:items-center lg:justify-start lg:pl-[7%]'
               id='ButtonGroup'
             >
               <Button buttonType='dark' label='Products' onClick={() => navigate('/products')} />
@@ -64,7 +64,7 @@ const Navbar = ({ navbarType = 'landing' }) => {
           )}
         </div>
         {navbarType === 'landing' || navbarType === 'signup' || navbarType === 'login' ? (
-          <div className='flex flex-row px-4 items-center justify-center gap-[8px]'>
+          <div className='flex flex-row items-center justify-center gap-[8px] px-4'>
             {navbarType === 'login' ? (
               ''
             ) : (
@@ -80,7 +80,7 @@ const Navbar = ({ navbarType = 'landing' }) => {
           ''
         )}
         {navbarType === 'app' ? (
-          <div className='box-border flex flex-row px-4 items-center justify-center gap-[8px] border-l-[0.8px]'>
+          <div className='box-border flex flex-row items-center justify-center gap-[8px] border-l-[0.8px] px-4'>
             {/*
             <button
               className='cursor-pointer [border:none] py-2 px-2 bg-gray hover:bg-gray-800 rounded-xl shadow-[0px_0px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-start gap-[8px]'
@@ -90,11 +90,11 @@ const Navbar = ({ navbarType = 'landing' }) => {
               <img className='relative w-6 h-6 shrink-0' alt='' src='/bell.svg' />
             </button>*/}
             <button
-              className='cursor-pointer [border:none] py-2 px-2 bg-gray hover:bg-gray-800 rounded-xl shadow-[0px_0px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-start gap-[8px]'
+              className='bg-gray flex cursor-pointer flex-row items-center justify-start gap-[8px] rounded-xl px-2 py-2 shadow-[0px_0px_4px_rgba(0,_0,_0,_0.25)] [border:none] hover:bg-gray-800'
               ref={profileMenuButtonRef}
               onClick={openProfilePopup}
             >
-              <img className='relative w-6 h-6 shrink-0' alt='' src='/profile.svg' />
+              <img className='relative h-6 w-6 shrink-0' alt='' src='/profile.svg' />
             </button>
           </div>
         ) : (

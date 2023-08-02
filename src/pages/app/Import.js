@@ -22,9 +22,9 @@ const Import = () => {
   ];
 
   return (
-    <div className='relative w-screen h-screen flex flex-col items-center justify-start'>
+    <div className='relative flex h-screen w-screen flex-col items-center justify-start'>
       <Navbar navbarType='app' />
-      <div className='flex-1 grid grid-cols-4 gap-12 justify-center items-center content-center'>
+      <div className='grid flex-1 grid-cols-4 content-center items-center justify-center gap-12'>
         {importList.map((importItem) => (
           <Button
             key={importItem.label}

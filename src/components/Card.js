@@ -27,16 +27,16 @@ const Card = ({
 }) => {
   return (
     <div
-      className='self-stretch flex-1 rounded-lg px-3 py-3 flex flex-col justify-start text-left border-[0.5px] border-solid gap-2'
+      className='flex flex-1 flex-col justify-start gap-2 self-stretch rounded-lg border-[0.5px] border-solid px-3 py-3 text-left'
       id='card'
     >
       <div
-        className='flex flex-row justify-start items-center h-[4rem] gap-2 border-b-[1px] border-solid'
+        className='flex h-[4rem] flex-row items-center justify-start gap-2 border-b-[1px] border-solid'
         id='card-header'
       >
-        {icon && <img className='object-contain h-full max-h-full' alt='' src={icon} />}
+        {icon && <img className='h-full max-h-full object-contain' alt='' src={icon} />}
         <div
-          className='self-stretch flex-1 flex flex-col justify-start items-start'
+          className='flex flex-1 flex-col items-start justify-start self-stretch'
           id='card-header-data'
         >
           <b className='flex-1 text-2xl'>{cardLabel}</b>

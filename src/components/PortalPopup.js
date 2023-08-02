@@ -116,7 +116,7 @@ const PortalPopup = ({
   return (
     <Portal>
       <div
-        className={'flex flex-col fixed inset-0 portalPopupOverlay'}
+        className={'portalPopupOverlay fixed inset-0 flex flex-col'}
         style={popupStyle}
         onClick={onOverlayClick}
       >

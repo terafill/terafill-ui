@@ -10,12 +10,7 @@ import {
   SquaresPlusIcon,
 } from '@heroicons/react/20/solid';
 import { CheckIcon } from '@heroicons/react/24/outline';
-import {
-  useQueries,
-  useQuery,
-  useQueryClient,
-  useMutation,
-} from '@tanstack/react-query';
+import { useQueries, useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import {
   NavLink,
@@ -44,13 +39,16 @@ function classNames(...classes) {
 }
 
 function MultiVaultDropown({ vaultListView, selectedVault, setSelectedVault }) {
-
   const navigate = useNavigate();
 
   return (
-    <Listbox value={selectedVault} onChange={
-      (e)=>{setSelectedVault(e); navigate("/app/home/");}
-    }>
+    <Listbox
+      value={selectedVault}
+      onChange={(e) => {
+        setSelectedVault(e);
+        navigate('/app/home/');
+      }}
+    >
       {({ open }) => (
         <>
           {vaultListView && selectedVault && vaultListView[selectedVault] ? (
@@ -128,7 +126,7 @@ function AddVaultItemPopup({ open, setOpen, selectedVault }) {
     username: '',
     website: '',
     password: '',
-    title: ''
+    title: '',
   });
   const navigate = useNavigate();
 
@@ -168,8 +166,8 @@ function AddVaultItemPopup({ open, setOpen, selectedVault }) {
                     as='h3'
                     className='w-full text-base font-semibold leading-6 text-gray-900'
                   >
-                    <div className="flex flex-row justify-center items-center gap-2">
-                      <SquaresPlusIcon className="w-10 h-10"/>
+                    <div className='flex flex-row justify-center items-center gap-2'>
+                      <SquaresPlusIcon className='w-10 h-10' />
                       Add new item
                     </div>
                   </Dialog.Title>
@@ -188,7 +186,7 @@ function AddVaultItemPopup({ open, setOpen, selectedVault }) {
                       placeholder='Enter title'
                       value={itemDataView.title}
                       onChange={(e) => {
-                        setItemDataView(prevState=>({...prevState, title: e.target.value}));
+                        setItemDataView((prevState) => ({ ...prevState, title: e.target.value }));
                       }}
                       required
                       title='Please enter title'
@@ -209,7 +207,10 @@ function AddVaultItemPopup({ open, setOpen, selectedVault }) {
                       placeholder='Enter username'
                       value={itemDataView.username}
                       onChange={(e) => {
-                        setItemDataView(prevState=>({...prevState, username: e.target.value}));
+                        setItemDataView((prevState) => ({
+                          ...prevState,
+                          username: e.target.value,
+                        }));
                       }}
                       required
                       title='Please enter username'
@@ -230,7 +231,10 @@ function AddVaultItemPopup({ open, setOpen, selectedVault }) {
                       placeholder='Enter password'
                       value={itemDataView.password}
                       onChange={(e) => {
-                        setItemDataView(prevState=>({...prevState, password: e.target.value}));
+                        setItemDataView((prevState) => ({
+                          ...prevState,
+                          password: e.target.value,
+                        }));
                       }}
                       required
                       title='Please enter password'
@@ -251,7 +255,7 @@ function AddVaultItemPopup({ open, setOpen, selectedVault }) {
                       placeholder='Enter website'
                       value={itemDataView.website}
                       onChange={(e) => {
-                        setItemDataView(prevState=>({...prevState, website: e.target.value}));
+                        setItemDataView((prevState) => ({ ...prevState, website: e.target.value }));
                       }}
                       required
                       title='Please enter website'
@@ -315,7 +319,7 @@ function AddVaultItemPopup({ open, setOpen, selectedVault }) {
 function EditVaultPopup({ open, setOpen, selectedVault }) {
   const cancelButtonRef = useRef(null);
   const queryClient = useQueryClient();
-  const vaultData = queryClient.getQueryData(["vaults", selectedVault]);
+  const vaultData = queryClient.getQueryData(['vaults', selectedVault]);
   const [vaultName, setVaultName] = useState('');
   const [vaultDescription, setVaultDescription] = useState('');
 
@@ -577,9 +581,9 @@ function AddVaultPopup({ open, setOpen, setSelectedVault }) {
                             queryClient.invalidateQueries({
                               queries: [{ queryKey: ['vaults'] }],
                             });
-                            console.log(`Vault ${data.name} created.`, data.id)
+                            console.log(`Vault ${data.name} created.`, data.id);
                             setSelectedVault(data.id);
-                            navigate("/app/home");
+                            navigate('/app/home');
                           },
                           onError: (error) => {
                             toast.error(error);
@@ -611,7 +615,7 @@ function DeleteVaultPopup({ open, setOpen, selectedVault, defaultVault, setSelec
   }, [selectedVault]);
 
   const queryClient = useQueryClient();
-  const vaultData = queryClient.getQueryData(["vaults", selectedVault])
+  const vaultData = queryClient.getQueryData(['vaults', selectedVault]);
 
   const deleteVaultMutation = useMutation({
     mutationFn: deleteVault,
@@ -703,7 +707,7 @@ function DeleteVaultPopup({ open, setOpen, selectedVault, defaultVault, setSelec
                                 queries: [{ queryKey: ['vaults'] }],
                               });
                               setSelectedVault(defaultVault);
-                              navigate("/app/home");
+                              navigate('/app/home');
                             },
                             onError: (error) => {
                               toast.error(error);
@@ -871,7 +875,9 @@ function VaultSettingsMenu({
                     aria-hidden='true'
                   />
                   Share vault
-                  <p className='ml-2 text-sm text-blue-400 bg-gray-100 p-1 rounded-full'>coming soon</p>
+                  <p className='ml-2 text-sm text-blue-400 bg-gray-100 p-1 rounded-full'>
+                    coming soon
+                  </p>
                 </a>
               )}
             </Menu.Item>
@@ -937,7 +943,6 @@ export const ItemPanel = () => {
   const [showPassword, setPasswordVisibility] = useState(false);
   const [itemUpdating, setItemUpdating] = useState(false);
 
-
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -947,10 +952,11 @@ export const ItemPanel = () => {
 
   const itemDataRaw = useQuery({
     queryKey: ['vaults', selectedVault, 'items', id],
-    queryFn: ()=> getVaultItem({
-      vaultId: selectedVault,
-      id: id
-    })
+    queryFn: () =>
+      getVaultItem({
+        vaultId: selectedVault,
+        id: id,
+      }),
   });
 
   // let initDataEncrypted = {
@@ -1091,7 +1097,7 @@ export const ItemPanel = () => {
         >
           <MoonLoader loading={itemUpdating && true} size={15} />
         </Button>
-{/*        {itemFormDisabled && shareButtonVisible && (
+        {/*        {itemFormDisabled && shareButtonVisible && (
           <Button
             label='Share'
             buttonType='link'
@@ -1234,7 +1240,7 @@ const NavigationPanel = ({
   setOpenEditVault,
   setOpenAddVault,
   setOpenDeleteVault,
-  setOpenAddVaultItem
+  setOpenAddVaultItem,
 }) => {
   // const navigate = useNavigate();
   const [search, setSearch] = useState('');
@@ -1355,7 +1361,7 @@ const AppHome = () => {
       var defaultId = null;
       for (var i = 0; i < data.length; i += 1) {
         newState[data[i].id] = data[i];
-        if (data[i].isDefault){
+        if (data[i].isDefault) {
           defaultId = data[i].id;
         }
       }
@@ -1365,14 +1371,14 @@ const AppHome = () => {
     }
   };
 
-  const setVaultDefaults = (vaultListDataRaw, selectedVault=null) => {
+  const setVaultDefaults = (vaultListDataRaw, selectedVault = null) => {
     const { vaultList, defaultId } = getVaultListView(vaultListDataRaw);
     setVaultListView(vaultList);
     setDefaultVault(defaultId);
-    if (selectedVault === null){
+    if (selectedVault === null) {
       setSelectedVault(defaultId);
     }
-  }
+  };
 
   // Fetch list of vaults
   const vaultListRaw = useQuery({
@@ -1389,7 +1395,7 @@ const AppHome = () => {
   });
 
   useEffect(() => {
-    if (vaultListRaw.data){
+    if (vaultListRaw.data) {
       setVaultDefaults(vaultListRaw.data, selectedVault);
     }
   }, [vaultListRaw.dataUpdatedAt]);
@@ -1419,7 +1425,6 @@ const AppHome = () => {
   const [openAddVaultPopup, setOpenAddVault] = useState(false);
   const [openDeleteVaultPopup, setOpenDeleteVault] = useState(false);
   const [openAddVaultItemPopup, setOpenAddVaultItem] = useState(false);
-
 
   return (
     <div className='w-full h-screen flex flex-col justify-start items-stretch text-left'>

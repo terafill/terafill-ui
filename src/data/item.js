@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import {BASE_URL, CLIENT_ID} from "../config.js";
+import { BASE_URL, CLIENT_ID } from '../config.js';
 import { getKeyWrappingKeyPair, encryptData } from '../utils/security';
 
 export async function getVaultItem({ vaultId, id }) {
@@ -25,7 +25,6 @@ export async function getVaultItem({ vaultId, id }) {
     throw Error(errorMessage);
   }
 }
-
 
 export async function updateVaultItem({ vaultId, id, title, website, password, username, iek }) {
   const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}/items/${id}`;

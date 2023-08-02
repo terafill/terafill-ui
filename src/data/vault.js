@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import {BASE_URL, CLIENT_ID} from "../config.js";
+import { BASE_URL, CLIENT_ID } from '../config.js';
 
 export async function getVaults() {
   const requestUrl = `${BASE_URL}/users/me/vaults`;

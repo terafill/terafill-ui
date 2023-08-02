@@ -74,8 +74,7 @@ const router = createBrowserRouter([
         path: 'email-confirmation',
         element: <EmailConfirmationForm />,
       },
-    ]
-    ,
+    ],
   },
   {
     path: '/import',
@@ -134,5 +133,3 @@ function App() {
   return <RouterProvider router={router} />;
 }
 export default App;
-
-

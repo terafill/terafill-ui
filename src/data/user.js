@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-import {BASE_URL} from "../config.js";
-
+import { BASE_URL } from '../config.js';
 
 export async function getProfile() {
   const requestUrl = `${BASE_URL}/users/me`;

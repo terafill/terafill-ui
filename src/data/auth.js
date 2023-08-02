@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Buffer } from 'buffer/';
 
-import {BASE_URL, CLIENT_ID} from "../config.js";
+import { BASE_URL, CLIENT_ID } from '../config.js';
 import { getAuthClientDetails, getRSAPrivateKey, getSRPClient } from '../utils/security';
 
 export const initateSignupProcess = async (email) => {

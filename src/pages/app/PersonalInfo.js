@@ -38,7 +38,7 @@ const PersonalInfo = () => {
     birthday: userProfileRaw?.data?.birthday ?? '',
     gender: userProfileRaw?.data?.gender ?? '',
     profileImage: '',
-  }
+  };
 
   const [userProfileView, setUserProfileView] = useState(initData);
 
@@ -89,17 +89,16 @@ const PersonalInfo = () => {
         setSaveButtonEnabled(false);
       }
     }
-  }
+  };
 
   const timeoutId = useRef(null);
 
-  useEffect(()=>{
+  useEffect(() => {
     clearTimeout(timeoutId.current);
-    timeoutId.current = setTimeout(()=>{
+    timeoutId.current = setTimeout(() => {
       syncSaveButton();
     }, 500);
   }, [userProfileView]);
-
 
   const [file, setFile] = useState(null);
 

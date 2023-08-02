@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-import { BASE_URL } from '../config.js';
+import { BASE_URL } from '../config';
 
 export async function getProfile() {
   const requestUrl = `${BASE_URL}/users/me`;
-  var config = {
+  const config = {
     withCredentials: true,
     method: 'get',
     url: requestUrl,
@@ -14,7 +14,7 @@ export async function getProfile() {
     },
   };
   try {
-    let response = await axios(config);
+    const response = await axios(config);
     return response?.data || {};
   } catch (error) {
     const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
@@ -24,7 +24,7 @@ export async function getProfile() {
 
 export async function getProfileImage() {
   const requestUrl = `${BASE_URL}/users/me/profile-image`;
-  var config = {
+  const config = {
     withCredentials: true,
     method: 'get',
     url: requestUrl,
@@ -35,7 +35,7 @@ export async function getProfileImage() {
   };
 
   try {
-    let response = await axios(config);
+    const response = await axios(config);
     return response?.data || {};
   } catch (error) {
     const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
@@ -43,7 +43,14 @@ export async function getProfileImage() {
   }
 }
 
-export async function updateProfile({ firstName, lastName, phoneNo, file = null }) {
+interface User {
+  firstName: string;
+  lastName: string;
+  phoneNo: string;
+  file: File;
+}
+
+export async function updateProfile({ firstName, lastName, phoneNo, file }: User) {
   const formData = new FormData();
 
   // Append fields to formData
@@ -56,7 +63,7 @@ export async function updateProfile({ firstName, lastName, phoneNo, file = null 
   }
 
   const requestUrl = `${BASE_URL}/users/me`;
-  var config = {
+  const config = {
     withCredentials: true,
     method: 'put',
     url: requestUrl,
@@ -69,7 +76,7 @@ export async function updateProfile({ firstName, lastName, phoneNo, file = null 
   };
 
   try {
-    let response = await axios(config);
+    const response = await axios(config);
     return response?.data || {};
   } catch (error) {
     const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;

@@ -1,15 +1,15 @@
 import axios from 'axios';
 import { Buffer } from 'buffer/';
 
-import { BASE_URL, CLIENT_ID } from '../config.js';
+import { BASE_URL, CLIENT_ID } from '../config';
 import { getAuthClientDetails, getRSAPrivateKey, getSRPClient } from '../utils/security';
 
-export const initateSignupProcess = async (email) => {
+export const initateSignupProcess = async (email: string) => {
   try {
-    var data = JSON.stringify({
+    const data = JSON.stringify({
       email: email,
     });
-    var config = {
+    const config = {
       method: 'post',
       url: `${BASE_URL}/auth/signup`,
       headers: {
@@ -27,11 +27,11 @@ export const initateSignupProcess = async (email) => {
 };
 
 export const completeSignupProcess = async (
-  email,
-  password,
-  verificationCode,
-  firstName,
-  lastName,
+  email: string,
+  password: string,
+  verificationCode: number,
+  firstName: string,
+  lastName: string,
 ) => {
   try {
     // generate verifier and salt
@@ -73,12 +73,12 @@ export const completeSignupProcess = async (
   }
 };
 
-const getSalt = (email) => {
-  var data = JSON.stringify({
+const getSalt = (email: string) => {
+  const data = JSON.stringify({
     email: email,
   });
 
-  var config = {
+  const config = {
     withCredentials: true,
     method: 'post',
     url: `${BASE_URL}/auth/salt`,
@@ -92,13 +92,13 @@ const getSalt = (email) => {
   return axios(config);
 };
 
-const initiateLogin = (email, clientPublicKey) => {
-  var data = JSON.stringify({
+const initiateLogin = (email: string, clientPublicKey: string) => {
+  const data = JSON.stringify({
     email: email,
     clientPublicKey: clientPublicKey,
   });
 
-  var config = {
+  const config = {
     withCredentials: true,
     method: 'post',
     url: `${BASE_URL}/auth/login`,
@@ -112,13 +112,13 @@ const initiateLogin = (email, clientPublicKey) => {
   return axios(config);
 };
 
-const confirmLogin = (email, clientProof) => {
-  var data = JSON.stringify({
+const confirmLogin = (email: string, clientProof: string) => {
+  const data = JSON.stringify({
     email: email,
     clientProof: clientProof,
   });
 
-  var config = {
+  const config = {
     withCredentials: true,
     method: 'post',
     url: `${BASE_URL}/auth/login/confirm`,
@@ -132,7 +132,7 @@ const confirmLogin = (email, clientProof) => {
   return axios(config);
 };
 
-export const loginUser = async (email, password) => {
+export const loginUser = async (email: string, password: string) => {
   try {
     // Get salt from server
     const saltResponse = await getSalt(email);
@@ -171,7 +171,7 @@ export const loginUser = async (email, password) => {
 
 export const getLoginStatus = async () => {
   try {
-    var config = {
+    const config = {
       withCredentials: true,
       method: 'get',
       url: `${BASE_URL}/auth/status`,
@@ -190,7 +190,7 @@ export const getLoginStatus = async () => {
 };
 
 export const logoutUser = () => {
-  var config = {
+  const config = {
     withCredentials: true,
     method: 'post',
     url: `${BASE_URL}/auth/logout`,

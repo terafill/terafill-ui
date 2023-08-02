@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-import { BASE_URL, CLIENT_ID } from '../config.js';
+import { BASE_URL, CLIENT_ID } from '../config';
 
 export async function getVaults() {
   const requestUrl = `${BASE_URL}/users/me/vaults`;
-  var config = {
+  const config = {
     withCredentials: true,
     method: 'get',
     url: requestUrl,
@@ -16,7 +16,7 @@ export async function getVaults() {
   };
 
   try {
-    let response = await axios(config);
+    const response = await axios(config);
     return response?.data || {};
   } catch (error) {
     const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
@@ -24,9 +24,9 @@ export async function getVaults() {
   }
 }
 
-export async function getVaultItems(vaultId) {
+export async function getVaultItems(vaultId: string) {
   const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}/items`;
-  var config = {
+  const config = {
     withCredentials: true,
     method: 'get',
     url: requestUrl,
@@ -38,7 +38,7 @@ export async function getVaultItems(vaultId) {
   };
 
   try {
-    let response = await axios(config);
+    const response = await axios(config);
     return response?.data || {};
   } catch (error) {
     const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
@@ -59,9 +59,15 @@ export async function getDefaultVaultItems() {
   return response;
 }
 
-export async function updateVault({ vaultId, name, description }) {
+interface Vault {
+  vaultId: string;
+  name: string;
+  description: string;
+}
+
+export async function updateVault({ vaultId, name, description }: Vault) {
   const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}`;
-  var config = {
+  const config = {
     withCredentials: true,
     method: 'put',
     url: requestUrl,
@@ -77,7 +83,7 @@ export async function updateVault({ vaultId, name, description }) {
   };
 
   try {
-    let response = await axios(config);
+    const response = await axios(config);
     return response?.data || {};
   } catch (error) {
     const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
@@ -85,9 +91,9 @@ export async function updateVault({ vaultId, name, description }) {
   }
 }
 
-export async function addVault({ name, description }) {
+export async function addVault({ name, description }: Vault) {
   const requestUrl = `${BASE_URL}/users/me/vaults`;
-  var config = {
+  const config = {
     withCredentials: true,
     method: 'post',
     url: requestUrl,
@@ -103,7 +109,7 @@ export async function addVault({ name, description }) {
   };
 
   try {
-    let response = await axios(config);
+    const response = await axios(config);
     return response?.data || {};
   } catch (error) {
     const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
@@ -111,9 +117,9 @@ export async function addVault({ name, description }) {
   }
 }
 
-export async function deleteVault({ vaultId }) {
+export async function deleteVault({ vaultId }: Vault) {
   const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}`;
-  var config = {
+  const config = {
     withCredentials: true,
     method: 'delete',
     url: requestUrl,
@@ -125,7 +131,7 @@ export async function deleteVault({ vaultId }) {
   };
 
   try {
-    let response = await axios(config);
+    const response = await axios(config);
     return response?.data || {};
   } catch (error) {
     const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;

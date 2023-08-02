@@ -182,7 +182,7 @@ export const CreateAccountForm = () => {
 };
 
 export const EmailConfirmationForm = () => {
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line
   const [userData, setUserData, setStepStatus] = useOutletContext();
   const navigate = useNavigate();
 

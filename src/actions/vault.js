@@ -1,3 +1,4 @@
+/* eslint-disable */
 const updateVaultState = (vaultId, attribute, value) => {
   setVaultList((prevVaultList) => ({
     ...prevVaultList,

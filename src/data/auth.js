@@ -1,12 +1,8 @@
-// import jsrp from '../jsrp';
 import axios from 'axios';
 import { Buffer } from 'buffer/';
 
+import {BASE_URL, CLIENT_ID} from "../config.js";
 import { getAuthClientDetails, getRSAPrivateKey, getSRPClient } from '../utils/security';
-
-// const baseUrl = 'http://localhost:8000/api/v1';
-const baseUrl = 'https://keylance-backend-svc-dev.up.railway.app/api/v1'
-const clientId = 'b980b13c-4db8-4e8a-859c-4544fd70825f';
 
 export const initateSignupProcess = async (email) => {
   try {
@@ -15,7 +11,7 @@ export const initateSignupProcess = async (email) => {
     });
     var config = {
       method: 'post',
-      url: `${baseUrl}/auth/signup`,
+      url: `${BASE_URL}/auth/signup`,
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
@@ -60,11 +56,11 @@ export const completeSignupProcess = async (
     const config = {
       withCredentials: true,
       method: 'post',
-      url: `${baseUrl}/auth/signup/confirm`,
+      url: `${BASE_URL}/auth/signup/confirm`,
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        'client-id': clientId,
+        'client-id': CLIENT_ID,
       },
       data: data,
     };
@@ -85,11 +81,11 @@ const getSalt = (email) => {
   var config = {
     withCredentials: true,
     method: 'post',
-    url: `${baseUrl}/auth/salt`,
+    url: `${BASE_URL}/auth/salt`,
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': clientId,
+      'client-id': CLIENT_ID,
     },
     data: data,
   };
@@ -105,11 +101,11 @@ const initiateLogin = (email, clientPublicKey) => {
   var config = {
     withCredentials: true,
     method: 'post',
-    url: `${baseUrl}/auth/login`,
+    url: `${BASE_URL}/auth/login`,
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': clientId,
+      'client-id': CLIENT_ID,
     },
     data: data,
   };
@@ -125,11 +121,11 @@ const confirmLogin = (email, clientProof) => {
   var config = {
     withCredentials: true,
     method: 'post',
-    url: `${baseUrl}/auth/login/confirm`,
+    url: `${BASE_URL}/auth/login/confirm`,
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': clientId,
+      'client-id': CLIENT_ID,
     },
     data: data,
   };
@@ -178,7 +174,7 @@ export const getLoginStatus = async () => {
     var config = {
       withCredentials: true,
       method: 'get',
-      url: `${baseUrl}/auth/status`,
+      url: `${BASE_URL}/auth/status`,
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
@@ -197,7 +193,7 @@ export const logoutUser = () => {
   var config = {
     withCredentials: true,
     method: 'post',
-    url: `${baseUrl}/auth/logout`,
+    url: `${BASE_URL}/auth/logout`,
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',

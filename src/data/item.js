@@ -1,14 +1,10 @@
 import axios from 'axios';
 
+import {BASE_URL, CLIENT_ID} from "../config.js";
 import { getKeyWrappingKeyPair, encryptData } from '../utils/security';
 
-// const baseUrl = 'http://localhost:8000/api/v1';
-const baseUrl = 'https://keylance-backend-svc-dev.up.railway.app/api/v1'
-const clientId = 'b980b13c-4db8-4e8a-859c-4544fd70825f';
-
-
 export async function getVaultItem({ vaultId, id }) {
-  const requestUrl = `${baseUrl}/users/me/vaults/${vaultId}/items/${id}`;
+  const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}/items/${id}`;
 
   var config = {
     withCredentials: true,
@@ -17,7 +13,7 @@ export async function getVaultItem({ vaultId, id }) {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': clientId,
+      'client-id': CLIENT_ID,
     },
   };
 
@@ -32,7 +28,7 @@ export async function getVaultItem({ vaultId, id }) {
 
 
 export async function updateVaultItem({ vaultId, id, title, website, password, username, iek }) {
-  const requestUrl = `${baseUrl}/users/me/vaults/${vaultId}/items/${id}`;
+  const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}/items/${id}`;
 
   var config = {
     withCredentials: true,
@@ -41,7 +37,7 @@ export async function updateVaultItem({ vaultId, id, title, website, password, u
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': clientId,
+      'client-id': CLIENT_ID,
     },
     data: {
       title: encryptData(title, iek),
@@ -61,7 +57,7 @@ export async function updateVaultItem({ vaultId, id, title, website, password, u
 }
 
 export async function createVaultItem({ vaultId, title, website, password, username, iek }) {
-  const requestUrl = `${baseUrl}/users/me/vaults/${vaultId}/items`;
+  const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}/items`;
   const keyWrappingKeyPair = getKeyWrappingKeyPair();
   const iekEnc = keyWrappingKeyPair.public.encrypt(iek);
 
@@ -72,7 +68,7 @@ export async function createVaultItem({ vaultId, title, website, password, usern
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': clientId,
+      'client-id': CLIENT_ID,
     },
     data: {
       title: encryptData(title, iek),
@@ -94,7 +90,7 @@ export async function createVaultItem({ vaultId, title, website, password, usern
 }
 
 export async function deleteVaultItem({ vaultId, id }) {
-  const requestUrl = `${baseUrl}/users/me/vaults/${vaultId}/items/${id}`;
+  const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}/items/${id}`;
   console.log(requestUrl);
 
   var config = {
@@ -104,7 +100,7 @@ export async function deleteVaultItem({ vaultId, id }) {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': clientId,
+      'client-id': CLIENT_ID,
     },
   };
 

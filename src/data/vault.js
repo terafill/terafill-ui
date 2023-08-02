@@ -1,11 +1,9 @@
 import axios from 'axios';
 
-// const baseUrl = 'http://localhost:8000/api/v1';
-const baseUrl = 'https://keylance-backend-svc-dev.up.railway.app/api/v1'
-const clientId = 'b980b13c-4db8-4e8a-859c-4544fd70825f';
+import {BASE_URL, CLIENT_ID} from "../config.js";
 
 export async function getVaults() {
-  const requestUrl = `${baseUrl}/users/me/vaults`;
+  const requestUrl = `${BASE_URL}/users/me/vaults`;
   var config = {
     withCredentials: true,
     method: 'get',
@@ -13,7 +11,7 @@ export async function getVaults() {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': clientId,
+      'client-id': CLIENT_ID,
     },
   };
 
@@ -27,7 +25,7 @@ export async function getVaults() {
 }
 
 export async function getVaultItems(vaultId) {
-  const requestUrl = `${baseUrl}/users/me/vaults/${vaultId}/items`;
+  const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}/items`;
   var config = {
     withCredentials: true,
     method: 'get',
@@ -35,7 +33,7 @@ export async function getVaultItems(vaultId) {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': clientId,
+      'client-id': CLIENT_ID,
     },
   };
 
@@ -62,7 +60,7 @@ export async function getDefaultVaultItems() {
 }
 
 export async function updateVault({ vaultId, name, description }) {
-  const requestUrl = `${baseUrl}/users/me/vaults/${vaultId}`;
+  const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}`;
   var config = {
     withCredentials: true,
     method: 'put',
@@ -70,7 +68,7 @@ export async function updateVault({ vaultId, name, description }) {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': clientId,
+      'client-id': CLIENT_ID,
     },
     data: {
       name: name,
@@ -88,7 +86,7 @@ export async function updateVault({ vaultId, name, description }) {
 }
 
 export async function addVault({ name, description }) {
-  const requestUrl = `${baseUrl}/users/me/vaults`;
+  const requestUrl = `${BASE_URL}/users/me/vaults`;
   var config = {
     withCredentials: true,
     method: 'post',
@@ -96,7 +94,7 @@ export async function addVault({ name, description }) {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': clientId,
+      'client-id': CLIENT_ID,
     },
     data: {
       name: name,
@@ -114,7 +112,7 @@ export async function addVault({ name, description }) {
 }
 
 export async function deleteVault({ vaultId }) {
-  const requestUrl = `${baseUrl}/users/me/vaults/${vaultId}`;
+  const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}`;
   var config = {
     withCredentials: true,
     method: 'delete',
@@ -122,7 +120,7 @@ export async function deleteVault({ vaultId }) {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'client-id': clientId,
+      'client-id': CLIENT_ID,
     },
   };
 

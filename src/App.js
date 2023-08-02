@@ -12,7 +12,6 @@ import FaqPage from './pages/marketing/FaqPage';
 import LandingPage from './pages/marketing/LandingPage';
 import PricingPage from './pages/marketing/PricingPage';
 import ProductsPage from './pages/marketing/ProductsPage';
-import WhitepaperPage from './pages/marketing/WhitepaperPage';
 
 const router = createBrowserRouter([
   {
@@ -51,10 +50,10 @@ const router = createBrowserRouter([
     path: '/pricing',
     element: <PricingPage />,
   },
-  {
-    path: '/whitepaper',
-    element: <WhitepaperPage />,
-  },
+  // {
+  //   path: '/whitepaper',
+  //   element: <WhitepaperPage />,
+  // },
   {
     path: '/faq',
     element: <FaqPage />,
@@ -75,7 +74,8 @@ const router = createBrowserRouter([
         path: 'email-confirmation',
         element: <EmailConfirmationForm />,
       },
-    ],
+    ]
+    ,
   },
   {
     path: '/import',
@@ -134,3 +134,5 @@ function App() {
   return <RouterProvider router={router} />;
 }
 export default App;
+
+

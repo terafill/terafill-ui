@@ -1,8 +1,7 @@
-// import { Buffer } from 'buffer/';
 import SRP from '@harshitsaini/srp-js';
+import { Buffer } from 'buffer/';
 import CryptoJS from 'crypto-js';
 import forge from 'node-forge';
-// import SRP from 'srp-js';
 import { v4 as uuidv4 } from 'uuid';
 
 export const getSRPClient = (username, password, salt) => {

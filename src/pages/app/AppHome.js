@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { useEffect, useState, useRef, Fragment } from 'react';
 
 import { Dialog, Listbox, Transition, Menu } from '@headlessui/react';
@@ -11,6 +10,12 @@ import {
   SquaresPlusIcon,
 } from '@heroicons/react/20/solid';
 import { CheckIcon } from '@heroicons/react/24/outline';
+import {
+  useQueries,
+  useQuery,
+  useQueryClient,
+  useMutation,
+} from '@tanstack/react-query';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import {
   NavLink,
@@ -24,13 +29,6 @@ import MoonLoader from 'react-spinners/MoonLoader';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  useQueries,
-  useQuery,
-  useQueryClient,
-  useMutation,
-  useIsFetching,
-} from '@tanstack/react-query';
 
 import Button from '../../components/Button';
 import Navbar from '../../components/Navbar';
@@ -935,7 +933,7 @@ export const ItemPanelIndex = () => {
 export const ItemPanel = () => {
   const { id } = useParams();
   const [itemFormDisabled, setItemFormDisability] = useState(true);
-  const [shareButtonVisible, setShareButtonVisible] = useState(true);
+  // const [shareButtonVisible, setShareButtonVisible] = useState(true);
   const [showPassword, setPasswordVisibility] = useState(false);
   const [itemUpdating, setItemUpdating] = useState(false);
 
@@ -955,14 +953,14 @@ export const ItemPanel = () => {
     })
   });
 
-  let initDataEncrypted = {
-    id: itemDataRaw?.data?.id ?? '',
-    title: itemDataRaw?.data?.title ?? '',
-    website: itemDataRaw?.data?.website ?? '',
-    username: itemDataRaw?.data?.username ?? '',
-    password: itemDataRaw?.data?.password ?? '',
-    encryptedEncryptionKey: itemDataRaw?.data?.encryptedEncryptionKey ?? '',
-  }
+  // let initDataEncrypted = {
+  //   id: itemDataRaw?.data?.id ?? '',
+  //   title: itemDataRaw?.data?.title ?? '',
+  //   website: itemDataRaw?.data?.website ?? '',
+  //   username: itemDataRaw?.data?.username ?? '',
+  //   password: itemDataRaw?.data?.password ?? '',
+  //   encryptedEncryptionKey: itemDataRaw?.data?.encryptedEncryptionKey ?? '',
+  // }
 
   const [itemDataView, setItemDataView] = useState(null);
 
@@ -985,10 +983,10 @@ export const ItemPanel = () => {
         vaultId: selectedVault,
       });
       setItemFormDisability(false);
-      setShareButtonVisible(false);
+      // setShareButtonVisible(false);
     } else {
       setItemFormDisability(true);
-      setShareButtonVisible(true);
+      // setShareButtonVisible(true);
     }
   }, [location]);
 
@@ -1055,7 +1053,6 @@ export const ItemPanel = () => {
                     },
                   },
                 );
-                navigate(`/app/home/${response.data.id}`);
               } else {
                 await updateItemData.mutateAsync(
                   {
@@ -1239,7 +1236,7 @@ const NavigationPanel = ({
   setOpenDeleteVault,
   setOpenAddVaultItem
 }) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [itemDataListView, setItemDataListView] = useState(null);
 
@@ -1347,9 +1344,9 @@ const AppHome = () => {
 
   const [defaultVault, setDefaultVault] = useState(null);
   const [selectedVault, setSelectedVault] = useState(null);
-  const [selectedVaultItem, setSelectedVaultItem] = useState(null);
+  // const [selectedVaultItem, setSelectedVaultItem] = useState(null);
   const [vaultListView, setVaultListView] = useState(null);
-  const location = useLocation();
+  // const location = useLocation();
   const queryClient = useQueryClient();
 
   const getVaultListView = (data) => {
@@ -1398,14 +1395,14 @@ const AppHome = () => {
   }, [vaultListRaw.dataUpdatedAt]);
 
   // Fetch raw vault item list
-  const vaultItemsRaw = useQueries({
+  useQueries({
     queries: (vaultListRaw?.data || []).map(({ id }) => {
       return {
         queryKey: ['vaults', id, 'items'],
         queryFn: async () => {
           const data = await getVaultItems(id);
           const keyWrappingKeyPair = getKeyWrappingKeyPair();
-          const decryptedItemList = data.map((vaultItem) => {
+          data.map((vaultItem) => {
             queryClient.setQueryData(['vaults', id, 'items', vaultItem.id], vaultItem);
             return decryptedItemData(vaultItem, keyWrappingKeyPair);
           });

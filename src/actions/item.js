@@ -1,4 +1,5 @@
-const updateItem = (vaultId, itemId, attribute, value) => {
+/* eslint-disable */
+export const updateItem = (vaultId, itemId, attribute, value) => {
   setVaultList((prevVaultList) => ({
     ...prevVaultList,
     [vaultId]: {
@@ -14,7 +15,7 @@ const updateItem = (vaultId, itemId, attribute, value) => {
   }));
 };
 
-const deleteItem = (vaultId, itemId) => {
+export const deleteItem = (vaultId, itemId) => {
   setVaultList((prevVaultList) => {
     const updatedVaultList = {
       ...prevVaultList,
@@ -34,7 +35,7 @@ const deleteItem = (vaultId, itemId) => {
   });
 };
 
-const addItem = (vaultId, itemData) => {
+export const addItem = (vaultId, itemData) => {
   if (itemData['website']) {
     itemData['icon'] = `https://cool-rose-moth.faviconkit.com/${itemData.website}/256`;
   }

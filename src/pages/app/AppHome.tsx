@@ -38,7 +38,26 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-function MultiVaultDropown({ vaultListView, selectedVault, setSelectedVault }) {
+interface Vault {
+  id?: string;
+  vaultId?: string;
+  name?: string;
+  description?: string;
+}
+
+interface VaultList {
+  [key: string]: Vault;
+}
+
+function MultiVaultDropown({
+  vaultListView,
+  selectedVault,
+  setSelectedVault,
+}: {
+  vaultListView: VaultList;
+  selectedVault: string;
+  setSelectedVault: (e) => void;
+}) {
   const navigate = useNavigate();
 
   return (
@@ -119,10 +138,21 @@ function MultiVaultDropown({ vaultListView, selectedVault, setSelectedVault }) {
   );
 }
 
+interface VaultItem {
+  vaultId: string;
+  id?: string;
+  iek?: string;
+  title?: string;
+  website?: string;
+  password?: string;
+  username?: string;
+}
+
 function AddVaultItemPopup({ open, setOpen, selectedVault }) {
   const cancelButtonRef = useRef(null);
   const queryClient = useQueryClient();
-  const [itemDataView, setItemDataView] = useState({
+  const [itemDataView, setItemDataView] = useState<VaultItem>({
+    vaultId: '',
     username: '',
     website: '',
     password: '',
@@ -289,14 +319,17 @@ function AddVaultItemPopup({ open, setOpen, selectedVault }) {
                           iek: iek,
                         },
                         {
-                          onError: (error) => {
-                            toast.error(error);
+                          onError: (error: unknown) => {
+                            if (error instanceof Error) {
+                              toast.error(error.message);
+                            } else {
+                              // Handle other cases if necessary, or use a default error message
+                              toast.error('An error occurred');
+                            }
                           },
                           onSuccess: (data) => {
                             toast.success('Item created!');
-                            queryClient.invalidateQueries({
-                              queries: [{ queryKey: ['vaults', selectedVault, 'items'] }],
-                            });
+                            queryClient.invalidateQueries(['vaults', selectedVault, 'items']);
                             navigate(`/app/home/${data.id}`);
                           },
                         },
@@ -605,9 +638,21 @@ function AddVaultPopup({ open, setOpen, setSelectedVault }) {
   );
 }
 
-function DeleteVaultPopup({ open, setOpen, selectedVault, defaultVault, setSelectedVault }) {
-  const cancelButtonRef = useRef(null);
-  const [vaultName, setVaultName] = useState('');
+function DeleteVaultPopup({
+  open,
+  setOpen,
+  selectedVault,
+  defaultVault,
+  setSelectedVault,
+}: {
+  open: boolean;
+  setOpen: (e) => void;
+  selectedVault: string;
+  defaultVault: string;
+  setSelectedVault: (e) => void;
+}) {
+  const cancelButtonRef = useRef<HTMLButtonElement | null>(null);
+  const [vaultName, setVaultName] = useState<string>('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -615,7 +660,7 @@ function DeleteVaultPopup({ open, setOpen, selectedVault, defaultVault, setSelec
   }, [selectedVault]);
 
   const queryClient = useQueryClient();
-  const vaultData = queryClient.getQueryData(['vaults', selectedVault]);
+  const vaultData: Vault | undefined | null = queryClient.getQueryData(['vaults', selectedVault]);
 
   const deleteVaultMutation = useMutation({
     mutationFn: deleteVault,
@@ -692,7 +737,7 @@ function DeleteVaultPopup({ open, setOpen, selectedVault, defaultVault, setSelec
                       type='button'
                       className='inline-flex w-2/3 justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2'
                       onClick={async () => {
-                        if (vaultName != vaultData.name) {
+                        if (vaultName != vaultData?.name) {
                           toast.warn("Vault name doesn't match!");
                           return;
                         }
@@ -703,14 +748,17 @@ function DeleteVaultPopup({ open, setOpen, selectedVault, defaultVault, setSelec
                           {
                             onSuccess: () => {
                               toast.success('Vault deleted successfully!');
-                              queryClient.invalidateQueries({
-                                queries: [{ queryKey: ['vaults'] }],
-                              });
+                              queryClient.invalidateQueries(['vaults']);
                               setSelectedVault(defaultVault);
                               navigate('/app/home');
                             },
-                            onError: (error) => {
-                              toast.error(error);
+                            onError: (error: unknown) => {
+                              if (error instanceof Error) {
+                                toast.error(error.message);
+                              } else {
+                                // Handle other cases if necessary, or use a default error message
+                                toast.error('An error occurred');
+                              }
                             },
                           },
                         );
@@ -946,7 +994,7 @@ export const ItemPanel = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [selectedVault] = useOutletContext();
+  const [selectedVault] = useOutletContext<[string]>();
 
   const queryClient = useQueryClient();
 
@@ -968,7 +1016,7 @@ export const ItemPanel = () => {
   //   encryptedEncryptionKey: itemDataRaw?.data?.encryptedEncryptionKey ?? '',
   // }
 
-  const [itemDataView, setItemDataView] = useState(null);
+  const [itemDataView, setItemDataView] = useState<VaultItem | null>(null);
 
   useEffect(() => {
     if (itemDataRaw.isSuccess && itemDataRaw.data) {
@@ -1348,18 +1396,16 @@ const NavigationPanel = ({
 const AppHome = () => {
   useTokenExpiration();
 
-  const [defaultVault, setDefaultVault] = useState(null);
-  const [selectedVault, setSelectedVault] = useState(null);
-  // const [selectedVaultItem, setSelectedVaultItem] = useState(null);
-  const [vaultListView, setVaultListView] = useState(null);
-  // const location = useLocation();
+  const [defaultVault, setDefaultVault] = useState<string | null>(null);
+  const [selectedVault, setSelectedVault] = useState<string | null>(null);
+  const [vaultListView, setVaultListView] = useState<VaultList | null>(null);
   const queryClient = useQueryClient();
 
   const getVaultListView = (data) => {
     if (data) {
-      var newState = {};
-      var defaultId = null;
-      for (var i = 0; i < data.length; i += 1) {
+      const newState = {};
+      let defaultId = null;
+      for (let i = 0; i < data.length; i += 1) {
         newState[data[i].id] = data[i];
         if (data[i].isDefault) {
           defaultId = data[i].id;

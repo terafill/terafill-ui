@@ -9,35 +9,36 @@ import Navbar from '../../components/Navbar';
 import { initateSignupProcess, completeSignupProcess } from '../../data/auth';
 import { storeAuthData } from '../../utils/security';
 
-const countries = [
-  'India',
-  'China',
-  'United States',
-  'Indonesia',
-  'Pakistan',
-  'Brazil',
-  'Nigeria',
-  'Bangladesh',
-  'Russia',
-  'Mexico',
-  'Japan',
-  'Ethiopia',
-  'Philippines',
-  'Egypt',
-  'Vietnam',
-  'DR Congo',
-  'Turkey',
-  'Iran',
-  'Germany',
-  'Thailand',
-];
+// const countries = [
+//   'India',
+//   'China',
+//   'United States',
+//   'Indonesia',
+//   'Pakistan',
+//   'Brazil',
+//   'Nigeria',
+//   'Bangladesh',
+//   'Russia',
+//   'Mexico',
+//   'Japan',
+//   'Ethiopia',
+//   'Philippines',
+//   'Egypt',
+//   'Vietnam',
+//   'DR Congo',
+//   'Turkey',
+//   'Iran',
+//   'Germany',
+//   'Thailand',
+// ];
 
 export const CreateAccountForm = () => {
-  const [userData, setUserData, setStepStatus] = useOutletContext();
+  // eslint-disable-next-line
+  const [userData, setUserData, setStepStatus]: any = useOutletContext();
   const navigate = useNavigate();
 
-  const passwordRef = useRef(null);
-  const passwordRepeatRef = useRef(null);
+  const passwordRef = useRef<HTMLInputElement | null>(null);
+  const passwordRepeatRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     setStepStatus({
@@ -48,7 +49,10 @@ export const CreateAccountForm = () => {
 
   const createAccountAction = async (e) => {
     e.preventDefault();
-    if (passwordRef.current.value != passwordRepeatRef.current.value) {
+    if (
+      passwordRef.current?.value &&
+      passwordRef.current?.value != passwordRepeatRef.current?.value
+    ) {
       toast.error("Passwords don't match!");
     } else {
       const { error } = await initateSignupProcess(userData.email);
@@ -183,22 +187,22 @@ export const CreateAccountForm = () => {
 
 export const EmailConfirmationForm = () => {
   // eslint-disable-next-line
-  const [userData, setUserData, setStepStatus] = useOutletContext();
+  const [userData, setUserData, setStepStatus]: any = useOutletContext();
   const navigate = useNavigate();
 
   const pinInputRefs = [
-    useRef(null),
-    useRef(null),
-    useRef(null),
-    useRef(null),
-    useRef(null),
-    useRef(null),
+    useRef<HTMLInputElement | null>(null),
+    useRef<HTMLInputElement | null>(null),
+    useRef<HTMLInputElement | null>(null),
+    useRef<HTMLInputElement | null>(null),
+    useRef<HTMLInputElement | null>(null),
+    useRef<HTMLInputElement | null>(null),
   ];
 
   const [pinState, setPinState] = useState(['', '', '', '', '', '']);
   const [pinIdx, setPinIdx] = useState(0);
 
-  const submitButtonRef = useRef(null);
+  // const submitButtonRef = useRef(null);
 
   useEffect(() => {
     setStepStatus({
@@ -208,7 +212,7 @@ export const EmailConfirmationForm = () => {
   }, []);
 
   useEffect(() => {
-    pinInputRefs[pinIdx].current.focus();
+    pinInputRefs[pinIdx].current?.focus();
   }, [pinIdx]);
 
   const handleFocus = (e, index) => {
@@ -221,7 +225,7 @@ export const EmailConfirmationForm = () => {
 
   const handleKeyDown = (e) => {
     const { key } = e;
-    let tempPin = [...pinState];
+    const tempPin = [...pinState];
     if (e.keyCode === 37 || e.keyCode === 8) {
       if (e.keyCode === 8) {
         tempPin[pinIdx] = '';
@@ -230,7 +234,7 @@ export const EmailConfirmationForm = () => {
       setPinIdx((pinIdx) => Math.max(0, pinIdx - 1));
     } else if (e.keyCode === 39) {
       setPinIdx((pinIdx) => Math.min(pinIdx + 1, pinInputRefs.length - 1));
-    } else if (event.keyCode >= 48 && event.keyCode <= 57) {
+    } else if (e.keyCode >= 48 && e.keyCode <= 57) {
       tempPin[pinIdx] = key[0];
       setPinState(tempPin);
       setPinIdx((pinIdx) => Math.min(pinIdx + 1, pinInputRefs.length - 1));
@@ -241,9 +245,9 @@ export const EmailConfirmationForm = () => {
     const text = e.clipboardData.getData('Text');
     let textIdx = 0;
     let curPinIdx = pinIdx;
-    let tempPin = [...pinState];
+    const tempPin = [...pinState];
     while (textIdx < text.length && curPinIdx < pinInputRefs.length) {
-      let char = text[textIdx];
+      const char = text[textIdx];
       if (char >= '0' && char <= '9') {
         tempPin[curPinIdx] = char;
         textIdx += 1;
@@ -318,9 +322,9 @@ export const EmailConfirmationForm = () => {
         <Button
           buttonType='link'
           label='Re-send verification code'
-          onClick={() => {
+          onClick={async () => {
             setPinState(['', '', '', '', '', '']);
-            const { error } = initateSignupProcess(userData.email);
+            const { error } = await initateSignupProcess(userData.email);
             if (error) {
               toast.error(error);
             } else {
@@ -338,7 +342,12 @@ export const EmailConfirmationForm = () => {
         />
       </div>
       <div className='flex flex-row items-center justify-center gap-[16px]'>
-        <Button id='submit-button' ref={submitButtonRef} label='Submit' type='submit' />
+        <Button
+          id='submit-button'
+          // ref={submitButtonRef}
+          label='Submit'
+          type='submit'
+        />
       </div>
     </form>
   );
@@ -355,11 +364,22 @@ const SignUpPage = () => {
     2: 'upcoming',
   });
 
-  const [userData, setUserData] = useState({
+  interface User {
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    phoneNo?: string;
+    birthday?: string;
+    gender?: string;
+    profileImage?: string | null;
+    password?: string;
+  }
+
+  const [userData, setUserData] = useState<User>({
     email: '',
     firstName: '',
     lastName: '',
-    country: countries[0],
+    // country: countries[0],
     password: '',
   });
 

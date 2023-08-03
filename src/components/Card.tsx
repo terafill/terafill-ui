@@ -2,7 +2,7 @@ import React from 'react';
 
 import { v4 as uuidv4 } from 'uuid';
 
-import Button from '../components/Button';
+import Button from './Button';
 
 const CardItem = ({ label, label2, text, blockButton, editButton, recoveryButton }) => {
   return (

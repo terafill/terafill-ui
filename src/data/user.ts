@@ -44,19 +44,25 @@ export async function getProfileImage() {
 }
 
 interface User {
-  firstName: string;
-  lastName: string;
-  phoneNo: string;
-  file: File;
+  firstName?: string;
+  lastName?: string;
+  phoneNo?: string;
+  file: File | null;
 }
 
 export async function updateProfile({ firstName, lastName, phoneNo, file }: User) {
   const formData = new FormData();
 
   // Append fields to formData
-  formData.append('first_name', firstName);
-  formData.append('last_name', lastName);
-  formData.append('phone_no', phoneNo);
+  if (firstName) {
+    formData.append('first_name', firstName);
+  }
+  if (lastName) {
+    formData.append('last_name', lastName);
+  }
+  if (phoneNo) {
+    formData.append('phone_no', phoneNo);
+  }
 
   if (file) {
     formData.append('file', file);

@@ -1,15 +1,29 @@
-import React, { memo } from 'react';
+import React, { memo, FC, ReactNode } from 'react';
 
-const Button = ({
+interface ButtonProps {
+  buttonType?: string;
+  buttonClassName?: string;
+  onClick?: () => void;
+  label: string;
+  labelClassName?: string;
+  icon?: string;
+  iconComponent?: ReactNode;
+  iconPosition?: string;
+  iconClassName?: string;
+  id?: string;
+  type?: 'button' | 'submit' | 'reset' | undefined;
+}
+
+const Button: FC<React.PropsWithChildren<ButtonProps>> = ({
   buttonType,
   buttonClassName,
-  onClick,
   label,
   labelClassName,
   icon,
   iconComponent,
   iconPosition = 'left',
   iconClassName,
+  type = 'button',
   ...props
 }) => {
   const buttonTypeClassMap = {
@@ -49,9 +63,8 @@ const Button = ({
   }
   return (
     <button
-      id={props.id}
       className={`${buttonTypeClassMap[buttonType]} ${buttonClassName}`}
-      onClick={onClick}
+      type={type}
       {...props}
     >
       {props.children}

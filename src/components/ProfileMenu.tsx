@@ -2,10 +2,10 @@ import React, { memo, useState, useCallback } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
+import { MenuItem } from './Menu';
+import PortalPopup from './PortalPopup';
+import SignoutPopup from './SignoutPopup';
 import { cleanupUserSession } from './TokenTools';
-import { MenuItem } from '../components/Menu';
-import PortalPopup from '../components/PortalPopup';
-import SignoutPopup from '../components/SignoutPopup';
 import { logoutUser } from '../data/auth';
 
 const ProfileMenu = () => {
@@ -16,7 +16,7 @@ const ProfileMenu = () => {
     // Signout
     logoutUser()
       .then(function () {
-        cleanupUserSession();
+        cleanupUserSession(null);
         console.log('Session cleaned up!');
       })
       .catch(function (error) {

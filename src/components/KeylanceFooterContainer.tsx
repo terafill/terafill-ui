@@ -3,7 +3,7 @@ import React from 'react';
 import { BsTwitter, BsFacebook, BsInstagram } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 
-import Button from '../components/Button';
+import Button from './Button';
 
 const KeylanceFooterContainer = () => {
   const navigate = useNavigate();

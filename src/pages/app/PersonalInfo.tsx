@@ -30,7 +30,17 @@ const PersonalInfo = () => {
     staleTime: 300000,
   });
 
-  const initData = {
+  interface profileData {
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    phoneNo?: string;
+    birthday?: string;
+    gender?: string;
+    profileImage?: string | null;
+  }
+
+  const initData: profileData = {
     email: userProfileRaw?.data?.email ?? '',
     firstName: userProfileRaw?.data?.firstName ?? '',
     lastName: userProfileRaw?.data?.lastName ?? '',
@@ -40,7 +50,7 @@ const PersonalInfo = () => {
     profileImage: '',
   };
 
-  const [userProfileView, setUserProfileView] = useState(initData);
+  const [userProfileView, setUserProfileView] = useState<profileData>(initData);
 
   const loadUserProfileView = ({ loadProfile = false, loadProfileImage = false }) => {
     if (loadProfile && userProfileRaw.isSuccess) {
@@ -91,32 +101,35 @@ const PersonalInfo = () => {
     }
   };
 
-  const timeoutId = useRef(null);
+  const timeoutId = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    clearTimeout(timeoutId.current);
+    if (timeoutId.current !== null) {
+      clearTimeout(timeoutId.current);
+    }
     timeoutId.current = setTimeout(() => {
       syncSaveButton();
     }, 500);
   }, [userProfileView]);
 
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState<File | null>(null);
 
-  const onFileChange = (event) => {
-    const selectedFile = event.target.files[0];
-    setFile(selectedFile);
+  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
 
-    // Create a preview of the image
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (reader.readyState === 2) {
-        setUserProfileView((prevState) => ({
-          ...prevState,
-          profileImage: reader.result,
-        }));
-      }
-    };
-    reader.readAsDataURL(selectedFile);
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.readyState === 2 && typeof reader.result === 'string') {
+          setUserProfileView((prevState) => ({
+            ...prevState,
+            profileImage: reader.result as string,
+          }));
+        }
+      };
+      reader.readAsDataURL(selectedFile);
+    }
   };
 
   return (
@@ -276,14 +289,18 @@ const PersonalInfo = () => {
                         file: file,
                       },
                       {
-                        onError: (error) => {
-                          toast.error(error);
+                        onError: (error: unknown) => {
+                          if (error instanceof Error) {
+                            toast.error(error.message);
+                          } else {
+                            // Handle other cases if necessary, or use a default error message
+                            toast.error('An error occurred');
+                          }
                         },
                         onSuccess: () => {
                           toast.success('User profile updated!');
-                          queryClient.invalidateQueries({
-                            queries: [{ queryKey: ['profile'] }, { queryKey: ['profileImage'] }],
-                          });
+                          queryClient.invalidateQueries(['profile']);
+                          queryClient.invalidateQueries(['profileImage']);
                         },
                       },
                     );

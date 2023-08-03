@@ -123,10 +123,10 @@ export const getKeyWrappingKeyPair = () => {
   };
 };
 
-export const storeAuthData = (email: string, password: string, keyWrappingKey: string | null) => {
+export const storeAuthData = (email: string, password?: string, keyWrappingKey?: string) => {
   localStorage.clear();
   localStorage.setItem('email', email);
-  if (keyWrappingKey) {
+  if (password && keyWrappingKey) {
     const hashedPassword = getHash(password, 'SHA-256', null);
     const keyWrappingKeyDecypted = forge.pki.decryptRsaPrivateKey(keyWrappingKey, hashedPassword);
     const keyWrappingKey_pem = forge.pki.privateKeyToPem(keyWrappingKeyDecypted);

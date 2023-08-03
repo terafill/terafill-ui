@@ -5,12 +5,12 @@ import { getKeyWrappingKeyPair, encryptData } from '../utils/security';
 
 interface VaultItemParams {
   vaultId: string;
-  id: string;
-  iek: string;
-  title: string;
-  website: string;
-  password: string;
-  username: string;
+  id?: string;
+  iek?: string;
+  title?: string;
+  website?: string;
+  password?: string;
+  username?: string;
 }
 
 export async function getVaultItem({ vaultId, id }: VaultItemParams): Promise<object> {

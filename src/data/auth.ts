@@ -29,7 +29,7 @@ export const initateSignupProcess = async (email: string) => {
 export const completeSignupProcess = async (
   email: string,
   password: string,
-  verificationCode: number,
+  verificationCode: string,
   firstName: string,
   lastName: string,
 ) => {

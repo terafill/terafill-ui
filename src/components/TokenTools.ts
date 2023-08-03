@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { getLoginStatus } from '../data/auth';
 
-export function cleanupUserSession(navigate = null) {
+export function cleanupUserSession(navigate) {
   Cookies.remove('sessionToken');
   Cookies.remove('sessionId');
   if (navigate) {

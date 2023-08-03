@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 
-import { MenuItem } from '../components/Menu';
+import { MenuItem } from './Menu';
 
 const NotificationsMenu = () => {
   return (

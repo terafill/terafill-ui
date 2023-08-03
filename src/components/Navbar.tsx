@@ -2,10 +2,10 @@ import React, { memo, useState, useRef, useCallback } from 'react';
 
 import { Link, useNavigate } from 'react-router-dom';
 
-import Button from '../components/Button';
-import NotificationsMenu from '../components/NotificationsMenu';
-import PortalPopup from '../components/PortalPopup';
-import ProfileMenu from '../components/ProfileMenu';
+import Button from './Button';
+import NotificationsMenu from './NotificationsMenu';
+import PortalPopup from './PortalPopup';
+import ProfileMenu from './ProfileMenu';
 
 const Navbar = ({ navbarType = 'landing' }) => {
   const navigate = useNavigate();

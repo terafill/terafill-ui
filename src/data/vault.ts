@@ -60,9 +60,9 @@ export async function getDefaultVaultItems() {
 }
 
 interface Vault {
-  vaultId: string;
-  name: string;
-  description: string;
+  vaultId?: string;
+  name?: string;
+  description?: string;
 }
 
 export async function updateVault({ vaultId, name, description }: Vault) {

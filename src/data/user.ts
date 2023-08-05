@@ -1,6 +1,7 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 import { BASE_URL } from '../config';
+import { UserProfileResponse, UserProfileImageResponse } from "../schemas/user";
 
 export async function getProfile() {
   const requestUrl = `${BASE_URL}/users/me`;
@@ -14,11 +15,13 @@ export async function getProfile() {
     },
   };
   try {
-    const response = await axios(config);
-    return response?.data || {};
+    const response = await axios.request(config);
+    return UserProfileResponse.read.parse(response?.data);
   } catch (error) {
-    const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    throw Error(errorMessage);
+    if (error instanceof AxiosError) {
+      const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+      throw Error(errorMessage);
+    }
   }
 }
 
@@ -36,27 +39,26 @@ export async function getProfileImage() {
 
   try {
     const response = await axios(config);
-    return response?.data || {};
+    return UserProfileImageResponse.read.parse(response?.data);
   } catch (error) {
-    const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    throw Error(errorMessage);
+    if (error instanceof AxiosError) {
+      const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+      throw Error(errorMessage);
+    }
   }
 }
 
-interface User {
-  firstName?: string;
+export async function updateProfile({ firstName, lastName, phoneNo, file }: {
+  firstName: string;
   lastName?: string;
   phoneNo?: string;
-  file: File | null;
-}
-
-export async function updateProfile({ firstName, lastName, phoneNo, file }: User) {
+  file?: File | null;
+}) {
   const formData = new FormData();
 
   // Append fields to formData
-  if (firstName) {
-    formData.append('first_name', firstName);
-  }
+  formData.append('first_name', firstName);
+  
   if (lastName) {
     formData.append('last_name', lastName);
   }
@@ -75,17 +77,43 @@ export async function updateProfile({ firstName, lastName, phoneNo, file }: User
     url: requestUrl,
     headers: {
       'Content-Type': 'multipart/form-data',
-      // 'Content-Type': 'application/json',
-      // 'Accept': 'application/json',
     },
     data: formData,
   };
 
   try {
-    const response = await axios(config);
-    return response?.data || {};
+    await axios(config);
+    return null;
   } catch (error) {
-    const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    throw Error(errorMessage);
+    if (error instanceof AxiosError) {
+      const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+      throw Error(errorMessage);
+    }
   }
 }
+
+// const makeAPIRequest = (
+//   requestUrl,
+//   propogateCredentials,
+//   headers,
+//   method,
+//   requestSchema,
+//   responseSchema
+// ) => {
+//   return async ()=>{
+// const config = {
+//       withCredentials: propogateCredentials,
+//       method: method,
+//       url: requestUrl,
+//       headers: headers,
+//     };    
+  
+//     try {
+//       const response = await axios(config);
+//       return response?.data || {};
+//     } catch (error) {
+//       const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+//       throw Error(errorMessage);
+//     }
+//   }
+// }

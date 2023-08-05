@@ -4,7 +4,7 @@ import CryptoJS from 'crypto-js';
 import forge from 'node-forge';
 import { v4 as uuidv4 } from 'uuid';
 
-export const getSRPClient = (username: string, password: string, salt: string) => {
+export const getSRPClient = (username: string, password: string, salt: string): Promise<SRP.Client | Error> => {
   return new Promise((resolve, reject) => {
     try {
       const params = SRP.params[1024];
@@ -22,7 +22,7 @@ export const getSRPClient = (username: string, password: string, salt: string) =
   });
 };
 
-export const getAuthClientDetails = (username: string, password: string) => {
+export const getAuthClientDetails = (username: string, password: string): Promise<[Buffer, Buffer]> => {
   return new Promise((resolve, reject) => {
     try {
       const params = SRP.params[1024];
@@ -30,6 +30,8 @@ export const getAuthClientDetails = (username: string, password: string) => {
       const password_ = Buffer.from(password);
       const salt = Buffer.from(CryptoJS.lib.WordArray.random(32).toString(), 'hex');
       const verifier = SRP.computeVerifier(params, salt, identity, password_);
+      console.log("salt",typeof(salt), salt);
+      console.log("verifier",typeof(verifier), verifier);
       resolve([salt, verifier]);
     } catch (error) {
       reject(error);
@@ -85,9 +87,10 @@ export function decryptData(cipherTextWithIv: string, key: string) {
   // Split the IV and ciphertext parts
   const iv = CryptoJS.lib.WordArray.create(concatenated.words.slice(0, 4));
   const ciphertext = CryptoJS.lib.WordArray.create(concatenated.words.slice(4));
+  const cipherParams = CryptoJS.lib.CipherParams.create({ ciphertext: ciphertext });
 
   // Decrypt the data
-  const decrypted = CryptoJS.AES.decrypt({ ciphertext: ciphertext }, CryptoJS.enc.Utf8.parse(key), {
+  const decrypted = CryptoJS.AES.decrypt(cipherParams, CryptoJS.enc.Utf8.parse(key), {
     mode: CryptoJS.mode.CBC,
     padding: CryptoJS.pad.Pkcs7,
     iv: iv,

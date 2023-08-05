@@ -1,8 +1,13 @@
-import axios from 'axios';
+// import SRP from '@harshitsaini/srp-js';
+import axios, {AxiosError, isAxiosError} from 'axios';
 import { Buffer } from 'buffer/';
+import { z } from "zod";
+
 
 import { BASE_URL, CLIENT_ID } from '../config';
+import { UserAuthResponse } from '../schemas/user';
 import { getAuthClientDetails, getRSAPrivateKey, getSRPClient } from '../utils/security';
+
 
 export const initateSignupProcess = async (email: string) => {
   try {
@@ -21,8 +26,11 @@ export const initateSignupProcess = async (email: string) => {
     const response = await axios(config);
     return { response: response?.data || {} };
   } catch (error) {
-    const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    return { error: errorMessage };
+    if (isAxiosError(error)) {
+      const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+      throw Error(errorMessage);
+    }
+    throw error;
   }
 };
 
@@ -35,7 +43,7 @@ export const completeSignupProcess = async (
 ) => {
   try {
     // generate verifier and salt
-    const [salt, verifier] = await getAuthClientDetails(email, password).then(
+    const [salt, verifier]: [Buffer, Buffer] = await getAuthClientDetails(email, password).then(
       ([salt, verifier]) => {
         return [salt, verifier];
       },
@@ -68,12 +76,17 @@ export const completeSignupProcess = async (
     const response = await axios(config);
     return { response: response?.data || {} };
   } catch (error) {
-    const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    return { error: errorMessage };
+    if (isAxiosError(error)) {
+      const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+      throw Error(errorMessage);
+    }
+    throw error;
   }
 };
 
-const getSalt = (email: string) => {
+type ErrorResponse = { error: string };
+
+export const getSalt = async (email: string): Promise<z.infer<typeof UserAuthResponse.getSalt.read>|ErrorResponse>  => {
   const data = JSON.stringify({
     email: email,
   });
@@ -89,10 +102,20 @@ const getSalt = (email: string) => {
     },
     data: data,
   };
-  return axios(config);
+
+  try{
+    const response = await axios.request(config);
+    return UserAuthResponse.getSalt.read.parse(response?.data);
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+      throw Error(errorMessage);
+    }
+    throw error;
+  }
 };
 
-const initiateLogin = (email: string, clientPublicKey: string) => {
+const initiateLogin = async (email: string, clientPublicKey: string): Promise<z.infer<typeof UserAuthResponse.initiateLogin.read>> => {
   const data = JSON.stringify({
     email: email,
     clientPublicKey: clientPublicKey,
@@ -109,10 +132,19 @@ const initiateLogin = (email: string, clientPublicKey: string) => {
     },
     data: data,
   };
-  return axios(config);
+  try{
+    const response = await axios(config);
+    return UserAuthResponse.initiateLogin.read.parse(response.data);
+  } catch (error) {
+    if (isAxiosError(error)) {
+      const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+      throw Error(errorMessage);
+    }
+    throw error;
+  }
 };
 
-const confirmLogin = (email: string, clientProof: string) => {
+const confirmLogin = async (email: string, clientProof: string) => {
   const data = JSON.stringify({
     email: email,
     clientProof: clientProof,
@@ -129,22 +161,38 @@ const confirmLogin = (email: string, clientProof: string) => {
     },
     data: data,
   };
-  return axios(config);
+  try{
+    const response = await axios(config);
+    return UserAuthResponse.confirmLogin.read.parse(response.data);
+  } catch (error) {
+    if (isAxiosError(error)) {
+      const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+      throw Error(errorMessage);
+    }
+    throw error;
+  }
 };
 
 export const loginUser = async (email: string, password: string) => {
   try {
     // Get salt from server
     const saltResponse = await getSalt(email);
-    const { salt } = saltResponse.data;
-
+    if ("error" in saltResponse){
+      throw Error(saltResponse.error)
+    }
+    const { salt } = saltResponse;
+    
     // Create SRP Client
     const client = await getSRPClient(email, password, salt);
     const clientPubliKey = client.computeA();
+    console.log("clientPubliKey", typeof(clientPubliKey), clientPubliKey, typeof(client));
 
     // Send A to server and receive B
     const loginResponse = await initiateLogin(email, Buffer.from(clientPubliKey).toString('hex'));
-    const { serverPublicKey } = loginResponse.data;
+    // if ("error" in loginResponse){
+    //   throw Error(loginResponse.error)
+    // }
+    const { serverPublicKey } = loginResponse;
     client.setB(Buffer.from(serverPublicKey, 'hex'));
 
     const clientProof = client.computeM1();
@@ -154,7 +202,11 @@ export const loginUser = async (email: string, password: string) => {
       email,
       Buffer.from(clientProof).toString('hex'),
     );
-    const { serverProof, keyWrappingKey } = confirmLoginResponse.data;
+    // if ("error" in confirmLoginResponse){
+    //   throw Error(confirmLoginResponse.error)
+    // }   
+    const { serverProof, keyWrappingKey } = confirmLoginResponse;
+    
     if (client.checkM2(Buffer.from(serverProof, 'hex'))) {
       console.warn('Server verified!');
       return {
@@ -164,8 +216,11 @@ export const loginUser = async (email: string, password: string) => {
       return { error: 'Server not verified!' };
     }
   } catch (error) {
-    const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    return { error: errorMessage };
+    if (isAxiosError(error)) {
+      const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+      throw Error(errorMessage);
+    }
+    throw error;
   }
 };
 
@@ -182,10 +237,13 @@ export const getLoginStatus = async () => {
     };
 
     const response = await axios(config);
-    return { response: response?.data || {} };
+    return UserAuthResponse.getLoginStatus.read.parse(response?.data);
   } catch (error) {
-    const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-    return { error: errorMessage };
+    if (isAxiosError(error)) {
+      const errorMessage = error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
+      throw Error(errorMessage);
+    }
+    throw error;
   }
 };
 

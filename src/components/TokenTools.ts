@@ -16,8 +16,8 @@ export function cleanupUserSession(navigate) {
 
 export async function isUserSessionValid() {
   try {
-    const { response } = await getLoginStatus();
-    return response?.loggedIn || false;
+    const { loggedIn } = await getLoginStatus();
+    return loggedIn || false;
   } catch (error) {
     return false;
   }

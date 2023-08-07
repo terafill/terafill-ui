@@ -1,5 +1,5 @@
 const webpack = require('webpack'); 
-module.exports = function override(config) { 
+module.exports = function override(config, env) { 
         const fallback = config.resolve.fallback || {}; 
         Object.assign(fallback, { 
       "crypto": require.resolve("crypto-browserify"),
@@ -17,5 +17,12 @@ module.exports = function override(config) {
         Buffer: ['buffer', 'Buffer']
     }) 
    ]) 
+   if (env === 'development') {
+    // Find and remove the ForkTsCheckerWebpackPlugin to disable type checking on 'npm start'
+    config.plugins = config.plugins.filter(
+      plugin => !(plugin.constructor.name === 'ForkTsCheckerWebpackPlugin')
+    );
+  }
+
    return config; }
 

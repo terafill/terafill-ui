@@ -1,13 +1,11 @@
 // import SRP from '@harshitsaini/srp-js';
-import axios, {AxiosError, isAxiosError} from 'axios';
+import axios, { AxiosError, isAxiosError } from 'axios';
 import { Buffer } from 'buffer/';
-import { z } from "zod";
-
+import { z } from 'zod';
 
 import { BASE_URL, CLIENT_ID } from '../config';
 import { UserAuthResponse } from '../schemas/user';
 import { getAuthClientDetails, getRSAPrivateKey, getSRPClient } from '../utils/security';
-
 
 export const initateSignupProcess = async (email: string) => {
   try {
@@ -86,7 +84,9 @@ export const completeSignupProcess = async (
 
 type ErrorResponse = { error: string };
 
-export const getSalt = async (email: string): Promise<z.infer<typeof UserAuthResponse.getSalt.read>|ErrorResponse>  => {
+export const getSalt = async (
+  email: string,
+): Promise<z.infer<typeof UserAuthResponse.getSalt.read> | ErrorResponse> => {
   const data = JSON.stringify({
     email: email,
   });
@@ -103,7 +103,7 @@ export const getSalt = async (email: string): Promise<z.infer<typeof UserAuthRes
     data: data,
   };
 
-  try{
+  try {
     const response = await axios.request(config);
     return UserAuthResponse.getSalt.read.parse(response?.data);
   } catch (error) {
@@ -115,7 +115,10 @@ export const getSalt = async (email: string): Promise<z.infer<typeof UserAuthRes
   }
 };
 
-const initiateLogin = async (email: string, clientPublicKey: string): Promise<z.infer<typeof UserAuthResponse.initiateLogin.read>> => {
+const initiateLogin = async (
+  email: string,
+  clientPublicKey: string,
+): Promise<z.infer<typeof UserAuthResponse.initiateLogin.read>> => {
   const data = JSON.stringify({
     email: email,
     clientPublicKey: clientPublicKey,
@@ -132,7 +135,7 @@ const initiateLogin = async (email: string, clientPublicKey: string): Promise<z.
     },
     data: data,
   };
-  try{
+  try {
     const response = await axios(config);
     return UserAuthResponse.initiateLogin.read.parse(response.data);
   } catch (error) {
@@ -161,7 +164,7 @@ const confirmLogin = async (email: string, clientProof: string) => {
     },
     data: data,
   };
-  try{
+  try {
     const response = await axios(config);
     return UserAuthResponse.confirmLogin.read.parse(response.data);
   } catch (error) {
@@ -177,15 +180,15 @@ export const loginUser = async (email: string, password: string) => {
   try {
     // Get salt from server
     const saltResponse = await getSalt(email);
-    if ("error" in saltResponse){
-      throw Error(saltResponse.error)
+    if ('error' in saltResponse) {
+      throw Error(saltResponse.error);
     }
     const { salt } = saltResponse;
-    
+
     // Create SRP Client
     const client = await getSRPClient(email, password, salt);
     const clientPubliKey = client.computeA();
-    console.log("clientPubliKey", typeof(clientPubliKey), clientPubliKey, typeof(client));
+    console.log('clientPubliKey', typeof clientPubliKey, clientPubliKey, typeof client);
 
     // Send A to server and receive B
     const loginResponse = await initiateLogin(email, Buffer.from(clientPubliKey).toString('hex'));
@@ -204,9 +207,9 @@ export const loginUser = async (email: string, password: string) => {
     );
     // if ("error" in confirmLoginResponse){
     //   throw Error(confirmLoginResponse.error)
-    // }   
+    // }
     const { serverProof, keyWrappingKey } = confirmLoginResponse;
-    
+
     if (client.checkM2(Buffer.from(serverProof, 'hex'))) {
       console.warn('Server verified!');
       return {

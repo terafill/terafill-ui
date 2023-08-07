@@ -61,6 +61,7 @@ const LoginPage = () => {
               type='email'
               name='email'
               id='email'
+              data-test='email'
               className='w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6'
               placeholder='jane@example.com'
               onChange={(e) => {
@@ -83,6 +84,7 @@ const LoginPage = () => {
               type='password'
               name='password'
               id='password'
+              data-test='password'
               className='w-full rounded-md px-2 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6'
               placeholder='*********'
               onChange={(e) => {
@@ -92,7 +94,7 @@ const LoginPage = () => {
               required
             />
           </div>
-          <Button buttonType='dark' label='Submit' type='submit' />
+          <Button buttonType='dark' label='Submit' type='submit' data-test='submit' />
         </form>
       </div>
     </div>

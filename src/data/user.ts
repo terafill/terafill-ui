@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 
 import { BASE_URL } from '../config';
-import { UserProfileResponse, UserProfileImageResponse } from "../schemas/user";
+import { UserProfileResponse, UserProfileImageResponse } from '../schemas/user';
 
 export async function getProfile() {
   const requestUrl = `${BASE_URL}/users/me`;
@@ -48,7 +48,12 @@ export async function getProfileImage() {
   }
 }
 
-export async function updateProfile({ firstName, lastName, phoneNo, file }: {
+export async function updateProfile({
+  firstName,
+  lastName,
+  phoneNo,
+  file,
+}: {
   firstName: string;
   lastName?: string;
   phoneNo?: string;
@@ -58,7 +63,7 @@ export async function updateProfile({ firstName, lastName, phoneNo, file }: {
 
   // Append fields to formData
   formData.append('first_name', firstName);
-  
+
   if (lastName) {
     formData.append('last_name', lastName);
   }
@@ -106,8 +111,8 @@ export async function updateProfile({ firstName, lastName, phoneNo, file }: {
 //       method: method,
 //       url: requestUrl,
 //       headers: headers,
-//     };    
-  
+//     };
+
 //     try {
 //       const response = await axios(config);
 //       return response?.data || {};

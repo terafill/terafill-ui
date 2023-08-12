@@ -4,6 +4,7 @@ import {
 } from 'react-router-dom';
 
 
+
 export const CreateAccountForm = () => {
   return (
       {/*        <div className="relative w-2/3">
@@ -76,3 +77,44 @@ export const RecoveryKitForm = () => {
     </form>
   );
 };
+
+const steps = {
+  1: { id: 'Step 1', name: 'Create Account', to: '' },
+  2: { id: 'Step 2', name: 'Email Confirmation', to: 'email-confirmation' },
+};
+
+
+
+const SignUp = () => {
+  const [stepStatus, setStepStatus] = useState({
+    1: 'current',
+    2: 'upcoming',
+  });
+
+    return(
+        <nav aria-label='Progress' className='mb-4 w-2/3'>
+          <ol role='list' className='space-y-4 md:flex md:space-x-16 md:space-y-0'>
+            {
+              // eslint-disable-next-line no-unused-vars
+              Object.entries(steps).map(([idx, step]) => (
+                <li key={step.name} className='md:flex-1'>
+                  {stepStatus[idx] === 'completed' ? (
+                    <span className='flex flex-col items-center rounded-lg border-t-4 bg-gray-200 py-2'>
+                      <span className='text-sm font-medium text-black'>{step.name}</span>
+                    </span>
+                  ) : stepStatus[idx] === 'current' ? (
+                    <span className='flex flex-col items-center items-center rounded-lg border-t-4 border-black bg-gray-200 py-2'>
+                      <span className='text-sm font-medium text-black'>{step.name}</span>
+                    </span>
+                  ) : (
+                    <span className='flex flex-col items-center rounded-lg border-t-4 border-gray-200 py-2'>
+                      <span className='text-sm font-medium text-gray-500'>{step.name}</span>
+                    </span>
+                  )}
+                </li>
+              ))
+            }
+          </ol>
+        </nav> 
+    )
+}

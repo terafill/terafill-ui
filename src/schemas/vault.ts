@@ -1,16 +1,16 @@
 interface Vault {
-  id?: string;
-  vaultId?: string;
-  name?: string;
-  description?: string;
+    id?: string;
+    vaultId?: string;
+    name?: string;
+    description?: string;
 }
 
 interface VaultList {
-  [key: string]: Vault;
+    [key: string]: Vault;
 }
 
 interface Vault {
-  vaultId?: string;
-  name?: string;
-  description?: string;
+    vaultId?: string;
+    name?: string;
+    description?: string;
 }

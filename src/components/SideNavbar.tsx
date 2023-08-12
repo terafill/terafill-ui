@@ -11,7 +11,7 @@ import { NavLink } from 'react-router-dom';
 
 const navigation = [
     { name: 'Home', href: '/app/home', icon: HomeIcon, comingSoon: false },
-    { name: 'Profile', href: '/app/profile', icon: UserIcon, comingSoon: false },
+    // { name: 'Profile', href: '/app/profile', icon: UserIcon, comingSoon: false },
     { name: 'Security', href: '/app/security', icon: ShieldCheckIcon, comingSoon: true },
     { name: 'Sharing', href: '/app/sharing', icon: UsersIcon, comingSoon: true },
     { name: 'Dashboard', href: '/app/dashboard', icon: ChartPieIcon, comingSoon: true },
@@ -24,7 +24,7 @@ function classNames(...classes) {
 export default function SideNavbar() {
     return (
         <>
-            <div className='flex-0 flex h-full w-24 justify-center bg-gray-900'>
+            <div className='flex-0 flex h-full w-24 justify-center border-r bg-black'>
                 <ul role='list' className='flex flex-1 flex-col items-center justify-around p-4'>
                     {navigation.map((item) => (
                         <NavLink
@@ -49,7 +49,7 @@ export default function SideNavbar() {
                                         <item.icon className='flex-0 flex h-8 w-8' />
                                         <p className='flex'>{item.name}</p>
                                         {item.comingSoon && (
-                                            <p className='rounded-full bg-black p-1 text-xs'>
+                                            <p className='rounded-sm bg-black p-[2px] text-xs text-gray-500'>
                                                 coming soon
                                             </p>
                                         )}

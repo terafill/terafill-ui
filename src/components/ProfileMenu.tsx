@@ -42,7 +42,7 @@ const ProfileMenu = () => {
 
     return (
         <>
-            <div className='relative flex max-h-full max-w-full flex-col items-center justify-center overflow-hidden rounded-md bg-white shadow-[0px_0px_4px_rgba(0,_0,_0,_0.25)]'>
+            <div className='relative flex max-h-full max-w-full flex-col items-center justify-center overflow-hidden rounded-md border bg-black'>
                 <div className='flex w-[200px] flex-col items-center justify-center gap-2 overflow-hidden px-2 py-2'>
                     <MenuItem menuItem='Home' onClick={() => navigate('/app/home')} />
                     {/*<MenuItem menuItem="Settings" onClick={()=>navigate("/settings")}/>*/}

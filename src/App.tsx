@@ -42,22 +42,22 @@ const router = createBrowserRouter([
             },
         ],
     },
-    {
-        path: '/products',
-        element: <ProductsPage />,
-    },
-    {
-        path: '/pricing',
-        element: <PricingPage />,
-    },
+    // {
+    //     path: '/products',
+    //     element: <ProductsPage />,
+    // },
+    // {
+    //     path: '/pricing',
+    //     element: <PricingPage />,
+    // },
     // {
     //   path: '/whitepaper',
     //   element: <WhitepaperPage />,
     // },
-    {
-        path: '/faq',
-        element: <FaqPage />,
-    },
+    // {
+    //     path: '/faq',
+    //     element: <FaqPage />,
+    // },
     {
         path: '/login',
         element: <LoginPage />,

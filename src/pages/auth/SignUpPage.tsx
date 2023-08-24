@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+import { motion } from 'framer-motion';
 import { Outlet, useNavigate, useOutletContext } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -328,8 +329,13 @@ const SignUpPage = () => {
         password?: string;
     }
 
+    // Get the current URL
+    const currentURL = new URL(window.location.href);
+    // Get the value of the 'email' parameter
+    // const email = currentURL.searchParams.get("email");
+
     const [userData, setUserData] = useState<User>({
-        email: '',
+        email: currentURL.searchParams.get('email') ?? '',
         firstName: '',
         lastName: '',
         // country: countries[0],
@@ -337,12 +343,20 @@ const SignUpPage = () => {
     });
 
     return (
-        <div className='justify-cente flex h-screen w-screen flex-col items-center'>
+        <motion.div
+            initial={{ opacity: 0.3 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0.3 }}
+            transition={{ duration: 0.5 }}
+            className='flex h-screen w-screen flex-col items-center justify-center'
+            id=''
+        >
+            {/* <div className='justify-center flex h-screen w-screen flex-col items-center'> */}
             {/* <Navbar navbarType='signup' /> */}
             <div className='flex flex-1 flex-col items-center justify-center self-stretch overflow-hidden'>
                 <Outlet context={[userData, setUserData]} />
             </div>
-        </div>
+        </motion.div>
     );
 };
 

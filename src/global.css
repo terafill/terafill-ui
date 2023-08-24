@@ -21,6 +21,18 @@ body {
     line-height: normal;
 } */
 
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
 @keyframes greenToCyan {
     to {
         background-image: linear-gradient(to right, green, cyan);
@@ -33,8 +45,78 @@ body {
     }
 }
 
+@layer utilities {
+    .cursor-blink {
+        animation: blink 1s infinite;
+    }
+}
+
 @layer base {
     :root {
+        /**
+ * ----------------------------------------
+ * animation fade-out
+ * ----------------------------------------
+ */
+        @-webkit-keyframes fade-out {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+        @keyframes fade-out {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .slide-in-bottom {
+            -webkit-animation: slide-in-bottom 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+            animation: slide-in-bottom 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+        }
+
+        /**
+ * ----------------------------------------
+ * animation slide-in-bottom
+ * ----------------------------------------
+ */
+        @-webkit-keyframes slide-in-bottom {
+            0% {
+                -webkit-transform: translateY(1000px);
+                transform: translateY(1000px);
+                opacity: 0;
+            }
+            100% {
+                -webkit-transform: translateY(0);
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        @keyframes slide-in-bottom {
+            0% {
+                -webkit-transform: translateY(1000px);
+                transform: translateY(1000px);
+                opacity: 0;
+            }
+            100% {
+                -webkit-transform: translateY(0);
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .Toastify__toast {
+            background-color: hsla(245, 0%, 10%, 1);
+            /* border: "sol"; */
+            /* border-color: gray; */
+            border: solid 1px hsla(245, 10%, 40%, 1);
+        }
+
         --gradient-start: hsla(0, 92%, 58%, 1);
         --gradient-end: hsla(43, 94%, 54%, 1);
 

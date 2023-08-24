@@ -2,7 +2,7 @@ import React, { memo, useState, useRef, useCallback } from 'react';
 
 import { Link, useNavigate } from 'react-router-dom';
 
-import Button from './Button';
+import Button, { Button2 } from './Button';
 import NotificationsMenu from './NotificationsMenu';
 import PortalPopup from './PortalPopup';
 import ProfileMenu from './ProfileMenu';
@@ -33,7 +33,7 @@ const Navbar = ({ navbarType = 'landing' }) => {
     return (
         <>
             <div
-                className='flex flex-row items-center justify-between bg-foreground dark:bg-background'
+                className='sticky top-0 z-20 flex w-screen flex-row items-center justify-between bg-foreground opacity-90 dark:bg-background'
                 id='navbar'
             >
                 <div className='flex flex-row items-center gap-[24px]' id='left-navbar'>
@@ -67,20 +67,30 @@ const Navbar = ({ navbarType = 'landing' }) => {
                         {navbarType === 'login' ? (
                             ''
                         ) : (
-                            <Button
-                                buttonType='dark'
-                                label='Login'
+                            <Button2
+                                variant='ghost'
+                                className=''
                                 onClick={() => navigate('/login')}
-                            />
+                            >
+                                Login
+                            </Button2>
+                            // <Button
+                            //     buttonType='dark'
+                            //     label='Login'
+                            //     onClick={() => navigate('/login')}
+                            // />
                         )}
                         {navbarType === 'signup' ? (
                             ''
                         ) : (
-                            <Button
-                                buttonType='light'
-                                label='Sign Up'
-                                onClick={() => navigate('/signup')}
-                            />
+                            <Button2 variant='default' onClick={() => navigate('/signup')}>
+                                Sign Up
+                            </Button2>
+                            // <Button
+                            //     buttonType='light'
+                            //     label='Sign Up'
+                            //     onClick={() => navigate('/signup')}
+                            // />
                         )}
                     </div>
                 ) : (

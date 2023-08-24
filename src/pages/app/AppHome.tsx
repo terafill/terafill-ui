@@ -4,13 +4,15 @@ import { Dialog, Listbox, Transition, Menu } from '@headlessui/react';
 import {
     ChevronUpDownIcon,
     PencilSquareIcon,
-    TrashIcon,
     UserPlusIcon,
     CogIcon,
     SquaresPlusIcon,
 } from '@heroicons/react/20/solid';
 import { CheckIcon } from '@heroicons/react/24/outline';
+import { TrashIcon, Pencil2Icon, UpdateIcon, CheckCircledIcon } from '@radix-ui/react-icons';
 import { useQueries, useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
+import toast, { Toaster } from 'react-hot-toast';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import {
     NavLink,
@@ -20,12 +22,12 @@ import {
     useOutletContext,
     useLocation,
 } from 'react-router-dom';
-import MoonLoader from 'react-spinners/MoonLoader';
+// import MoonLoader from 'react-spinners/MoonLoader';
 import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer, toast } from 'react-toastify';
+// import { ToastContainer, toast, Slide, Flip, cssTransition } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
 
-import Button from '../../components/Button';
+import Button, { Button2 } from '../../components/Button';
 import { Input } from '../../components/Input';
 import Navbar from '../../components/Navbar';
 import SideNavbar from '../../components/SideNavbar';
@@ -35,6 +37,7 @@ import { getVaultItem, updateVaultItem, createVaultItem, deleteVaultItem } from 
 import { addVault, getVaults, getVaultItems, updateVault, deleteVault } from '../../data/vault';
 import { getKeyWrappingKeyPair, decryptData } from '../../utils/security';
 import './AppHome.css';
+import { set } from 'cypress/types/lodash';
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
@@ -165,20 +168,59 @@ interface VaultItem {
 }
 
 function AddVaultItemPopup({ open, setOpen, selectedVault }) {
-    const cancelButtonRef = useRef(null);
-    const queryClient = useQueryClient();
-    const [itemDataView, setItemDataView] = useState<VaultItem>({
+    const initData = {
         vaultId: '',
         username: '',
         website: '',
         password: '',
         title: '',
-    });
-    const navigate = useNavigate();
+    };
 
+    const [itemDataView, setItemDataView] = useState<VaultItem>(initData);
     const createItemData = useMutation({
         mutationFn: createVaultItem,
     });
+
+    useEffect(() => {
+        if (open) {
+            setItemDataView(initData);
+            createItemData.reset();
+        }
+    }, [open]);
+
+    const cancelButtonRef = useRef(null);
+    const queryClient = useQueryClient();
+    const navigate = useNavigate();
+
+    const addVaultItemMutation = async () => {
+        const iek = uuidv4();
+        await createItemData.mutateAsync(
+            {
+                vaultId: selectedVault,
+                title: itemDataView.title,
+                website: itemDataView.website,
+                password: itemDataView.password,
+                username: itemDataView.username,
+                iek: iek,
+            },
+            {
+                onError: (error: unknown) => {
+                    if (error instanceof Error) {
+                        toast.error(error.message);
+                    } else {
+                        // Handle other cases if necessary, or use a default error message
+                        toast.error('An error occurred');
+                    }
+                },
+                onSuccess: (data) => {
+                    toast.success('Item created!');
+                    queryClient.invalidateQueries(['vaults', selectedVault, 'items']);
+                    navigate(`/app/home/${data.id}`);
+                },
+            },
+        );
+        setOpen(false);
+    };
 
     return (
         <Transition.Root show={open} as={Fragment}>
@@ -197,7 +239,7 @@ function AddVaultItemPopup({ open, setOpen, selectedVault }) {
                     leaveFrom='opacity-100'
                     leaveTo='opacity-0'
                 >
-                    <div className='fixed inset-0 bg-black bg-opacity-10 transition-opacity' />
+                    <div className='fixed inset-0 bg-black bg-opacity-30 transition-opacity' />
                 </Transition.Child>
 
                 <div className='fixed inset-0 z-10 overflow-y-auto'>
@@ -326,53 +368,37 @@ function AddVaultItemPopup({ open, setOpen, selectedVault }) {
                                     className='flex w-5/6 flex-row items-center justify-center gap-2'
                                     id='button-group'
                                 >
-                                    <button
-                                        type='button'
-                                        className='mt-3 inline-flex w-2/3 justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0'
-                                        onClick={() => setOpen(false)}
+                                    <Button2
+                                        variant='secondary'
                                         ref={cancelButtonRef}
+                                        onClick={() => setOpen(false)}
                                     >
                                         Cancel
-                                    </button>
-                                    <button
-                                        type='button'
-                                        className='inline-flex w-2/3 justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2'
-                                        onClick={async () => {
-                                            const iek = uuidv4();
-                                            await createItemData.mutateAsync(
-                                                {
-                                                    vaultId: selectedVault,
-                                                    title: itemDataView.title,
-                                                    website: itemDataView.website,
-                                                    password: itemDataView.password,
-                                                    username: itemDataView.username,
-                                                    iek: iek,
-                                                },
-                                                {
-                                                    onError: (error: unknown) => {
-                                                        if (error instanceof Error) {
-                                                            toast.error(error.message);
-                                                        } else {
-                                                            // Handle other cases if necessary, or use a default error message
-                                                            toast.error('An error occurred');
-                                                        }
-                                                    },
-                                                    onSuccess: (data) => {
-                                                        toast.success('Item created!');
-                                                        queryClient.invalidateQueries([
-                                                            'vaults',
-                                                            selectedVault,
-                                                            'items',
-                                                        ]);
-                                                        navigate(`/app/home/${data.id}`);
-                                                    },
-                                                },
-                                            );
-                                            setOpen(false);
-                                        }}
-                                    >
-                                        Confirm
-                                    </button>
+                                    </Button2>
+                                    {
+                                        //Create-creating-Success button
+                                        createItemData.isLoading ? (
+                                            <Button2 variant='default' disabled>
+                                                <UpdateIcon className='mr-2 h-6 w-6 animate-spin' />
+                                                {'Creating'}
+                                            </Button2>
+                                        ) : createItemData.isSuccess ? (
+                                            <Button2
+                                                variant='default'
+                                                className='font-semibold text-green-600'
+                                            >
+                                                <CheckCircledIcon className='mr-2 h-6 w-6 text-green-600' />
+                                                Success
+                                            </Button2>
+                                        ) : (
+                                            <Button2
+                                                variant='default'
+                                                onClick={addVaultItemMutation}
+                                            >
+                                                Add
+                                            </Button2>
+                                        )
+                                    }
                                 </div>
                             </Dialog.Panel>
                         </Transition.Child>
@@ -390,16 +416,45 @@ function EditVaultPopup({ open, setOpen, selectedVault }) {
     const [vaultName, setVaultName] = useState('');
     const [vaultDescription, setVaultDescription] = useState('');
 
+    const updateVaultMutation = useMutation({
+        mutationFn: updateVault,
+    });
+
     useEffect(() => {
         if (selectedVault) {
             setVaultName(vaultData?.name ?? '');
             setVaultDescription(vaultData?.description ?? '');
         }
-    }, [selectedVault]);
+    }, [selectedVault, open]);
 
-    const updateVaultMutation = useMutation({
-        mutationFn: updateVault,
-    });
+    useEffect(() => {
+        if (open) {
+            updateVaultMutation.reset();
+            console.log('Triggered');
+        }
+    }, [open]);
+
+    const updateVaultMutationTrigger = async () => {
+        updateVaultMutation.mutateAsync(
+            {
+                vaultId: selectedVault,
+                name: vaultName,
+                description: vaultDescription,
+            },
+            {
+                onSuccess: () => {
+                    queryClient.invalidateQueries({
+                        queries: [{ queryKey: ['vaults'] }],
+                    });
+                    setOpen(false);
+                    toast.success('Vault updated successfully!');
+                },
+                onError: (error) => {
+                    toast.error(error);
+                },
+            },
+        );
+    };
 
     return (
         <Transition.Root show={open} as={Fragment}>
@@ -418,7 +473,7 @@ function EditVaultPopup({ open, setOpen, selectedVault }) {
                     leaveFrom='opacity-100'
                     leaveTo='opacity-0'
                 >
-                    <div className='fixed inset-0 bg-black bg-opacity-10 transition-opacity' />
+                    <div className='fixed inset-0 bg-black bg-opacity-20 transition-opacity' />
                 </Transition.Child>
 
                 <div className='fixed inset-0 z-10 overflow-y-auto'>
@@ -489,43 +544,37 @@ function EditVaultPopup({ open, setOpen, selectedVault }) {
                                     className='flex w-5/6 flex-row items-center justify-center gap-2'
                                     id='button-group'
                                 >
-                                    <button
-                                        type='button'
-                                        className='mt-3 inline-flex w-2/3 justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0'
+                                    <Button2
+                                        variant='secondary'
                                         onClick={() => setOpen(false)}
                                         ref={cancelButtonRef}
                                     >
                                         Cancel
-                                    </button>
-                                    <button
-                                        type='button'
-                                        className='inline-flex w-2/3 justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2'
-                                        onClick={async () => {
-                                            updateVaultMutation.mutateAsync(
-                                                {
-                                                    vaultId: selectedVault,
-                                                    name: vaultName,
-                                                    description: vaultDescription,
-                                                },
-                                                {
-                                                    onSuccess: () => {
-                                                        toast.success(
-                                                            'Vault updated successfully!',
-                                                        );
-                                                        queryClient.invalidateQueries({
-                                                            queries: [{ queryKey: ['vaults'] }],
-                                                        });
-                                                    },
-                                                    onError: (error) => {
-                                                        toast.error(error);
-                                                    },
-                                                },
-                                            );
-                                            setOpen(false);
-                                        }}
-                                    >
-                                        Confirm
-                                    </button>
+                                    </Button2>
+                                    {
+                                        //update-updating-Success button
+                                        updateVaultMutation.isLoading ? (
+                                            <Button2 variant='default' disabled>
+                                                <UpdateIcon className='mr-2 h-6 w-6 animate-spin' />
+                                                {'Updating'}
+                                            </Button2>
+                                        ) : updateVaultMutation.isSuccess ? (
+                                            <Button2
+                                                variant='default'
+                                                className='font-semibold text-green-600'
+                                            >
+                                                <CheckCircledIcon className='mr-2 h-6 w-6 text-green-600' />
+                                                Success
+                                            </Button2>
+                                        ) : (
+                                            <Button2
+                                                variant='default'
+                                                onClick={updateVaultMutationTrigger}
+                                            >
+                                                Update
+                                            </Button2>
+                                        )
+                                    }
                                 </div>
                             </Dialog.Panel>
                         </Transition.Child>
@@ -548,6 +597,39 @@ function AddVaultPopup({ open, setOpen, setSelectedVault }) {
         mutationFn: addVault,
     });
 
+    const addVaultMutationTrigger = async () => {
+        await addVaultMutation.mutateAsync(
+            {
+                name: vaultName,
+                description: vaultDescription,
+            },
+            {
+                onSuccess: (data) => {
+                    toast.success('Vault added successfully!');
+                    queryClient.setQueryData(['vaults', data.id], data);
+                    queryClient.invalidateQueries({
+                        queries: [{ queryKey: ['vaults'] }],
+                    });
+                    console.log(`Vault ${data.name} created.`, data.id);
+                    setSelectedVault(data.id);
+                    setOpen(false);
+                    navigate('/app/home');
+                },
+                onError: (error) => {
+                    toast.error(error);
+                },
+            },
+        );
+    };
+
+    useEffect(() => {
+        if (open) {
+            setVaultName('');
+            setVaultDescription('');
+            addVaultMutation.reset();
+        }
+    }, [open]);
+
     return (
         <Transition.Root show={open} as={Fragment}>
             <Dialog
@@ -566,7 +648,7 @@ function AddVaultPopup({ open, setOpen, setSelectedVault }) {
                     leaveTo='opacity-0'
                 >
                     <div
-                        className='fixed inset-0 bg-black bg-opacity-10 transition-opacity'
+                        className='fixed inset-0 bg-black bg-opacity-30 transition-opacity'
                         aria-hidden='true'
                     />
                 </Transition.Child>
@@ -642,50 +724,37 @@ function AddVaultPopup({ open, setOpen, setSelectedVault }) {
                                     className='flex w-5/6 flex-row items-center justify-center gap-2'
                                     id='button-group'
                                 >
-                                    <button
-                                        type='button'
-                                        className='mt-3 inline-flex w-2/3 justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0'
-                                        onClick={() => setOpen(false)}
+                                    <Button2
+                                        variant='secondary'
                                         ref={cancelButtonRef}
+                                        onClick={() => setOpen(false)}
                                     >
                                         Cancel
-                                    </button>
-                                    <button
-                                        type='button'
-                                        className='inline-flex w-2/3 justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2'
-                                        onClick={async () => {
-                                            await addVaultMutation.mutateAsync(
-                                                {
-                                                    name: vaultName,
-                                                    description: vaultDescription,
-                                                },
-                                                {
-                                                    onSuccess: (data) => {
-                                                        toast.success('Vault added successfully!');
-                                                        queryClient.setQueryData(
-                                                            ['vaults', data.id],
-                                                            data,
-                                                        );
-                                                        queryClient.invalidateQueries({
-                                                            queries: [{ queryKey: ['vaults'] }],
-                                                        });
-                                                        console.log(
-                                                            `Vault ${data.name} created.`,
-                                                            data.id,
-                                                        );
-                                                        setSelectedVault(data.id);
-                                                        navigate('/app/home');
-                                                    },
-                                                    onError: (error) => {
-                                                        toast.error(error);
-                                                    },
-                                                },
-                                            );
-                                            setOpen(false);
-                                        }}
-                                    >
-                                        Confirm
-                                    </button>
+                                    </Button2>
+                                    {
+                                        //Create-creating-Success button
+                                        addVaultMutation.isLoading ? (
+                                            <Button2 variant='default' disabled>
+                                                <UpdateIcon className='mr-2 h-6 w-6 animate-spin' />
+                                                {'Creating'}
+                                            </Button2>
+                                        ) : addVaultMutation.isSuccess ? (
+                                            <Button2
+                                                variant='default'
+                                                className='font-semibold text-green-600'
+                                            >
+                                                <CheckCircledIcon className='mr-2 h-6 w-6 text-green-600' />
+                                                Success
+                                            </Button2>
+                                        ) : (
+                                            <Button2
+                                                variant='default'
+                                                onClick={addVaultMutationTrigger}
+                                            >
+                                                Add
+                                            </Button2>
+                                        )
+                                    }
                                 </div>
                             </Dialog.Panel>
                         </Transition.Child>
@@ -713,16 +782,53 @@ function DeleteVaultPopup({
     const [vaultName, setVaultName] = useState<string>('');
     const navigate = useNavigate();
 
-    useEffect(() => {
-        setVaultName('');
-    }, [selectedVault]);
-
     const queryClient = useQueryClient();
     const vaultData: Vault | undefined | null = queryClient.getQueryData(['vaults', selectedVault]);
 
     const deleteVaultMutation = useMutation({
         mutationFn: deleteVault,
     });
+
+    const deleteVaultMutationTrigger = async () => {
+        if (vaultName != vaultData?.name) {
+            console.log('vaultName match', vaultName, vaultData?.name);
+            toast.warn("Vault name doesn't match!");
+            return;
+        }
+        deleteVaultMutation.mutateAsync(
+            {
+                vaultId: selectedVault,
+            },
+            {
+                onSuccess: () => {
+                    toast.success('Vault deleted successfully!');
+                    queryClient.invalidateQueries(['vaults']);
+                    setSelectedVault(defaultVault);
+                    setOpen(false);
+                    navigate('/app/home');
+                },
+                onError: (error: unknown) => {
+                    if (error instanceof Error) {
+                        toast.error(error.message);
+                    } else {
+                        // Handle other cases if necessary, or use a default error message
+                        toast.error('An error occurred');
+                    }
+                },
+            },
+        );
+    };
+
+    useEffect(() => {
+        setVaultName('');
+    }, [selectedVault]);
+
+    useEffect(() => {
+        if (open) {
+            setVaultName('');
+            deleteVaultMutation.reset();
+        }
+    }, [open]);
 
     return (
         <Transition.Root show={open} as={Fragment}>
@@ -741,7 +847,7 @@ function DeleteVaultPopup({
                     leaveFrom='opacity-100'
                     leaveTo='opacity-0'
                 >
-                    <div className='fixed inset-0 bg-black bg-opacity-10 transition-opacity' />
+                    <div className='fixed inset-0 bg-black bg-opacity-30 transition-opacity' />
                 </Transition.Child>
 
                 <div className='fixed inset-0 z-10 overflow-y-auto'>
@@ -791,52 +897,37 @@ function DeleteVaultPopup({
                                         className='flex w-5/6 flex-row items-center justify-center gap-2'
                                         id='button-group'
                                     >
-                                        <button
-                                            type='button'
-                                            className='mt-3 inline-flex w-2/3 justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0'
-                                            onClick={() => setOpen(false)}
+                                        <Button2
+                                            variant='secondary'
                                             ref={cancelButtonRef}
+                                            onClick={() => setOpen(false)}
                                         >
                                             Cancel
-                                        </button>
-                                        <button
-                                            type='button'
-                                            className='inline-flex w-2/3 justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2'
-                                            onClick={async () => {
-                                                if (vaultName != vaultData?.name) {
-                                                    toast.warn("Vault name doesn't match!");
-                                                    return;
-                                                }
-                                                deleteVaultMutation.mutateAsync(
-                                                    {
-                                                        vaultId: selectedVault,
-                                                    },
-                                                    {
-                                                        onSuccess: () => {
-                                                            toast.success(
-                                                                'Vault deleted successfully!',
-                                                            );
-                                                            queryClient.invalidateQueries([
-                                                                'vaults',
-                                                            ]);
-                                                            setSelectedVault(defaultVault);
-                                                            navigate('/app/home');
-                                                        },
-                                                        onError: (error: unknown) => {
-                                                            if (error instanceof Error) {
-                                                                toast.error(error.message);
-                                                            } else {
-                                                                // Handle other cases if necessary, or use a default error message
-                                                                toast.error('An error occurred');
-                                                            }
-                                                        },
-                                                    },
-                                                );
-                                                setOpen(false);
-                                            }}
-                                        >
-                                            Confirm
-                                        </button>
+                                        </Button2>
+                                        {
+                                            //delete-deleting-Success button
+                                            deleteVaultMutation.isLoading ? (
+                                                <Button2 variant='default' disabled>
+                                                    <UpdateIcon className='mr-2 h-6 w-6 animate-spin' />
+                                                    {'Deleting'}
+                                                </Button2>
+                                            ) : deleteVaultMutation.isSuccess ? (
+                                                <Button2
+                                                    variant='default'
+                                                    className='font-semibold text-green-600'
+                                                >
+                                                    <CheckCircledIcon className='mr-2 h-6 w-6 text-green-600' />
+                                                    Success
+                                                </Button2>
+                                            ) : (
+                                                <Button2
+                                                    variant='destructive'
+                                                    onClick={deleteVaultMutationTrigger}
+                                                >
+                                                    Confirm
+                                                </Button2>
+                                            )
+                                        }
                                     </div>
                                 </div>
                             </Dialog.Panel>
@@ -1048,6 +1139,8 @@ export const ItemPanel = () => {
     // const [shareButtonVisible, setShareButtonVisible] = useState(true);
     const [showPassword, setPasswordVisibility] = useState(false);
     const [itemUpdating, setItemUpdating] = useState(false);
+    const [editMode, setEditMode] = useState(false);
+    const [updateSuccess, setUpdateSuccess] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -1075,6 +1168,100 @@ export const ItemPanel = () => {
     // }
 
     const [itemDataView, setItemDataView] = useState<VaultItem | null>(null);
+
+    const upsertItem = async (id) => {
+        if (!itemFormDisabled) {
+            setItemUpdating(true);
+            if (id === 'new') {
+                const iek = uuidv4();
+                await createItemData.mutateAsync(
+                    {
+                        vaultId: selectedVault,
+                        title: itemDataView.title,
+                        website: itemDataView.website,
+                        password: itemDataView.password,
+                        username: itemDataView.username,
+                        iek: iek,
+                    },
+                    {
+                        onError: (error) => {
+                            toast.error(error);
+                        },
+                        onSuccess: () => {
+                            toast.success('Item created!');
+                            queryClient.invalidateQueries({
+                                queries: [
+                                    {
+                                        queryKey: ['vaults', selectedVault, 'items'],
+                                    },
+                                ],
+                            });
+                        },
+                    },
+                );
+            } else {
+                await updateItemData.mutateAsync(
+                    {
+                        vaultId: selectedVault,
+                        id: id,
+                        title: itemDataView.title,
+                        website: itemDataView.website,
+                        password: itemDataView.password,
+                        username: itemDataView.username,
+                        iek: itemDataView.iek,
+                    },
+                    {
+                        onError: (error) => {
+                            toast.error(error);
+                        },
+                        onSuccess: () => {
+                            // toast.success('Item updated!');
+                            setUpdateSuccess(true);
+                            setTimeout(() => {
+                                setEditMode(false);
+                                setUpdateSuccess(false);
+                            }, 3000);
+                            queryClient.invalidateQueries({
+                                queries: [
+                                    // change selectedVault to itemDataView.vaultId
+                                    {
+                                        queryKey: ['vaults', selectedVault, 'items'],
+                                    },
+                                ],
+                            });
+                        },
+                    },
+                );
+            }
+            setItemUpdating(false);
+        }
+        setItemFormDisability(!itemFormDisabled);
+    };
+
+    const deleteItemMutation = async () => {
+        await deleteItemData.mutateAsync(
+            {
+                vaultId: selectedVault,
+                id: id,
+            },
+            {
+                onError: (error) => {
+                    toast.error(error);
+                    navigate(-1);
+                },
+                onSuccess: () => {
+                    toast.success('Item deleted!');
+                    queryClient.invalidateQueries({
+                        queries: [
+                            // change selectedVault to itemDataView.vaultId
+                            { queryKey: ['vaults', selectedVault, 'items'] },
+                        ],
+                    });
+                    navigate(-1);
+                },
+            },
+        );
+    };
 
     useEffect(() => {
         if (itemDataRaw.isSuccess && itemDataRaw.data) {
@@ -1119,144 +1306,68 @@ export const ItemPanel = () => {
             className='relative z-[0] flex h-full flex-1 flex-col items-center justify-center self-stretch overflow-hidden bg-gray-950 px-[16px] py-[32px]'
             id='right-panel'
         >
-            {/*      <div className="absolute">
-        <ToastContainer />
-      </div>*/}
-            <div className='absolute right-[24px] top-[24px] flex flex-row self-end'>
-                {!itemFormDisabled && !itemUpdating && (
-                    <Button
-                        onClick={() => {
-                            setItemFormDisability(!itemFormDisabled);
-                            if (id === 'new') {
-                                // console.log(location.location.state?.previousPath);
-                                navigate(-1);
-                            }
-                        }}
-                        label='Cancel'
-                        buttonType='link'
-                        buttonClassName='relative top-[0rem] right-[0rem] z-[100] hover:bg-red-50'
-                        labelClassName='text-xl text-red-500'
-                    />
-                )}
-                <Button
-                    onClick={async () => {
-                        if (!itemFormDisabled) {
-                            setItemUpdating(true);
-                            if (id === 'new') {
-                                const iek = uuidv4();
-                                await createItemData.mutateAsync(
-                                    {
-                                        vaultId: selectedVault,
-                                        title: itemDataView.title,
-                                        website: itemDataView.website,
-                                        password: itemDataView.password,
-                                        username: itemDataView.username,
-                                        iek: iek,
-                                    },
-                                    {
-                                        onError: (error) => {
-                                            toast.error(error);
-                                        },
-                                        onSuccess: () => {
-                                            toast.success('Item created!');
-                                            queryClient.invalidateQueries({
-                                                queries: [
-                                                    {
-                                                        queryKey: [
-                                                            'vaults',
-                                                            selectedVault,
-                                                            'items',
-                                                        ],
-                                                    },
-                                                ],
-                                            });
-                                        },
-                                    },
-                                );
-                            } else {
-                                await updateItemData.mutateAsync(
-                                    {
-                                        vaultId: selectedVault,
-                                        id: id,
-                                        title: itemDataView.title,
-                                        website: itemDataView.website,
-                                        password: itemDataView.password,
-                                        username: itemDataView.username,
-                                        iek: itemDataView.iek,
-                                    },
-                                    {
-                                        onError: (error) => {
-                                            toast.error(error);
-                                        },
-                                        onSuccess: () => {
-                                            toast.success('Item updated!');
-                                            queryClient.invalidateQueries({
-                                                queries: [
-                                                    // change selectedVault to itemDataView.vaultId
-                                                    {
-                                                        queryKey: [
-                                                            'vaults',
-                                                            selectedVault,
-                                                            'items',
-                                                        ],
-                                                    },
-                                                ],
-                                            });
-                                        },
-                                    },
-                                );
-                            }
-                            setItemUpdating(false);
-                        }
-                        setItemFormDisability(!itemFormDisabled);
-                    }}
-                    label={itemFormDisabled ? 'Edit' : itemUpdating ? 'Saving' : 'Save'}
-                    buttonType='link'
-                    buttonClassName='relative top-[0rem] right-[0rem] z-[100]'
-                    labelClassName='text-xl'
-                >
-                    <MoonLoader loading={itemUpdating && true} size={15} />
-                </Button>
-                {/*        {itemFormDisabled && shareButtonVisible && (
-          <Button
-            label='Share'
-            buttonType='link'
-            buttonClassName='relative top-[0rem] right-[0rem] z-[100]'
-            labelClassName='text-xl'
-          />
-        )}*/}
-                {itemFormDisabled && !itemUpdating && id != 'new' && (
-                    <Button
-                        onClick={async () => {
-                            await deleteItemData.mutateAsync(
-                                {
-                                    vaultId: selectedVault,
-                                    id: id,
-                                },
-                                {
-                                    onError: (error) => {
-                                        toast.error(error);
-                                        navigate(-1);
-                                    },
-                                    onSuccess: () => {
-                                        toast.success('Item deleted!');
-                                        queryClient.invalidateQueries({
-                                            queries: [
-                                                // change selectedVault to itemDataView.vaultId
-                                                { queryKey: ['vaults', selectedVault, 'items'] },
-                                            ],
-                                        });
-                                        navigate(-1);
-                                    },
-                                },
-                            );
-                        }}
-                        label='Delete'
-                        buttonType='link'
-                        buttonClassName='relative top-[0rem] right-[0rem] z-[100] hover:bg-red-50'
-                        labelClassName='text-xl text-red-500'
-                    />
-                )}
+            <div className='absolute right-[24px] top-[24px] flex flex-row gap-3 self-end'>
+                {
+                    // Cancel button
+                    editMode && !updateSuccess && (
+                        <Button2
+                            disabled={itemUpdating}
+                            variant='ghost'
+                            onClick={() => {
+                                setItemFormDisability(true);
+                                setEditMode(false);
+                                if (id === 'new') {
+                                    navigate(-1);
+                                }
+                            }}
+                        >
+                            Cancel
+                        </Button2>
+                    )
+                }
+                {
+                    // Edit button
+                    !editMode && (
+                        <Button2
+                            variant='secondary'
+                            size='icon'
+                            onClick={() => {
+                                setEditMode(true);
+                                setItemFormDisability(false);
+                            }}
+                        >
+                            <Pencil2Icon className='h-6 w-6' />
+                        </Button2>
+                    )
+                }
+                {
+                    //Save-Saving-Success button
+                    editMode &&
+                        (itemUpdating ? (
+                            <Button2 variant='ghost'>
+                                <UpdateIcon className='mr-2 h-6 w-6 animate-spin' />
+                                {'saving'}
+                            </Button2>
+                        ) : updateSuccess ? (
+                            <Button2 variant='secondary' className='font-semibold text-green-600'>
+                                <CheckCircledIcon className='mr-2 h-6 w-6 text-green-600' />
+                                Success
+                            </Button2>
+                        ) : (
+                            <Button2 variant='ghost' onClick={() => upsertItem(id)}>
+                                Save
+                            </Button2>
+                        ))
+                }
+
+                {
+                    // Delete button
+                    !editMode && !itemUpdating && id != 'new' && (
+                        <Button2 variant='secondary' size='icon' onClick={deleteItemMutation}>
+                            <TrashIcon className='h-6 w-6 text-red-500' />
+                        </Button2>
+                    )
+                }
             </div>
             <div className='grid grid-cols-2 grid-rows-4 items-center justify-center justify-items-center gap-4'>
                 <div className='flex-1 self-stretch' id='iconframe'>
@@ -1279,6 +1390,7 @@ export const ItemPanel = () => {
                 />
                 <label className='text-left font-medium text-gray-400'>Username</label>
                 <Input
+                    animationKey={itemFormDisabled}
                     className={`flex w-8/12 overflow-hidden text-lg ${
                         itemFormDisabled ? '' : 'border-1 border-gray-300 bg-gray-700 bg-opacity-40'
                     }`}
@@ -1293,6 +1405,7 @@ export const ItemPanel = () => {
                 <label className='text-left font-medium text-gray-400'>Password</label>
                 <div className='relative box-border flex w-8/12 flex-1 flex-row items-stretch justify-items-stretch'>
                     <Input
+                        animationKey={itemFormDisabled}
                         className={`flex w-full overflow-hidden text-lg ${
                             itemFormDisabled
                                 ? ''
@@ -1320,6 +1433,7 @@ export const ItemPanel = () => {
 
                 <label className='text-left font-medium text-gray-400'>Website</label>
                 <Input
+                    animationKey={itemFormDisabled}
                     className={`box-border flex w-8/12 overflow-hidden text-lg ${
                         itemFormDisabled
                             ? ''
@@ -1551,7 +1665,19 @@ const AppHome = () => {
                     className='flex flex-1 flex-row items-stretch overflow-hidden'
                     id='apphome-inner'
                 >
-                    <ToastContainer />
+                    <Toaster
+                        position='bottom-right'
+                        reverseOrder={false}
+                        toastOptions={{
+                            duration: 5000,
+                            style: {
+                                background: '#000000',
+                                color: '#fff',
+                                border: '1px solid #1F2937',
+                            },
+                        }}
+                    />
+
                     <AddVaultItemPopup
                         open={openAddVaultItemPopup}
                         setOpen={setOpenAddVaultItem}

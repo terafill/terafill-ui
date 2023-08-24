@@ -1,16 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+import { UpdateIcon, CheckCircledIcon } from '@radix-ui/react-icons';
 import { motion } from 'framer-motion';
 import { Outlet, useNavigate, useOutletContext } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
-import Button from '../../components/Button';
+import Button, { Button2 } from '../../components/Button';
 import { Input } from '../../components/Input';
 import Logo from '../../components/Logo';
 // import Navbar from '../../components/Navbar';
 import { initateSignupProcess, completeSignupProcess } from '../../data/auth';
 import { storeAuthData } from '../../utils/security';
+import { setScheduler } from 'cypress/types/bluebird';
+import { error } from 'console';
 
 // const countries = [
 //   'India',
@@ -43,21 +46,31 @@ export const CreateAccountForm = () => {
     const passwordRef = useRef<HTMLInputElement | null>(null);
     const passwordRepeatRef = useRef<HTMLInputElement | null>(null);
 
-    const createAccountAction = async (e) => {
-        e.preventDefault();
-        if (
-            passwordRef.current?.value &&
-            passwordRef.current?.value != passwordRepeatRef.current?.value
-        ) {
-            toast.error("Passwords don't match!");
-        } else {
-            const { error } = await initateSignupProcess(userData.email);
+    const [loading, setLoading] = useState(false);
+    // const [success, setSuccess] = useState(false);
 
-            if (error) {
-                toast.error(error);
+    const createAccountAction = async (e) => {
+        try {
+            setLoading(true);
+            e.preventDefault();
+            if (
+                passwordRef.current?.value &&
+                passwordRef.current?.value != passwordRepeatRef.current?.value
+            ) {
+                toast.error("Passwords don't match!");
             } else {
-                navigate('email-confirmation');
+                const { error } = await initateSignupProcess(userData.email);
+                setLoading(false);
+                if (error) {
+                    toast.error(error);
+                } else {
+                    // setSuccess(true);
+                    setTimeout(() => navigate('email-confirmation'), 200);
+                }
             }
+        } catch (error) {
+            setLoading(false);
+            console.error('Error occured:', error);
         }
     };
 
@@ -151,7 +164,17 @@ export const CreateAccountForm = () => {
             <p className='text-destructive-foreground'>
                 Note: Memorise this password and keep it safe.
             </p>
-            <Button id='submit-button' buttonType='light' label='Create Account' type='submit' />
+            {/* <Button id='submit-button' buttonType='light' label='Create Account' type='submit' /> */}
+            {loading ? (
+                <Button2 disabled>
+                    <UpdateIcon className='mr-2 h-4 w-4 animate-spin' />
+                    Loading
+                </Button2>
+            ) : (
+                <Button2 variant='default' type='submit' data-test='submit'>
+                    Continue
+                </Button2>
+            )}
         </form>
     );
 };
@@ -227,30 +250,41 @@ export const EmailConfirmationForm = () => {
         }
     };
 
-    const signupConfirmationAction = async (e) => {
-        e.preventDefault();
-        const verificationCode = [...pinState].join('');
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
 
-        const { error } = await completeSignupProcess(
-            userData.email,
-            userData.password,
-            verificationCode,
-            userData.firstName,
-            userData.lastName,
-        );
-        if (error) {
-            toast.error(error);
-        } else {
-            storeAuthData(userData.email);
-            toast.success('Signup successful');
-            navigate('/login');
+    const signupConfirmationAction = async (e) => {
+        try {
+            setLoading(true);
+            // e.preventDefault();
+            const verificationCode = [...pinState].join('');
+
+            const { error } = await completeSignupProcess(
+                userData.email,
+                userData.password,
+                verificationCode,
+                userData.firstName,
+                userData.lastName,
+            );
+            if (error) {
+                toast.error(error);
+                setLoading(false);
+            } else {
+                setLoading(false);
+                setSuccess(true);
+                storeAuthData(userData.email);
+                toast.success('Signup successful');
+                setTimeout(() => navigate('/login'), 3000);
+            }
+        } catch (error) {
+            console.error('Error occured: ', error);
         }
     };
 
     return (
         <form
             className='flex flex-col items-center justify-center gap-[32px] overflow-hidden px-32 py-8'
-            onSubmit={signupConfirmationAction}
+            // onSubmit={signupConfirmationAction}
         >
             <ToastContainer style={{ zIndex: 9999 }} />
             <h4 className='text-center text-3xl font-semibold'>Verify your email address</h4>
@@ -260,7 +294,7 @@ export const EmailConfirmationForm = () => {
                     <b className='text-foreground'> {userData.email}</b>
                 </span>
             </p>
-            <div className='flex w-full flex-row justify-evenly'>
+            <div className='flex w-full flex-row justify-evenly gap-2'>
                 {pinInputRefs.map((_, index) => (
                     <Input
                         key={index}
@@ -305,14 +339,29 @@ export const EmailConfirmationForm = () => {
                     }}
                 />
             </div>
-            <Button
+            {/* <Button
                 buttonType='light'
                 labelClassName='text-gray-800'
                 id='submit-button'
                 // ref={submitButtonRef}
                 label='Submit'
                 type='submit'
-            />
+            /> */}
+            {loading ? (
+                <Button2 disabled>
+                    <UpdateIcon className='mr-2 h-4 w-4 animate-spin' />
+                    Signing up
+                </Button2>
+            ) : success ? (
+                <Button2 variant='default' className='font-semibold text-green-800'>
+                    <CheckCircledIcon className='mr-2 h-6 w-6 text-green-800' />
+                    Success
+                </Button2>
+            ) : (
+                <Button2 variant='default' type='submit' data-test='submit' onClick={signupConfirmationAction}>
+                    Continue
+                </Button2>
+            )}
         </form>
     );
 };

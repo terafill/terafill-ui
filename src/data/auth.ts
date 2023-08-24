@@ -27,7 +27,8 @@ export const initateSignupProcess = async (email: string) => {
         if (isAxiosError(error)) {
             const errorMessage =
                 error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-            throw Error(errorMessage);
+            // throw Error(errorMessage);
+            return { error: error }
         }
         throw error;
     }
@@ -78,7 +79,8 @@ export const completeSignupProcess = async (
         if (isAxiosError(error)) {
             const errorMessage =
                 error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-            throw Error(errorMessage);
+            // throw Error(errorMessage);
+            return { error: error }
         }
         throw error;
     }

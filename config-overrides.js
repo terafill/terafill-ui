@@ -1,5 +1,13 @@
+const { override, addWebpackAlias } = require('customize-cra');
 const webpack = require('webpack');
+const path = require('path');
+
 module.exports = function override(config, env) {
+    // eslint-disable-line no-param-reassign
+    config = addWebpackAlias({
+        '@': path.resolve(__dirname, 'src'),
+    })(config); // Call the returned function with the current config
+
     const fallback = config.resolve.fallback || {};
     Object.assign(fallback, {
         crypto: require.resolve('crypto-browserify'),

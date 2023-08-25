@@ -2,16 +2,20 @@ import React from 'react';
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import AppHome, { ItemPanel, ItemPanelIndex } from './pages/app/AppHome';
-import HelpSupport from './pages/app/HelpSupport';
-import Import from './pages/app/Import';
-import PersonalInfo from './pages/app/PersonalInfo';
-import LoginPage from './pages/auth/LoginPage';
-import SignUpPage, { CreateAccountForm, EmailConfirmationForm } from './pages/auth/SignUpPage';
-import FaqPage from './pages/marketing/FaqPage';
-import LandingPage from './pages/marketing/LandingPage';
-import PricingPage from './pages/marketing/PricingPage';
-import ProductsPage from './pages/marketing/ProductsPage';
+// import HelpSupport from './pages/app/HelpSupport';
+import AppHome from './pages/app/Home/index';
+import ItemPanel from './pages/app/Home/ItemPanel';
+import ItemPanelIndex from './pages/app/Home/ItemPanelIndex';
+// import Import from './pages/app/Import';
+// import PersonalInfo from './pages/app/PersonalInfo';
+import LoginPage from './pages/auth/Login';
+import CreateAccountForm from './pages/auth/Signup/CreateAccountForm';
+import EmailConfirmationForm from './pages/auth/Signup/EmailConfirmationForm';
+import SignUpPage from './pages/auth/Signup/index';
+// import FaqPage from './pages/marketing/FaqPage';
+import LandingPage from './pages/marketing/Landing/Landing';
+// import PricingPage from './pages/marketing/PricingPage';
+// import ProductsPage from './pages/marketing/ProductsPage';
 
 const router = createBrowserRouter([
     {
@@ -36,10 +40,10 @@ const router = createBrowserRouter([
                     },
                 ],
             },
-            {
-                path: 'profile',
-                element: <PersonalInfo />,
-            },
+            // {
+            //     path: 'profile',
+            //     element: <PersonalInfo />,
+            // },
         ],
     },
     // {
@@ -76,14 +80,14 @@ const router = createBrowserRouter([
             },
         ],
     },
-    {
-        path: '/import',
-        element: <Import />,
-    },
-    {
-        path: '/help-and-support',
-        element: <HelpSupport />,
-    },
+    // {
+    //     path: '/import',
+    //     element: <Import />,
+    // },
+    // {
+    //     path: '/help-and-support',
+    //     element: <HelpSupport />,
+    // },
 ]);
 
 function App() {

@@ -1,120 +1,32 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
-import Button, { Button2 } from '../../components/Button';
-import Footer from '../../components/Footer';
-import { Input } from '../../components/Input';
-import Logo from '../../components/Logo';
-import Navbar from '../../components/Navbar';
+import AnimatedText from './AnimatedText';
+import { Button2 } from '../../../components/form/Button';
+import Footer from '../../../components/layout/Footer';
+import { Input } from '../../../components/form/Input';
+import Logo from '../../../components/ui/Logo';
+import Navbar from '../../../components/layout/Navbar';
 
-const AnimatedText = () => {
-    const [textState, setTextState] = useState({
-        text: 'Developers',
-        className: '',
-        key: 0, // Add a key to distinguish different states
-    });
-
-    const gradientStyles = {
-        '': {}, // default
-        'green-cyan': {
-            background: 'linear-gradient(to right, green, cyan)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            letterSpacing: '0.025em',
-        },
-        'blue-purple': {
-            background: 'linear-gradient(to right, blue, purple)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            letterSpacing: '0.08em',
-        },
-        'white-black': {
-            background: 'linear-gradient(to bottom, white, black)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            letterSpacing: '0.08em',
-        },
-    };
-
-    useEffect(() => {
-        let counter = 0;
-
-        const interval = setInterval(() => {
-            counter = (counter + 1) % 4;
-
-            switch (counter) {
-                case 1:
-                    setTextState({
-                        text: 'Engineers',
-                        className: 'green-cyan',
-                        key: counter,
-                    });
-                    break;
-                case 2:
-                    setTextState({
-                        text: 'Leaders',
-                        className: 'blue-purple',
-                        key: counter,
-                    });
-                    break;
-                case 3:
-                    setTextState({
-                        text: 'Artists',
-                        className: 'white-black',
-                        key: counter,
-                    });
-                    break;
-                default:
-                    setTextState({
-                        text: 'Developers',
-                        className: '',
-                        key: counter,
-                    });
-            }
-        }, 3000);
-
-        return () => clearInterval(interval);
-    }, []);
-
-    return (
-        <AnimatePresence mode='wait'>
-            <motion.span
-                key={textState.key}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 2 }}
-                className='gradient-text z-0'
-                style={gradientStyles[textState.className]}
-                id='animatedText'
-            >
-                {textState.text}
-            </motion.span>
-        </AnimatePresence>
-    );
-};
 
 const LandingPage = () => {
     const navigate = useNavigate();
-    const emailRef = useRef(null);
-    const emailRefSecondary = useRef(null);
+    const emailRef = useRef<HTMLInputElement>(null);
+    const emailRefSecondary = useRef<HTMLInputElement>(null);
 
     return (
         <>
             <Navbar navbarType='landing' />
             <motion.div
-                // key={textState.key}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
                 className='flex h-screen w-full flex-col'
-                // style={gradientStyles[textState.className]}
                 id=''
             >
-                {/* <div className='flex h-screen w-full flex-col '> */}
                 <div
                     className='flex h-screen shrink-0 flex-col items-center justify-center gap-16'
                     id='section-1'
@@ -140,11 +52,10 @@ const LandingPage = () => {
                         <Input ref={emailRef} type='email' placeholder='Email address' />
                         <Button2
                             variant='default'
-                            onClick={() => navigate(`/signup?email=${emailRef.current.value}`)}
+                            onClick={() => navigate(`/signup?email=${emailRef?.current?.value??''}`)}
                         >
                             Get started
                         </Button2>
-                        {/* <Button label='Get started' buttonType='light' /> */}
                     </div>
                 </div>
                 <div
@@ -221,11 +132,10 @@ const LandingPage = () => {
                     </div>
                     <div className='flex w-[500px] justify-center gap-4' id='action-frame'>
                         <Input ref={emailRefSecondary} type='email' placeholder='Email address' />
-                        {/* <Button label='Get started' buttonType='light' /> */}
                         <Button2
                             variant='default'
                             onClick={() =>
-                                navigate(`/signup?email=${emailRefSecondary.current.value}`)
+                                navigate(`/signup?email=${emailRefSecondary?.current?.value??''}`)
                             }
                         >
                             Get started

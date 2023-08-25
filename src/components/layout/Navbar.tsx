@@ -2,10 +2,10 @@ import React, { memo, useState, useRef, useCallback } from 'react';
 
 import { Link, useNavigate } from 'react-router-dom';
 
-import Button, { Button2 } from './Button';
-import NotificationsMenu from './NotificationsMenu';
-import PortalPopup from './PortalPopup';
-import ProfileMenu from './ProfileMenu';
+import { Button2 } from '../form/Button';
+import NotificationsMenu from '../modals/NotificationsMenu';
+import PortalPopup from '../modals/PortalPopup';
+import ProfileMenu from '../modals/ProfileMenu';
 
 const Navbar = ({ navbarType = 'landing' }) => {
     const navigate = useNavigate();
@@ -98,14 +98,13 @@ const Navbar = ({ navbarType = 'landing' }) => {
                 )}
                 {navbarType === 'app' ? (
                     <div className='box-border flex flex-row items-center justify-center gap-[8px] border-l-[0.8px] px-4'>
-                        {/*
-            <button
-              className='cursor-pointer [border:none] py-2 px-2 bg-gray hover:bg-gray-800 rounded-xl shadow-[0px_0px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-start gap-[8px]'
-              ref={notificationsMenuButtonRef}
-              onClick={openNotificationsPopup}
-            >
-              <img className='relative w-6 h-6 shrink-0' alt='' src='/bell.svg' />
-            </button>*/}
+                        {/* <button
+                            className='bg-gray flex cursor-pointer flex-row items-center justify-start gap-[8px] rounded-xl px-2 py-2 shadow-[0px_0px_4px_rgba(0,_0,_0,_0.25)] [border:none] hover:bg-gray-800'
+                            ref={notificationsMenuButtonRef}
+                            onClick={openNotificationsPopup}
+                        >
+                            <img className='relative h-6 w-6 shrink-0' alt='' src='/bell.svg' />
+                        </button> */}
                         <button
                             className='bg-gray flex cursor-pointer flex-row items-center justify-start gap-[8px] rounded-xl px-2 py-2 shadow-[0px_0px_4px_rgba(0,_0,_0,_0.25)] [border:none] hover:bg-gray-800'
                             ref={profileMenuButtonRef}

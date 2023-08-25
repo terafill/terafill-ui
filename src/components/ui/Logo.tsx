@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { cn } from '../utils/basic';
+import { cn } from '../../utils/basic';
 
 interface Props {
     variant: string;

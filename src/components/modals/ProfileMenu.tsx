@@ -3,10 +3,11 @@ import React, { memo, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { MenuItem } from './Menu';
-import PortalPopup from './PortalPopup';
-import SignoutPopup from './SignoutPopup';
-import { cleanupUserSession } from './TokenTools';
-import { logoutUser } from '../data/auth';
+import { logoutUser } from '../../data/auth';
+import { cleanupUserSession } from '../../utils/tokenTools';
+import PortalPopup from '../modals/PortalPopup';
+import SignoutPopup from '../modals/SignoutPopup';
+
 
 const ProfileMenu = () => {
     const [isSignoutPopupOpen, setSignoutPopupOpen] = useState(false);

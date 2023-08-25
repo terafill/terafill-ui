@@ -5,7 +5,6 @@ import {
     HomeIcon,
     UsersIcon,
     ShieldCheckIcon,
-    UserIcon,
 } from '@heroicons/react/24/outline';
 import { NavLink } from 'react-router-dom';
 

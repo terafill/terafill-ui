@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 
-import Button from './Button';
+import Button from '../form/Button';
 
 const SignoutPopup = ({ onConfirm, onClose }) => {
     return (

@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { motion } from 'framer-motion';
 
-import { cn } from '../utils/basic';
+import { cn } from '../../utils/basic';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 

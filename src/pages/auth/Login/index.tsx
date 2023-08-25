@@ -1,16 +1,16 @@
 import React, { useState, memo } from 'react';
 
-import { ReloadIcon, UpdateIcon, CheckCircledIcon } from '@radix-ui/react-icons';
+import { UpdateIcon, CheckCircledIcon } from '@radix-ui/react-icons';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
-import Button, { Button2 } from '../../components/Button';
-import { Input } from '../../components/Input';
-import Logo from '../../components/Logo';
-import { loginUser } from '../../data/auth';
-import { storeAuthData } from '../../utils/security';
+import { Button2 } from '../../../components/form/Button';
+import { Input } from '../../../components/form/Input';
+import Logo from '../../../components/ui/Logo';
+import { loginUser } from '../../../data/auth';
+import { storeAuthData } from '../../../utils/security';
 
 const LoginPage = () => {
     const navigate = useNavigate();

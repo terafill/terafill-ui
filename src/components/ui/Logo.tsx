@@ -9,9 +9,9 @@ interface Props {
 
 const Logo: FC<Props> = ({ variant, className }) => {
     if (variant == 'mini') {
-        return <img src='Logo-mini-derived.png' className={cn('h-24 w-24', className)} />;
+        return <img src='/logos/internal/logo_mini.png' className={cn('h-24 w-24', className)} />;
     } else if (variant == 'full') {
-        return <img className='h-[88px]' alt='' src='Logo_Extra.png' />;
+        return <img className='h-[88px]' alt='' src='/logos/internal/logo_full.png' />;
     }
 };
 

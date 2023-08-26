@@ -139,7 +139,7 @@ const NavigationPanel = ({
                 className='absolute bottom-[1.2rem] right-[1.2rem] z-[100] h-[3rem] w-[3rem]'
                 size='icon'
             >
-                <img className='h-[1.5rem] w-[1.5rem]' src='/icbaselineplus.svg' />
+                <img className='h-[1.5rem] w-[1.5rem]' src='/icons/plus.svg' />
             </Button2>
         </div>
     );

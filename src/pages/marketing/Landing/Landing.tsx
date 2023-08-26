@@ -73,7 +73,7 @@ const LandingPage = () => {
                         </p>
                     </div>
                     <div className='flex flex-1 object-contain px-[80px]'>
-                        <img src='./undraw_fast_gray.svg' />
+                        <img src='/images/undraw_fast_gray.svg' />
                     </div>
                 </div>
                 <div
@@ -93,7 +93,7 @@ const LandingPage = () => {
                         </p>
                     </div>
                     <div className='flex flex-1 object-contain px-[80px]'>
-                        <img src='./KeyboardBase.png' />
+                        <img src='/images/keyboard_base.png' />
                     </div>
                 </div>
                 <div
@@ -114,7 +114,7 @@ const LandingPage = () => {
                         </p>
                     </div>
                     <div className='flex flex-1 object-contain px-[80px]'>
-                        <img src='undraw_security_gray.svg' />
+                        <img src='/images/undraw_security_gray.svg' />
                     </div>
                 </div>
                 <div

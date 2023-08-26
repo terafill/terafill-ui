@@ -7,6 +7,55 @@ import { BASE_URL, CLIENT_ID } from '../config';
 import { UserAuthResponse } from '../schemas/user';
 import { getAuthClientDetails, getRSAPrivateKey, getSRPClient } from '../utils/security';
 
+interface httpCallResponse {
+    data?: unknown;
+    error?: string;
+    statusCode?: number;
+    subCode?: number;
+}
+
+const httpCall = async (url, method, headers = {}, data = {}): Promise<httpCallResponse> => {
+    const jsonData = JSON.stringify(data);
+
+    const config = {
+        withCredentials: true,
+        method: method,
+        url: url,
+        headers: {
+            ...headers,
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            'client-id': CLIENT_ID,
+        },
+        data: jsonData,
+    };
+
+    // console.log('httpCall.config', config);
+
+    try {
+        const response = await axios.request(config);
+        return { data: response?.data };
+    } catch (error) {
+        console.log('httpCall', error);
+        if (error instanceof AxiosError) {
+            let errorMessage = 'Something went wrong. Please try again.';
+            let subCode = 0
+            if (error.code === 'ERR_NETWORK') {
+                errorMessage = 'Server is down. Please try again.';
+                subCode = 1;
+            } else if (error?.response?.data?.detail?.info) {
+                errorMessage = error?.response?.data?.detail?.info;
+            }
+            return {
+                error: errorMessage,
+                statusCode: error?.response?.status,
+                subCode: error?.response?.data?.detail?.code | subCode,
+            };
+        }
+        throw error;
+    }
+};
+
 export const initateSignupProcess = async (email: string) => {
     try {
         const data = JSON.stringify({
@@ -86,109 +135,61 @@ export const completeSignupProcess = async (
     }
 };
 
-type ErrorResponse = { error: string };
 
 export const getSalt = async (
     email: string,
-): Promise<z.infer<typeof UserAuthResponse.getSalt.read> | ErrorResponse> => {
-    const data = JSON.stringify({
-        email: email,
-    });
+): Promise<z.infer<typeof UserAuthResponse.getSalt.read> | httpCallResponse> => {
+    const httpCallResponse = await httpCall(`${BASE_URL}/auth/salt`, 'post', {}, { email: email });
 
-    const config = {
-        withCredentials: true,
-        method: 'post',
-        url: `${BASE_URL}/auth/salt`,
-        headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            'client-id': CLIENT_ID,
-        },
-        data: data,
-    };
-
-    try {
-        const response = await axios.request(config);
-        return UserAuthResponse.getSalt.read.parse(response?.data);
-    } catch (error) {
-        if (error instanceof AxiosError) {
-            const errorMessage =
-                error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-            throw Error(errorMessage);
-        }
-        throw error;
+    if (httpCallResponse?.error) {
+        return httpCallResponse;
     }
+    return UserAuthResponse.getSalt.read.parse(httpCallResponse?.data);
 };
 
 const initiateLogin = async (
     email: string,
     clientPublicKey: string,
-): Promise<z.infer<typeof UserAuthResponse.initiateLogin.read>> => {
-    const data = JSON.stringify({
-        email: email,
-        clientPublicKey: clientPublicKey,
-    });
-
-    const config = {
-        withCredentials: true,
-        method: 'post',
-        url: `${BASE_URL}/auth/login`,
-        headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            'client-id': CLIENT_ID,
+): Promise<z.infer<typeof UserAuthResponse.initiateLogin.read> | httpCallResponse> => {
+    const httpCallResponse = await httpCall(
+        `${BASE_URL}/auth/login`,
+        'post',
+        {},
+        {
+            email: email,
+            clientPublicKey: clientPublicKey,
         },
-        data: data,
-    };
-    try {
-        const response = await axios(config);
-        return UserAuthResponse.initiateLogin.read.parse(response.data);
-    } catch (error) {
-        if (isAxiosError(error)) {
-            const errorMessage =
-                error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-            throw Error(errorMessage);
-        }
-        throw error;
+    );
+    if (httpCallResponse?.error) {
+        return httpCallResponse;
     }
+
+    return UserAuthResponse.initiateLogin.read.parse(httpCallResponse?.data);
 };
 
 const confirmLogin = async (email: string, clientProof: string) => {
-    const data = JSON.stringify({
-        email: email,
-        clientProof: clientProof,
-    });
-
-    const config = {
-        withCredentials: true,
-        method: 'post',
-        url: `${BASE_URL}/auth/login/confirm`,
-        headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            'client-id': CLIENT_ID,
+    const httpCallResponse = await httpCall(
+        `${BASE_URL}/auth/login/confirm`,
+        'post',
+        {},
+        {
+            email: email,
+            clientProof: clientProof,
         },
-        data: data,
-    };
-    try {
-        const response = await axios(config);
-        return UserAuthResponse.confirmLogin.read.parse(response.data);
-    } catch (error) {
-        if (isAxiosError(error)) {
-            const errorMessage =
-                error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-            throw Error(errorMessage);
-        }
-        throw error;
+    );
+    if (httpCallResponse?.error) {
+        return httpCallResponse;
     }
+
+    return UserAuthResponse.confirmLogin.read.parse(httpCallResponse?.data);
 };
 
 export const loginUser = async (email: string, password: string) => {
     try {
         // Get salt from server
         const saltResponse = await getSalt(email);
-        if ('error' in saltResponse) {
-            throw Error(saltResponse.error);
+        if (saltResponse?.error) {
+            return saltResponse;
         }
         const { salt } = saltResponse;
 
@@ -202,9 +203,11 @@ export const loginUser = async (email: string, password: string) => {
             email,
             Buffer.from(clientPubliKey).toString('hex'),
         );
-        // if ("error" in loginResponse){
-        //   throw Error(loginResponse.error)
-        // }
+
+        if (loginResponse?.error) {
+            return loginResponse;
+        }
+
         const { serverPublicKey } = loginResponse;
         client.setB(Buffer.from(serverPublicKey, 'hex'));
 
@@ -215,9 +218,11 @@ export const loginUser = async (email: string, password: string) => {
             email,
             Buffer.from(clientProof).toString('hex'),
         );
-        // if ("error" in confirmLoginResponse){
-        //   throw Error(confirmLoginResponse.error)
-        // }
+
+        if (confirmLoginResponse?.error) {
+            return confirmLoginResponse;
+        }
+
         const { serverProof, keyWrappingKey } = confirmLoginResponse;
 
         if (client.checkM2(Buffer.from(serverProof, 'hex'))) {
@@ -229,37 +234,17 @@ export const loginUser = async (email: string, password: string) => {
             return { error: 'Server not verified!' };
         }
     } catch (error) {
-        if (isAxiosError(error)) {
-            const errorMessage =
-                error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-            throw Error(errorMessage);
-        }
+        console.error("loginUser.error", error)
         throw error;
     }
 };
 
 export const getLoginStatus = async () => {
-    try {
-        const config = {
-            withCredentials: true,
-            method: 'get',
-            url: `${BASE_URL}/auth/status`,
-            headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json',
-            },
-        };
-
-        const response = await axios(config);
-        return UserAuthResponse.getLoginStatus.read.parse(response?.data);
-    } catch (error) {
-        if (isAxiosError(error)) {
-            const errorMessage =
-                error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-            throw Error(errorMessage);
-        }
-        throw error;
+    const httpCallResponse = await httpCall(`${BASE_URL}/auth/status`, 'get');
+    if (httpCallResponse?.error) {
+        return httpCallResponse;
     }
+    return UserAuthResponse.getLoginStatus.read.parse(httpCallResponse?.data);
 };
 
 export const logoutUser = () => {

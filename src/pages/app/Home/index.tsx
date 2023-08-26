@@ -11,12 +11,6 @@ import EditVaultPopup from './EditVaultPopup';
 import NavigationPanel from './NavigationPanel';
 import Navbar from '../../../components/layout/Navbar';
 import SideNavbar from '../../../components/layout/SideNavbar';
-import {
-    getVaultItem,
-    updateVaultItem,
-    createVaultItem,
-    deleteVaultItem,
-} from '../../../data/item';
 import { getVaults, getVaultItems } from '../../../data/vault';
 import { getKeyWrappingKeyPair, decryptData } from '../../../utils/security';
 import { useTokenExpiration } from '../../../utils/tokenTools';

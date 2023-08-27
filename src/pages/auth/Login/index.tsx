@@ -27,6 +27,7 @@ const LoginPage = () => {
 
     const attemptLogin = async (e) => {
         try {
+            toast.remove();
             e.preventDefault();
             if (!isOnline) {
                 toast.error('Your device is offline', {
@@ -35,26 +36,26 @@ const LoginPage = () => {
                 return;
             }
             setLoading(true);
-            const { error, subCode  } = await loginUser(userData.email, userData.password);
+            const { data, error, subCode } = await loginUser(userData.email, userData.password);
             setLoading(false);
             if (error) {
-                if(subCode === 0 || subCode === 1){
+                if (subCode === 0 || subCode === 1) {
                     showBoundary(error);
-                }
-                else{
+                } else {
+                    setLoading(false);
                     toast.error(error);
                 }
             } else {
                 setSuccess(true);
                 setTimeout(() => setSuccess(false), 3000);
-                storeAuthData(userData.email, userData.password, response.keyWrappingKey);
+                storeAuthData(userData.email, userData.password, data.keyWrappingKey);
                 navigate('/app/home');
             }
         } catch (error) {
             setLoading(false);
             console.log('Unexpected error: ', error);
             // throw error;
-            showBoundary(error);
+            showBoundary(undefined);
         }
     };
 

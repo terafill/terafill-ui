@@ -1,14 +1,16 @@
 import React, { useState, useRef } from 'react';
 
+import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import { UpdateIcon } from '@radix-ui/react-icons';
+import { useErrorBoundary } from 'react-error-boundary';
+import { toast } from 'react-hot-toast';
 import { useNavigate, useOutletContext } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
 
-import 'react-toastify/dist/ReactToastify.css';
 import { Button2 } from '../../../components/form/Button';
 import { Input } from '../../../components/form/Input';
 import Logo from '../../../components/ui/Logo';
 import { initateSignupProcess } from '../../../data/auth';
+import useUserDevice from '../../../hooks/useUserDevice';
 
 const CreateAccountForm = () => {
     // eslint-disable-next-line
@@ -21,28 +23,47 @@ const CreateAccountForm = () => {
     const [loading, setLoading] = useState(false);
     // const [success, setSuccess] = useState(false);
 
+    const { isOnline } = useUserDevice();
+    const { showBoundary } = useErrorBoundary();
+
     const createAccountAction = async (e) => {
         try {
-            setLoading(true);
+            toast.remove();
             e.preventDefault();
-            if (
+            if (!isOnline) {
+                toast.error('Your device is offline', {
+                    icon: <ExclamationTriangleIcon height={'30px'} width={'30px'} color='yellow' />,
+                });
+                return;
+            } else if (
                 passwordRef.current?.value &&
                 passwordRef.current?.value != passwordRepeatRef.current?.value
             ) {
-                toast.error("Passwords don't match!");
+                toast.error("Passwords don't match!", {
+                    icon: <ExclamationTriangleIcon height={'30px'} width={'30px'} color='yellow' />,
+                });
+
+                return;
             } else {
-                const { error } = await initateSignupProcess(userData.email);
+                setLoading(true);
+                const { error, subCode } = await initateSignupProcess(userData.email);
                 setLoading(false);
                 if (error) {
-                    toast.error(error);
+                    if (subCode === 0 || subCode === 1) {
+                        showBoundary(error);
+                    } else {
+                        setLoading(false);
+                        toast.error(error);
+                    }
                 } else {
-                    // setSuccess(true);
                     setTimeout(() => navigate('email-confirmation'), 200);
                 }
             }
         } catch (error) {
             setLoading(false);
-            console.error('Error occured:', error);
+            console.log('Unexpected error: ', error);
+            // throw error;
+            showBoundary(undefined);
         }
     };
 
@@ -51,7 +72,6 @@ const CreateAccountForm = () => {
             className='flex flex-col items-center justify-center gap-[16px] px-32 py-8'
             onSubmit={createAccountAction}
         >
-            <ToastContainer style={{ zIndex: 9999 }} />
             <Logo variant='mini' className='h-16 w-16' />
             <h4 className='leading-[120% relative m-0 text-center text-3xl font-bold'>
                 Create your Terafill account

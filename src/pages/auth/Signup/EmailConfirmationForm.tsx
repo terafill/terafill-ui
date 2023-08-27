@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 
+import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import { UpdateIcon, CheckCircledIcon } from '@radix-ui/react-icons';
+import { useErrorBoundary } from 'react-error-boundary';
+import { toast } from 'react-hot-toast';
 import { useNavigate, useOutletContext } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
 
-import 'react-toastify/dist/ReactToastify.css';
 import PinInput from './PinInput';
 import Button, { Button2 } from '../../../components/form/Button';
 import { initateSignupProcess, completeSignupProcess } from '../../../data/auth';
+import useUserDevice from '../../../hooks/useUserDevice';
 import { storeAuthData } from '../../../utils/security';
 
 const EmailConfirmationForm = () => {
@@ -19,22 +21,37 @@ const EmailConfirmationForm = () => {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
 
+    const { isOnline } = useUserDevice();
+    const { showBoundary } = useErrorBoundary();
+
     const signupConfirmationAction = async (e) => {
         try {
-            setLoading(true);
-            // e.preventDefault();
+            toast.remove();
+            e.preventDefault();
+            if (!isOnline) {
+                toast.error('Your device is offline', {
+                    icon: <ExclamationTriangleIcon height={'30px'} width={'30px'} color='yellow' />,
+                });
+                return;
+            }
             const verificationCode = [...pinState].join('');
 
-            const { error } = await completeSignupProcess(
+            setLoading(true);
+            const { error, subCode } = await completeSignupProcess(
                 userData.email,
                 userData.password,
                 verificationCode,
                 userData.firstName,
                 userData.lastName,
             );
+            setLoading(false);
             if (error) {
-                toast.error(error);
-                setLoading(false);
+                if (subCode === 0 || subCode === 1) {
+                    showBoundary(error);
+                } else {
+                    setLoading(false);
+                    toast.error(error);
+                }
             } else {
                 setLoading(false);
                 setSuccess(true);
@@ -43,16 +60,18 @@ const EmailConfirmationForm = () => {
                 setTimeout(() => navigate('/login'), 3000);
             }
         } catch (error) {
-            console.error('Error occured: ', error);
+            setLoading(false);
+            console.log('Unexpected error: ', error);
+            // throw error;
+            showBoundary(undefined);
         }
     };
 
     return (
         <form
             className='flex flex-col items-center justify-center gap-[32px] overflow-hidden px-32 py-8'
-            // onSubmit={signupConfirmationAction}
+            onSubmit={signupConfirmationAction}
         >
-            <ToastContainer style={{ zIndex: 9999 }} />
             <h4 className='text-center text-3xl font-semibold'>Verify your email address</h4>
             <p className='flex shrink-0 items-center text-center text-lg text-muted-foreground'>
                 <span className='w-full'>
@@ -103,7 +122,6 @@ const EmailConfirmationForm = () => {
                     variant='default'
                     type='submit'
                     data-test='submit'
-                    onClick={signupConfirmationAction}
                 >
                     Continue
                 </Button2>

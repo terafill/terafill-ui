@@ -1,6 +1,8 @@
 import React, { memo, useState, useCallback } from 'react';
 
 import { useNavigate } from 'react-router-dom';
+import { useErrorBoundary } from 'react-error-boundary';
+import { toast } from 'react-hot-toast';
 
 import { MenuItem } from './Menu';
 import { logoutUser } from '../../data/auth';
@@ -8,29 +10,32 @@ import { cleanupUserSession } from '../../utils/tokenTools';
 import PortalPopup from '../modals/PortalPopup';
 import SignoutPopup from '../modals/SignoutPopup';
 
-
 const ProfileMenu = () => {
     const [isSignoutPopupOpen, setSignoutPopupOpen] = useState(false);
     const navigate = useNavigate();
+    const { showBoundary } = useErrorBoundary();
 
-    const onSignoutConfirm = useCallback(() => {
+    const onSignoutConfirm = useCallback(async () => {
         // Signout
-        logoutUser()
-            .then(function () {
+        try {
+            // toast.dismiss();
+            const { error, subCode } = await logoutUser();
+            if (error) {
+                if (subCode === 0 || subCode === 1) {
+                    showBoundary(error);
+                } else {
+                    toast.error(error);
+                }
+            } else {
                 cleanupUserSession(null);
                 console.log('Session cleaned up!');
-            })
-            .catch(function (error) {
-                console.log(error);
-                if (error?.response?.data?.detail) {
-                    const errorMessage = error.response.data.detail;
-                    console.log(errorMessage);
-                    alert([errorMessage]);
-                } else {
-                    alert([`Something went wrong: ${error}.`]);
-                }
-            });
-        navigate('/');
+                navigate('/');
+            }
+        } catch (error) {
+            console.log('Unexpected error: ', error);
+            // throw error;
+            showBoundary(null);
+        }
     }, []);
 
     const openSignoutPopup = useCallback(() => {

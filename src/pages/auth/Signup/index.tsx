@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 
 import { motion } from 'framer-motion';
+import { Toaster } from 'react-hot-toast';
 import { Outlet } from 'react-router-dom';
-
-import 'react-toastify/dist/ReactToastify.css';
 
 const SignUpPage = () => {
     interface User {
@@ -36,6 +35,18 @@ const SignUpPage = () => {
             className='flex h-screen w-screen flex-col items-center justify-center'
             id=''
         >
+            <Toaster
+                position='top-center'
+                reverseOrder={false}
+                toastOptions={{
+                    duration: 5000,
+                    style: {
+                        background: '#000000',
+                        color: '#fff',
+                        border: '1px solid #1F2937',
+                    },
+                }}
+            />
             <div className='flex flex-1 flex-col items-center justify-center self-stretch overflow-hidden'>
                 <Outlet context={[userData, setUserData]} />
             </div>

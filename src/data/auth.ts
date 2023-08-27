@@ -1,86 +1,24 @@
 // import SRP from '@harshitsaini/srp-js';
-import axios, { AxiosError, isAxiosError } from 'axios';
 import { Buffer } from 'buffer/';
 import { z } from 'zod';
 
-import { BASE_URL, CLIENT_ID } from '../config';
+import { httpCallResponse, httpCall } from './httpCallFacade';
+import { BASE_URL } from '../config';
 import { UserAuthResponse } from '../schemas/user';
 import { getAuthClientDetails, getRSAPrivateKey, getSRPClient } from '../utils/security';
 
-interface httpCallResponse {
-    data?: unknown;
-    error?: string;
-    statusCode?: number;
-    subCode?: number;
-}
-
-const httpCall = async (url, method, headers = {}, data = {}): Promise<httpCallResponse> => {
-    const jsonData = JSON.stringify(data);
-
-    const config = {
-        withCredentials: true,
-        method: method,
-        url: url,
-        headers: {
-            ...headers,
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            'client-id': CLIENT_ID,
-        },
-        data: jsonData,
-    };
-
-    // console.log('httpCall.config', config);
-
-    try {
-        const response = await axios.request(config);
-        return { data: response?.data };
-    } catch (error) {
-        console.log('httpCall', error);
-        if (error instanceof AxiosError) {
-            let errorMessage = 'Something went wrong. Please try again.';
-            let subCode = 0
-            if (error.code === 'ERR_NETWORK') {
-                errorMessage = 'Server is down. Please try again.';
-                subCode = 1;
-            } else if (error?.response?.data?.detail?.info) {
-                errorMessage = error?.response?.data?.detail?.info;
-            }
-            return {
-                error: errorMessage,
-                statusCode: error?.response?.status,
-                subCode: error?.response?.data?.detail?.code | subCode,
-            };
-        }
-        throw error;
-    }
-};
-
 export const initateSignupProcess = async (email: string) => {
-    try {
-        const data = JSON.stringify({
-            email: email,
-        });
-        const config = {
-            method: 'post',
-            url: `${BASE_URL}/auth/signup`,
-            headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json',
-            },
-            data: data,
-        };
-        const response = await axios(config);
-        return { response: response?.data || {} };
-    } catch (error) {
-        if (isAxiosError(error)) {
-            const errorMessage =
-                error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-            // throw Error(errorMessage);
-            return { error: error };
-        }
-        throw error;
+    const httpCallResponse = await httpCall(
+        `${BASE_URL}/auth/signup`,
+        'post',
+        {},
+        { email: email },
+    );
+
+    if (httpCallResponse?.error) {
+        return httpCallResponse;
     }
+    return {};
 };
 
 export const completeSignupProcess = async (
@@ -90,51 +28,32 @@ export const completeSignupProcess = async (
     firstName: string,
     lastName: string,
 ) => {
-    try {
-        // generate verifier and salt
-        const [salt, verifier]: [Buffer, Buffer] = await getAuthClientDetails(email, password).then(
-            ([salt, verifier]) => {
-                return [salt, verifier];
-            },
-        );
+    // generate verifier and salt
+    const [salt, verifier]: [Buffer, Buffer] = await getAuthClientDetails(email, password).then(
+        ([salt, verifier]) => {
+            return [salt, verifier];
+        },
+    );
 
-        const encryptedKeyWrappingKey = getRSAPrivateKey(password, true);
+    const encryptedKeyWrappingKey = getRSAPrivateKey(password, true);
 
-        const data = JSON.stringify({
-            email: email,
-            verificationCode: verificationCode,
-            firstName: firstName,
-            lastName: lastName,
-            verifier: verifier.toString('hex'),
-            salt: salt.toString('hex'),
-            encryptedKeyWrappingKey: encryptedKeyWrappingKey,
-        });
+    const data = {
+        email: email,
+        verificationCode: verificationCode,
+        firstName: firstName,
+        lastName: lastName,
+        verifier: verifier.toString('hex'),
+        salt: salt.toString('hex'),
+        encryptedKeyWrappingKey: encryptedKeyWrappingKey,
+    };
 
-        const config = {
-            withCredentials: true,
-            method: 'post',
-            url: `${BASE_URL}/auth/signup/confirm`,
-            headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json',
-                'client-id': CLIENT_ID,
-            },
-            data: data,
-        };
+    const httpCallResponse = await httpCall(`${BASE_URL}/auth/signup/confirm`, 'post', {}, data);
 
-        const response = await axios(config);
-        return { response: response?.data || {} };
-    } catch (error) {
-        if (isAxiosError(error)) {
-            const errorMessage =
-                error?.response?.data?.detail?.info || `Something went wrong: ${error}.`;
-            // throw Error(errorMessage);
-            return { error: error };
-        }
-        throw error;
+    if (httpCallResponse?.error) {
+        return httpCallResponse;
     }
+    return {};
 };
-
 
 export const getSalt = async (
     email: string,
@@ -228,13 +147,13 @@ export const loginUser = async (email: string, password: string) => {
         if (client.checkM2(Buffer.from(serverProof, 'hex'))) {
             console.warn('Server verified!');
             return {
-                response: { keyWrappingKey: keyWrappingKey },
+                data: { keyWrappingKey: keyWrappingKey },
             };
         } else {
             return { error: 'Server not verified!' };
         }
     } catch (error) {
-        console.error("loginUser.error", error)
+        console.error('loginUser.error', error);
         throw error;
     }
 };
@@ -247,16 +166,10 @@ export const getLoginStatus = async () => {
     return UserAuthResponse.getLoginStatus.read.parse(httpCallResponse?.data);
 };
 
-export const logoutUser = () => {
-    const config = {
-        withCredentials: true,
-        method: 'post',
-        url: `${BASE_URL}/auth/logout`,
-        headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-        },
-    };
-
-    return axios(config);
+export const logoutUser = async () => {
+    const httpCallResponse = await httpCall(`${BASE_URL}/auth/logout`, 'post');
+    if (httpCallResponse?.error) {
+        return httpCallResponse;
+    }
+    return {};
 };

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Toaster } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 import { Outlet } from 'react-router-dom';
 
 import AddVaultItemPopup from './AddVaultItemPopup';
@@ -41,6 +41,7 @@ const decryptedItemData = (itemData, keyWrappingKeyPair) => {
 };
 
 const AppHome = () => {
+
     useTokenExpiration();
 
     const [defaultVault, setDefaultVault] = useState<string | null>(null);

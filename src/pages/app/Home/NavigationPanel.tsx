@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 
 import { useQueryClient } from '@tanstack/react-query';
 import { NavLink } from 'react-router-dom';
+import { Suspense } from 'react';
+import { motion } from 'framer-motion';
 
 import VaultSelectionMenu from './VaultSelectionMenu';
 import VaultSettingsMenu from './VaultSettingsMenu';
@@ -89,7 +91,21 @@ const NavigationPanel = ({
                     }}
                 />
             </div>
-            <div
+
+            <motion.div
+                // variants={{
+                //     hidden: { opacity: 0 },
+                //     show: {
+                //         opacity: 1,
+                //         transition: { staggerChildren: 0.5 },
+                //     },
+                // }}
+                // initial='hidden'
+                // animate='show'
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1 }}
                 className='z-[1] flex flex-1 flex-col items-center justify-start self-stretch overflow-y-auto bg-gray-950 px-2 py-2'
                 id='item-list'
             >
@@ -105,6 +121,13 @@ const NavigationPanel = ({
                     .map(
                         ([id, itemData]) =>
                             id != 'new' && (
+                                // <motion.span
+                                //     key={itemData.id}
+                                //     variants={{
+                                //         hidden: { opacity: 0 },
+                                //         show: { opacity: 1 },
+                                //     }}
+                                // >
                                 <NavLink
                                     to={`${itemData.id}`}
                                     key={itemData.id}
@@ -130,9 +153,10 @@ const NavigationPanel = ({
                                         </div>
                                     </button>
                                 </NavLink>
+                                // </motion.span>
                             ),
                     )}
-            </div>
+            </motion.div>
             <Button2
                 variant={'secondary'}
                 onClick={() => setOpenAddVaultItem(true)}

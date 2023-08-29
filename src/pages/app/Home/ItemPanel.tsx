@@ -1,17 +1,22 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 import { TrashIcon, Pencil2Icon, UpdateIcon, CheckCircledIcon } from '@radix-ui/react-icons';
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
-import { useParams, useNavigate, useLocation, useOutletContext } from "react-router-dom";
+import { useParams, useNavigate, useLocation, useOutletContext } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
+import { motion } from 'framer-motion';
 
-
-import { Button2 } from "../../../components/form/Button";
-import { Input } from "../../../components/form/Input";
-import { getVaultItem, createVaultItem, deleteVaultItem, updateVaultItem } from "../../../data/item";
-import { getKeyWrappingKeyPair, decryptData } from "../../../utils/security";
+import { Button2 } from '../../../components/form/Button';
+import { Input } from '../../../components/form/Input';
+import {
+    getVaultItem,
+    createVaultItem,
+    deleteVaultItem,
+    updateVaultItem,
+} from '../../../data/item';
+import { getKeyWrappingKeyPair, decryptData } from '../../../utils/security';
 
 const decryptedItemData = (itemData, keyWrappingKeyPair) => {
     const iek = keyWrappingKeyPair.private.decrypt(itemData.encryptedEncryptionKey);
@@ -49,6 +54,7 @@ const ItemPanel = () => {
                 vaultId: selectedVault,
                 id: id,
             }),
+        suspense: true,
     });
 
     // let initDataEncrypted = {
@@ -195,7 +201,11 @@ const ItemPanel = () => {
     });
 
     return (
-        <div
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
             className='relative z-[0] flex h-full flex-1 flex-col items-center justify-center self-stretch overflow-hidden bg-gray-950 px-[16px] py-[32px]'
             id='right-panel'
         >
@@ -341,7 +351,7 @@ const ItemPanel = () => {
                     disabled={itemFormDisabled}
                 />
             </div>
-        </div>
+        </motion.div>
     );
 };
 

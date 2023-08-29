@@ -4,8 +4,10 @@ import { Button2 } from './components/form/Button';
 // import Navbar from '../../../components/layout/Navbar';
 
 const GlobalError = ({ error, resetErrorBoundary }) => {
-    const errorMessage = error ?? "Something went wrong. Please try again." 
-    // const navigate = useNavigate();
+    let errorMessage: string = "Something went wrong. Please try again.";
+    if (typeof error === "string" || error instanceof String) {
+        errorMessage = String(error); // Casting it to a primitive string
+    }
     return (
         <div className='h-screen w-screen justify-center overflow-hidden'>
             {/* <Navbar /> */}

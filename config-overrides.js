@@ -8,6 +8,8 @@ module.exports = function override(config, env) {
         '@': path.resolve(__dirname, 'src'),
     })(config); // Call the returned function with the current config
 
+    config.devtool = 'source-map';
+
     const fallback = config.resolve.fallback || {};
     Object.assign(fallback, {
         crypto: require.resolve('crypto-browserify'),

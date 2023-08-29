@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 
+import { UpdateIcon } from '@radix-ui/react-icons';
 import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast, Toaster } from 'react-hot-toast';
 import { Outlet } from 'react-router-dom';
+// import { Suspense } from 'react';
 
 import AddVaultItemPopup from './AddVaultItemPopup';
 import AddVaultPopup from './AddVaultPopup';
@@ -41,7 +43,6 @@ const decryptedItemData = (itemData, keyWrappingKeyPair) => {
 };
 
 const AppHome = () => {
-
     useTokenExpiration();
 
     const [defaultVault, setDefaultVault] = useState<string | null>(null);
@@ -164,6 +165,7 @@ const AppHome = () => {
                         defaultVault={defaultVault}
                         setSelectedVault={setSelectedVault}
                     />
+
                     <NavigationPanel
                         vaultListView={vaultListView}
                         selectedVault={selectedVault}
@@ -173,7 +175,16 @@ const AppHome = () => {
                         setOpenDeleteVault={setOpenDeleteVault}
                         setOpenAddVaultItem={setOpenAddVaultItem}
                     />
-                    <Outlet context={[selectedVault, vaultListView]} />
+                    <Suspense
+                        fallback={
+                            <div className='flex w-full flex-col items-center justify-center text-white'>
+                                {/* loading... */}
+                                <UpdateIcon className='mr-2 flex h-6 w-6 animate-spin flex-col items-center justify-center' />
+                            </div>
+                        }
+                    >
+                        <Outlet context={[selectedVault, vaultListView]} />
+                    </Suspense>
                 </div>
             </div>
         </div>

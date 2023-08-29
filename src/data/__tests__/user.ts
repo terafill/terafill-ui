@@ -6,43 +6,43 @@ jest.mock('axios');
 import { getProfile } from '../user';
 
 describe('getProfile function', () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
 
-  test('getProfile: success', async () => {
-    // Mock successful response
-    const userProfile = {
-      email: 'test@keylance.io',
-      firstName: 'John',
-    };
-    axios.request = jest.fn().mockResolvedValue({ data: userProfile });
+    test('getProfile: success', async () => {
+        // Mock successful response
+        const userProfile = {
+            email: 'test@keylance.io',
+            firstName: 'John',
+        };
+        axios.request = jest.fn().mockResolvedValue({ data: userProfile });
 
-    const result = await getProfile();
+        const result = await getProfile();
 
-    // Verify the result
-    expect(result).toEqual(userProfile);
-  });
+        // Verify the result
+        expect(result).toEqual(userProfile);
+    });
 
-  test('getProfile: schema parse failure', async () => {
-    // Mock successful response
-    const userProfile = null;
-    axios.request = jest.fn().mockResolvedValue({ data: userProfile });
+    test('getProfile: schema parse failure', async () => {
+        // Mock successful response
+        const userProfile = null;
+        axios.request = jest.fn().mockResolvedValue({ data: userProfile });
 
-    try {
-      await getProfile();
-    } catch (e) {
-      expect(e).toBeInstanceOf(Error);
-    }
-  });
+        try {
+            await getProfile();
+        } catch (e) {
+            expect(e).toBeInstanceOf(Error);
+        }
+    });
 
-  test('getProfile: schema parse failure', async () => {
-    axios.request = jest.fn().mockRejectedValue(new AxiosError('hello'));
+    test('getProfile: schema parse failure', async () => {
+        axios.request = jest.fn().mockRejectedValue(new AxiosError('hello'));
 
-    try {
-      await getProfile();
-    } catch (e) {
-      expect(e).toBeInstanceOf(Error);
-    }
-  });
+        try {
+            await getProfile();
+        } catch (e) {
+            expect(e).toBeInstanceOf(Error);
+        }
+    });
 });

@@ -6,6 +6,8 @@ import { createRoot } from 'react-dom/client';
 
 import App from './App';
 import './global.css';
+import { ErrorBoundary } from 'react-error-boundary';
+// import NotFoundPage from './pages/misc/Error';
 
 const container = document.getElementById('root');
 const root = createRoot(container);
@@ -14,12 +16,10 @@ const root = createRoot(container);
 const queryClient = new QueryClient();
 
 root.render(
-  <QueryClientProvider client={queryClient}>
-    <App />
-    {/*    <React.StrictMode>
-    </React.StrictMode>*/}
-    <ReactQueryDevtools initialIsOpen={false} />
-  </QueryClientProvider>,
+    <QueryClientProvider client={queryClient}>
+        <App />
+        <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>,
 );
 
 // If you want to start measuring performance in your app, pass a function

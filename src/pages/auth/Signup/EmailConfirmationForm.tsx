@@ -80,7 +80,7 @@ const EmailConfirmationForm = () => {
                 </span>
             </p>
             <div className='flex w-full flex-row justify-evenly gap-2'>
-                <PinInput pinState={pinState} setPinState={setPinState}/>
+                <PinInput pinState={pinState} setPinState={setPinState} />
             </div>
             <div className='flex flex-col items-center justify-center'>
                 <Button
@@ -118,11 +118,7 @@ const EmailConfirmationForm = () => {
                     Success
                 </Button2>
             ) : (
-                <Button2
-                    variant='default'
-                    type='submit'
-                    data-test='submit'
-                >
+                <Button2 variant='default' type='submit' data-test='submit'>
                     Continue
                 </Button2>
             )}

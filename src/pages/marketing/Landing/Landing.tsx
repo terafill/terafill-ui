@@ -5,11 +5,10 @@ import { useNavigate } from 'react-router-dom';
 
 import AnimatedText from './AnimatedText';
 import { Button2 } from '../../../components/form/Button';
-import Footer from '../../../components/layout/Footer';
 import { Input } from '../../../components/form/Input';
-import Logo from '../../../components/ui/Logo';
+import Footer from '../../../components/layout/Footer';
 import Navbar from '../../../components/layout/Navbar';
-
+import Logo from '../../../components/ui/Logo';
 
 const LandingPage = () => {
     const navigate = useNavigate();
@@ -52,7 +51,9 @@ const LandingPage = () => {
                         <Input ref={emailRef} type='email' placeholder='Email address' />
                         <Button2
                             variant='default'
-                            onClick={() => navigate(`/signup?email=${emailRef?.current?.value??''}`)}
+                            onClick={() =>
+                                navigate(`/signup?email=${emailRef?.current?.value ?? ''}`)
+                            }
                         >
                             Get started
                         </Button2>
@@ -135,7 +136,7 @@ const LandingPage = () => {
                         <Button2
                             variant='default'
                             onClick={() =>
-                                navigate(`/signup?email=${emailRefSecondary?.current?.value??''}`)
+                                navigate(`/signup?email=${emailRefSecondary?.current?.value ?? ''}`)
                             }
                         >
                             Get started

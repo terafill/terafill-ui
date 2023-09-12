@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 
 import { cn } from '../../utils/basic';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(

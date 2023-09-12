@@ -3,10 +3,10 @@ import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { createRoot } from 'react-dom/client';
+// import { ErrorBoundary } from 'react-error-boundary';
 
 import App from './App';
 import './global.css';
-import { ErrorBoundary } from 'react-error-boundary';
 // import NotFoundPage from './pages/misc/Error';
 
 const container = document.getElementById('root');

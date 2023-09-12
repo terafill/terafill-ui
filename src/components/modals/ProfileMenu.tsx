@@ -1,8 +1,8 @@
 import React, { memo, useState, useCallback } from 'react';
 
-import { useNavigate } from 'react-router-dom';
 import { useErrorBoundary } from 'react-error-boundary';
 import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 import { MenuItem } from './Menu';
 import { logoutUser } from '../../data/auth';

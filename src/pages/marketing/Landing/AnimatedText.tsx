@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from 'framer-motion';
 
 const AnimatedText = () => {
     const [textState, setTextState] = useState({

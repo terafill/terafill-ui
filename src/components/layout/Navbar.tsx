@@ -110,7 +110,11 @@ const Navbar = ({ navbarType = 'landing' }) => {
                             ref={profileMenuButtonRef}
                             onClick={openProfilePopup}
                         >
-                            <img className='relative h-6 w-6 shrink-0' alt='' src='/icons/profile.svg' />
+                            <img
+                                className='relative h-6 w-6 shrink-0'
+                                alt=''
+                                src='/icons/profile.svg'
+                            />
                         </button>
                     </div>
                 ) : (

@@ -8,14 +8,16 @@ const LoginErrorPage = () => {
     return (
         <div className='h-screen w-screen justify-center overflow-hidden'>
             {/* <Navbar /> */}
-            <div className='flex flex-row justify-center items-center h-screen gap-64'>
+            <div className='flex h-screen flex-row items-center justify-center gap-64'>
                 <img className='w-[320px] opacity-70' src='/images/undraw_server_down_s-4-lk.svg' />
                 <div className='flex flex-col items-center gap-8'>
                     <div className='text-2xl text-gray-300'>
                         <p>Something went wrong.</p>
                         <p>Please try again later.</p>
-                    </div>                        
-                    <Button2 variant={'secondary'} onClick={() => window.location.reload()}>Retry</Button2>
+                    </div>
+                    <Button2 variant={'secondary'} onClick={() => window.location.reload()}>
+                        Retry
+                    </Button2>
                 </div>
             </div>
         </div>

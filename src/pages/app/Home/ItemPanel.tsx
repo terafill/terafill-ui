@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 
 import { TrashIcon, Pencil2Icon, UpdateIcon, CheckCircledIcon } from '@radix-ui/react-icons';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { useParams, useNavigate, useLocation, useOutletContext } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-import { motion } from 'framer-motion';
 
 import { Button2 } from '../../../components/form/Button';
 import { Input } from '../../../components/form/Input';

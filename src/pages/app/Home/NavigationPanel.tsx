@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
 import { useQueryClient } from '@tanstack/react-query';
-import { NavLink } from 'react-router-dom';
-import { Suspense } from 'react';
 import { motion } from 'framer-motion';
+import { NavLink } from 'react-router-dom';
 
 import VaultSelectionMenu from './VaultSelectionMenu';
 import VaultSettingsMenu from './VaultSettingsMenu';

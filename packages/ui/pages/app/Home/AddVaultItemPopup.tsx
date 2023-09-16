@@ -4,13 +4,13 @@ import { Dialog, Transition } from '@headlessui/react';
 import { SquaresPlusIcon } from '@heroicons/react/20/solid';
 import { UpdateIcon, CheckCircledIcon } from '@radix-ui/react-icons';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
+import { createVaultItem } from 'lib/api/item';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Button2 } from 'components/form/Button';
 import { Input } from 'components/form/Input';
-import { createVaultItem } from 'lib/api/item';
 
 
 export default function AddVaultItemPopup({ open, setOpen, selectedVault }) {

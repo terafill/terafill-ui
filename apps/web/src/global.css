@@ -1,0 +1,235 @@
+/* @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:wght@400&display=swap'); */
+/* @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap'); */
+/* @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,700;1,700&display=swap'); */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* .shadow-all-direction {
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.15);
+} */
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* 
+body {
+    margin: 0;
+    line-height: normal;
+} */
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes greenToCyan {
+    to {
+        background-image: linear-gradient(to right, green, cyan);
+    }
+}
+
+@keyframes blueToPurple {
+    to {
+        background-image: linear-gradient(to right, blue, purple);
+    }
+}
+
+@layer utilities {
+    .cursor-blink {
+        animation: blink 1s infinite;
+    }
+}
+
+@layer base {
+    :root {
+        /**
+ * ----------------------------------------
+ * animation fade-out
+ * ----------------------------------------
+ */
+        @-webkit-keyframes fade-out {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+        @keyframes fade-out {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .slide-in-bottom {
+            -webkit-animation: slide-in-bottom 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+            animation: slide-in-bottom 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+        }
+
+        /**
+ * ----------------------------------------
+ * animation slide-in-bottom
+ * ----------------------------------------
+ */
+        @-webkit-keyframes slide-in-bottom {
+            0% {
+                -webkit-transform: translateY(1000px);
+                transform: translateY(1000px);
+                opacity: 0;
+            }
+            100% {
+                -webkit-transform: translateY(0);
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        @keyframes slide-in-bottom {
+            0% {
+                -webkit-transform: translateY(1000px);
+                transform: translateY(1000px);
+                opacity: 0;
+            }
+            100% {
+                -webkit-transform: translateY(0);
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .Toastify__toast {
+            background-color: hsla(245, 0%, 10%, 1);
+            /* border: "sol"; */
+            /* border-color: gray; */
+            border: solid 1px hsla(245, 10%, 40%, 1);
+        }
+
+        --gradient-start: hsla(0, 92%, 58%, 1);
+        --gradient-end: hsla(43, 94%, 54%, 1);
+
+        .gradient-text {
+            background-image: linear-gradient(
+                to right,
+                hsla(0, 92%, 58%, 1),
+                hsla(43, 94%, 54%, 1)
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation-duration: 3s;
+        }
+
+        .green-cyan {
+            animation-name: greenToCyan;
+        }
+
+        .blue-purple {
+            animation-name: blueToPurple;
+        }
+
+        /* For Webkit browsers (like Chrome and Safari) */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* For Firefox */
+        .no-scrollbar::-moz-scrollbar {
+            width: 0;
+            background: transparent; /* make scrollbar transparent */
+        }
+
+        /* For IE/Edge */
+        .no-scrollbar {
+            -ms-overflow-style: none;
+        }
+
+        --background: 0 0% 100%;
+        --foreground: 222.2 47.4% 11.2%;
+
+        --muted: 210 40% 96.1%;
+        --muted-foreground: 215.4 16.3% 46.9%;
+
+        --popover: 0 0% 100%;
+        --popover-foreground: 222.2 47.4% 11.2%;
+
+        --border: 214.3 31.8% 91.4%;
+        --input: 214.3 31.8% 91.4%;
+
+        --card: 0 0% 100%;
+        --card-foreground: 222.2 47.4% 11.2%;
+
+        --primary: 222.2 47.4% 11.2%;
+        --primary-foreground: 210 40% 98%;
+
+        --secondary: 210 40% 96.1%;
+        --secondary-foreground: 222.2 47.4% 11.2%;
+
+        --accent: 210 40% 96.1%;
+        --accent-foreground: 222.2 47.4% 11.2%;
+
+        --destructive: 0 100% 50%;
+        --destructive-foreground: 210 40% 98%;
+
+        --ring: 215 20.2% 65.1%;
+
+        --radius: 0.5rem;
+    }
+
+    .dark {
+        --background: 224 71% 4%;
+        --foreground: 213 31% 91%;
+
+        --muted: 223 47% 11%;
+        --muted-foreground: 215.4 16.3% 56.9%;
+
+        --accent: 216 34% 17%;
+        --accent-foreground: 210 40% 98%;
+
+        --popover: 224 71% 4%;
+        --popover-foreground: 215 20.2% 65.1%;
+
+        --border: 216 34% 17%;
+        --input: 216 34% 17%;
+
+        --card: 224 71% 4%;
+        --card-foreground: 213 31% 91%;
+
+        --primary: 210 40% 98%;
+        --primary-foreground: 222.2 47.4% 1.2%;
+
+        --secondary: 222.2 47.4% 11.2%;
+        --secondary-foreground: 210 40% 98%;
+
+        --destructive: 0 63% 31%;
+        --destructive-foreground: 210 40% 98%;
+
+        --ring: 216 34% 17%;
+
+        --radius: 0.5rem;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+        font-feature-settings:
+            'rlig' 1,
+            'calt' 1;
+    }
+}

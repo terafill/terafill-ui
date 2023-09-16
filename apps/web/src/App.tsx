@@ -1,21 +1,20 @@
 import React from 'react';
 
+// Inner App
 import { ErrorBoundary } from 'react-error-boundary';
 import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
-
-import AppHome from 'pages/app/Home/index.tsx';
-// Inner App
-import ItemPanel from 'pages/app/Home/ItemPanel';
-import ItemPanelIndex from 'pages/app/Home/ItemPanelIndex';
+import AppHome from 'ui/pages/app/Home/index.tsx';
+import ItemPanel from 'ui/pages/app/Home/ItemPanel';
+import ItemPanelIndex from 'ui/pages/app/Home/ItemPanelIndex';
 // Login
-import LoginPage from 'pages/auth/Login';
+import LoginPage from 'ui/pages/auth/Login';
 //Signup
-import CreateAccountForm from 'pages/auth/Signup/CreateAccountForm';
-import EmailConfirmationForm from 'pages/auth/Signup/EmailConfirmationForm';
-import SignUpPage from 'pages/auth/Signup/index';
+import CreateAccountForm from 'ui/pages/auth/Signup/CreateAccountForm';
+import EmailConfirmationForm from 'ui/pages/auth/Signup/EmailConfirmationForm';
+import SignUpPage from 'ui/pages/auth/Signup/index';
 //Landing
-import LandingPage from 'pages/marketing/Landing/Landing';
-import NotFoundPage from 'pages/misc/Error';
+import LandingPage from 'ui/pages/marketing/Landing/Landing';
+import NotFoundPage from 'ui/pages/misc/Error';
 
 import GlobalError from './GlobalError';
 

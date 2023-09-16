@@ -38,11 +38,12 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            pages: '/pages',
-            components: '/components',
-            config: '/config',
-            src: '/src',
-            lib: '/lib'
+            components: 'ui/components',
+            // config: 'config/config',
+            // pages: 'ui/pages',
+            // components: '/components',
+            // src: '/src',
+            // lib: '/lib'
         },
     },
 });

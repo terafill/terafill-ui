@@ -3,20 +3,21 @@ import React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 
-import GlobalError from './GlobalError';
+import AppHome from 'pages/app/Home/index.tsx';
 // Inner App
-import AppHome from './pages/app/Home/index';
-import ItemPanel from './pages/app/Home/ItemPanel';
-import ItemPanelIndex from './pages/app/Home/ItemPanelIndex';
+import ItemPanel from 'pages/app/Home/ItemPanel';
+import ItemPanelIndex from 'pages/app/Home/ItemPanelIndex';
 // Login
-import LoginPage from './pages/auth/Login';
+import LoginPage from 'pages/auth/Login';
 //Signup
-import CreateAccountForm from './pages/auth/Signup/CreateAccountForm';
-import EmailConfirmationForm from './pages/auth/Signup/EmailConfirmationForm';
-import SignUpPage from './pages/auth/Signup/index';
+import CreateAccountForm from 'pages/auth/Signup/CreateAccountForm';
+import EmailConfirmationForm from 'pages/auth/Signup/EmailConfirmationForm';
+import SignUpPage from 'pages/auth/Signup/index';
 //Landing
-import LandingPage from './pages/marketing/Landing/Landing';
-import NotFoundPage from './pages/misc/Error';
+import LandingPage from 'pages/marketing/Landing/Landing';
+import NotFoundPage from 'pages/misc/Error';
+
+import GlobalError from './GlobalError';
 
 const ErrorBoundaryLayout = () => (
     <ErrorBoundary FallbackComponent={GlobalError}>

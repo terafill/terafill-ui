@@ -36,4 +36,13 @@ export default defineConfig({
             protocolImports: true,
         }),
     ],
+    resolve: {
+        alias: {
+            pages: '/pages',
+            components: '/components',
+            config: '/config',
+            src: '/src',
+            lib: '/lib'
+        },
+    },
 });

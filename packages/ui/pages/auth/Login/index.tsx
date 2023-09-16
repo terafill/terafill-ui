@@ -3,6 +3,10 @@ import React, { useState, memo } from 'react';
 import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import { UpdateIcon, CheckCircledIcon } from '@radix-ui/react-icons';
 import { motion } from 'framer-motion';
+import { loginUser, getLoginStatus } from 'lib/api/auth';
+import useUserDevice from 'lib/hooks/useUserDevice';
+import { loginSuccessHook } from 'lib/utils/plugin';
+import { storeAuthData } from 'lib/utils/security';
 import { ErrorBoundary, useErrorBoundary } from 'react-error-boundary';
 import { Toaster, toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
@@ -10,13 +14,12 @@ import { useNavigate } from 'react-router-dom';
 import { Button2 } from 'components/form/Button';
 import { Input } from 'components/form/Input';
 import Logo from 'components/ui/Logo';
-import { loginUser } from 'lib/api/auth';
-import useUserDevice from 'lib/hooks/useUserDevice';
-import { storeAuthData } from 'lib/utils/security';
 
 import LoginErrorPage from './errors';
 
-const LoginPage = () => {
+const LoginPage = ({ CLIENT_ENV = 'WEB' }) => {
+    console.log(`Initialized login page with ${CLIENT_ENV} client`);
+
     const { showBoundary } = useErrorBoundary();
     const navigate = useNavigate();
     const email = localStorage.getItem('email');
@@ -50,6 +53,7 @@ const LoginPage = () => {
                 setSuccess(true);
                 setTimeout(() => setSuccess(false), 3000);
                 storeAuthData(userData.email, userData.password, data.keyWrappingKey);
+                loginSuccessHook();
                 navigate('/app/home');
             }
         } catch (error) {
@@ -59,6 +63,26 @@ const LoginPage = () => {
             showBoundary(undefined);
         }
     };
+
+    getLoginStatus()
+        .then(async (response) => {
+            let keyWrappingKey = null;
+            if (CLIENT_ENV === 'WEB') {
+                keyWrappingKey = await localStorage.getItem('keyWrappingKey');
+            } else {
+                const getResponse = await chrome.storage.session.get('keyWrappingKey');
+                keyWrappingKey = getResponse?.keyWrappingKey;
+                console.log('Plugin mode keyWrappingKey: ', getResponse, keyWrappingKey);
+            }
+            console.log('keyWrappingKey is: ', keyWrappingKey);
+            if (response.loggedIn && keyWrappingKey) {
+                console.log('Pre-login successful');
+                navigate('/app/home');
+            } else {
+                console.log('Pre-login failed', response);
+            }
+        })
+        .catch((err) => console.error(err));
 
     return (
         <ErrorBoundary FallbackComponent={LoginErrorPage}>

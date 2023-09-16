@@ -2,14 +2,14 @@ import React, { Suspense, useEffect, useState } from 'react';
 
 import { UpdateIcon } from '@radix-ui/react-icons';
 import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getVaults, getVaultItems } from 'lib/api/vault';
+import { getKeyWrappingKeyPair, decryptData } from 'lib/utils/security';
+import { useTokenExpiration } from 'lib/utils/tokenTools';
 import { toast, Toaster } from 'react-hot-toast';
 import { Outlet } from 'react-router-dom';
 
 import Navbar from 'components/layout/Navbar';
 import SideNavbar from 'components/layout/SideNavbar';
-import { getVaults, getVaultItems } from 'lib/api/vault';
-import { getKeyWrappingKeyPair, decryptData } from 'lib/utils/security';
-import { useTokenExpiration } from 'lib/utils/tokenTools';
 
 import AddVaultItemPopup from './AddVaultItemPopup';
 import AddVaultPopup from './AddVaultPopup';
@@ -42,7 +42,7 @@ const decryptedItemData = (itemData, keyWrappingKeyPair) => {
     };
 };
 
-const AppHome = () => {
+const AppHome = ({ CLIENT_ENV = 'WEB' }) => {
     useTokenExpiration();
 
     const [defaultVault, setDefaultVault] = useState<string | null>(null);
@@ -125,7 +125,7 @@ const AppHome = () => {
         <div className='flex h-screen w-screen flex-col items-stretch justify-start'>
             <Navbar navbarType='app' />
             <div className='flex h-full flex-row items-stretch border-t' id='app-screen'>
-                <SideNavbar />
+                {(CLIENT_ENV=="WEB") && <SideNavbar />}
                 <div
                     className='flex flex-1 flex-row items-stretch overflow-hidden'
                     id='apphome-inner'

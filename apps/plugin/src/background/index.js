@@ -239,7 +239,7 @@ const setActionIcon = (locked = false) => {
 				path: {
 					// 16: "Padlock6.png",
 					// 48: "Padlock6.png",
-					128: "Padlock6.png",
+					128: "/Padlock6.png",
 				},
 			});
 			console.log("Badged Icon was set!");
@@ -249,7 +249,7 @@ const setActionIcon = (locked = false) => {
 				path: {
 					// 16: "Logo-mini-derived-128.png",
 					// 48: "Logo-mini-derived-128.png",
-					128: "Logo-mini-derived-128.png",
+					128: "/Logo-mini-derived-128.png",
 				},
 			});
 			console.log("Simple Icon was set!");

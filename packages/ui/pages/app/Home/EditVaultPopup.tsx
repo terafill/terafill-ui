@@ -3,19 +3,25 @@ import React, { useEffect, useState, useRef, Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { UpdateIcon, CheckCircledIcon } from '@radix-ui/react-icons';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
+import { useAtom, useAtomValue } from 'jotai';
+import { updateVault } from 'lib/api/vault';
+import { toast } from 'react-hot-toast';
 
 import { Button2 } from 'components/form/Button';
 import { Input } from 'components/form/Input';
 import { Textarea } from 'components/form/TextArea';
-import { updateVault } from 'lib/api/vault';
 
-export default function EditVaultPopup({ open, setOpen, selectedVault }) {
+import { editVaultPopupOpenAtom, selectedVaultAtom } from './store';
+
+export default function EditVaultPopup() {
+    const selectedVault = useAtomValue(selectedVaultAtom);
     const cancelButtonRef = useRef(null);
     const queryClient = useQueryClient();
     const vaultData = queryClient.getQueryData(['vaults', selectedVault]);
     const [vaultName, setVaultName] = useState('');
     const [vaultDescription, setVaultDescription] = useState('');
+
+    const [open, setOpen] = useAtom(editVaultPopupOpenAtom);
 
     const updateVaultMutation = useMutation({
         mutationFn: updateVault,

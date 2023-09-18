@@ -4,8 +4,9 @@ import { Dialog, Transition } from '@headlessui/react';
 import { SquaresPlusIcon } from '@heroicons/react/20/solid';
 import { UpdateIcon, CheckCircledIcon } from '@radix-ui/react-icons';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
+import { useAtom, useAtomValue } from 'jotai';
 import { createVaultItem } from 'lib/api/item';
-import toast from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -13,7 +14,12 @@ import { Button2 } from 'components/form/Button';
 import { Input } from 'components/form/Input';
 
 
-export default function AddVaultItemPopup({ open, setOpen, selectedVault }) {
+import { addVaultItemPopupOpenAtom, selectedVaultAtom } from "./store";
+
+export default function AddVaultItemPopup() {
+
+    const selectedVault = useAtomValue(selectedVaultAtom);
+
     const initData = {
         vaultId: '',
         username: '',
@@ -21,6 +27,8 @@ export default function AddVaultItemPopup({ open, setOpen, selectedVault }) {
         password: '',
         title: '',
     };
+
+    const [open, setOpen] = useAtom(addVaultItemPopupOpenAtom);
 
     const [itemDataView, setItemDataView] = useState<VaultItem>(initData);
     const createItemData = useMutation({

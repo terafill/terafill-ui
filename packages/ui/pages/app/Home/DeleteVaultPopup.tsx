@@ -1,28 +1,23 @@
 import React, { useEffect, useState, useRef, Fragment } from 'react';
 
 import { Dialog, Transition } from '@headlessui/react';
+import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import { UpdateIcon, CheckCircledIcon } from '@radix-ui/react-icons';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
+import { useAtom } from 'jotai';
+import { deleteVault } from 'lib/api/vault';
+import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 import { Button2 } from 'components/form/Button';
 import { Input } from 'components/form/Input';
-import { deleteVault } from 'lib/api/vault';
 
-export default function DeleteVaultPopup({
-    open,
-    setOpen,
-    selectedVault,
-    defaultVault,
-    setSelectedVault,
-}: {
-    open: boolean;
-    setOpen: (e) => void;
-    selectedVault: string;
-    defaultVault: string;
-    setSelectedVault: (e) => void;
-}) {
+import { deleteVaultPopupOpenAtom, selectedVaultAtom } from './store';
+
+export default function DeleteVaultPopup({ defaultVault }: { defaultVault: string }) {
+    const [open, setOpen] = useAtom(deleteVaultPopupOpenAtom);
+    const [selectedVault, setSelectedVault] = useAtom(selectedVaultAtom);
+
     const cancelButtonRef = useRef<HTMLButtonElement | null>(null);
     const [vaultName, setVaultName] = useState<string>('');
     const navigate = useNavigate();
@@ -37,7 +32,10 @@ export default function DeleteVaultPopup({
     const deleteVaultMutationTrigger = async () => {
         if (vaultName != vaultData?.name) {
             console.log('vaultName match', vaultName, vaultData?.name);
-            toast.warn("Vault name doesn't match!");
+            toast.remove();
+            toast.error("Vault name doesn't match!", {
+                icon: <ExclamationTriangleIcon height={'30px'} width={'30px'} color='yellow' />,
+            });
             return;
         }
         deleteVaultMutation.mutateAsync(
@@ -46,6 +44,7 @@ export default function DeleteVaultPopup({
             },
             {
                 onSuccess: () => {
+                    toast.remove();
                     toast.success('Vault deleted successfully!');
                     queryClient.invalidateQueries(['vaults']);
                     setSelectedVault(defaultVault);
@@ -53,6 +52,7 @@ export default function DeleteVaultPopup({
                     navigate('/app/home');
                 },
                 onError: (error: unknown) => {
+                    toast.remove();
                     if (error instanceof Error) {
                         toast.error(error.message);
                     } else {

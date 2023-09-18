@@ -2,6 +2,7 @@ import { Suspense, useEffect, useState } from 'react';
 
 import { UpdateIcon } from '@radix-ui/react-icons';
 import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useAtom } from 'jotai';
 import { getVaults, getVaultItems } from 'lib/api/vault';
 import { getKeyWrappingKeyPair, decryptData } from 'lib/utils/security';
 import { useTokenExpiration } from 'lib/utils/tokenTools';
@@ -16,7 +17,7 @@ import AddVaultPopup from './AddVaultPopup';
 import DeleteVaultPopup from './DeleteVaultPopup';
 import EditVaultPopup from './EditVaultPopup';
 import NavigationPanel from './NavigationPanel';
-import './index.css';
+import { selectedVaultAtom } from './store';
 
 interface Vault {
     id?: string;
@@ -46,7 +47,7 @@ const AppHome = ({ CLIENT_ENV = 'WEB' }) => {
     useTokenExpiration();
 
     const [defaultVault, setDefaultVault] = useState<string | null>(null);
-    const [selectedVault, setSelectedVault] = useState<string | null>(null);
+    const [selectedVault, setSelectedVault] = useAtom(selectedVaultAtom);
     const [vaultListView, setVaultListView] = useState<VaultList | null>(null);
     const queryClient = useQueryClient();
 
@@ -116,16 +117,11 @@ const AppHome = ({ CLIENT_ENV = 'WEB' }) => {
         }),
     });
 
-    const [openEditVaultPopup, setOpenEditVault] = useState(false);
-    const [openAddVaultPopup, setOpenAddVault] = useState(false);
-    const [openDeleteVaultPopup, setOpenDeleteVault] = useState(false);
-    const [openAddVaultItemPopup, setOpenAddVaultItem] = useState(false);
-
     return (
         <div className='flex h-screen w-screen flex-col items-stretch justify-start'>
             <Navbar navbarType='app' />
             <div className='flex h-full flex-row items-stretch border-t' id='app-screen'>
-                {(CLIENT_ENV=="WEB") && <SideNavbar />}
+                {CLIENT_ENV == 'WEB' && <SideNavbar />}
                 <div
                     className='flex flex-1 flex-row items-stretch overflow-hidden'
                     id='apphome-inner'
@@ -143,47 +139,20 @@ const AppHome = ({ CLIENT_ENV = 'WEB' }) => {
                         }}
                     />
 
-                    <AddVaultItemPopup
-                        open={openAddVaultItemPopup}
-                        setOpen={setOpenAddVaultItem}
-                        selectedVault={selectedVault}
-                    />
-                    <EditVaultPopup
-                        open={openEditVaultPopup}
-                        setOpen={setOpenEditVault}
-                        selectedVault={selectedVault}
-                    />
-                    <AddVaultPopup
-                        open={openAddVaultPopup}
-                        setOpen={setOpenAddVault}
-                        setSelectedVault={setSelectedVault}
-                    />
-                    <DeleteVaultPopup
-                        open={openDeleteVaultPopup}
-                        setOpen={setOpenDeleteVault}
-                        selectedVault={selectedVault}
-                        defaultVault={defaultVault}
-                        setSelectedVault={setSelectedVault}
-                    />
+                    <AddVaultItemPopup />
+                    <EditVaultPopup />
+                    <AddVaultPopup />
+                    <DeleteVaultPopup defaultVault={defaultVault} />
 
-                    <NavigationPanel
-                        vaultListView={vaultListView}
-                        selectedVault={selectedVault}
-                        setSelectedVault={setSelectedVault}
-                        setOpenEditVault={setOpenEditVault}
-                        setOpenAddVault={setOpenAddVault}
-                        setOpenDeleteVault={setOpenDeleteVault}
-                        setOpenAddVaultItem={setOpenAddVaultItem}
-                    />
+                    <NavigationPanel vaultListView={vaultListView} />
                     <Suspense
                         fallback={
                             <div className='flex w-full flex-col items-center justify-center text-white'>
-                                {/* loading... */}
                                 <UpdateIcon className='mr-2 flex h-6 w-6 animate-spin flex-col items-center justify-center' />
                             </div>
                         }
                     >
-                        <Outlet context={[selectedVault, vaultListView, setOpenAddVaultItem]} />
+                        <Outlet context={[vaultListView]} />
                     </Suspense>
                 </div>
             </div>

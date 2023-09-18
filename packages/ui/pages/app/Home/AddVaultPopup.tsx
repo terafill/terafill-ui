@@ -3,19 +3,25 @@ import React, { useEffect, useState, useRef, Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { UpdateIcon, CheckCircledIcon } from '@radix-ui/react-icons';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
+import { useAtom, useSetAtom } from 'jotai';
+import { addVault } from 'lib/api/vault';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 import { Button2 } from 'components/form/Button';
 import { Input } from 'components/form/Input';
 import { Textarea } from 'components/form/TextArea';
-import { addVault } from 'lib/api/vault';
 
-export default function AddVaultPopup({ open, setOpen, setSelectedVault }) {
+import { addVaultPopupOpenAtom, selectedVaultAtom } from './store';
+
+export default function AddVaultPopup() {
+    const setSelectedVault = useSetAtom(selectedVaultAtom);
     const cancelButtonRef = useRef(null);
     const [vaultName, setVaultName] = useState('');
     const [vaultDescription, setVaultDescription] = useState('');
     const navigate = useNavigate();
+
+    const [open, setOpen] = useAtom(addVaultPopupOpenAtom);
 
     const queryClient = useQueryClient();
 

@@ -270,7 +270,7 @@ const ItemPanel = () => {
             <div className='grid grid-cols-2 grid-rows-4 items-center justify-center justify-items-center gap-4'>
                 <div className='flex-1 self-stretch' id='iconframe'>
                     <img
-                        className='h-[88px] w-[88px] overflow-hidden object-cover'
+                        className='h-[88px] w-[88px] overflow-hidden object-cover border-2 rounded-md border-gray-900'
                         alt=''
                         src={itemDataView?.icon ?? null}
                     />

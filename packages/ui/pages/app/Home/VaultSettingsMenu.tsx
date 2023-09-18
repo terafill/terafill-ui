@@ -8,19 +8,22 @@ import {
     SquaresPlusIcon,
 } from '@heroicons/react/20/solid';
 import { TrashIcon } from '@radix-ui/react-icons';
+import { useAtomValue, useSetAtom } from 'jotai';
+
+import {
+    addVaultPopupOpenAtom,
+    editVaultPopupOpenAtom,
+    deleteVaultPopupOpenAtom,
+    selectedVaultAtom,
+} from './store';
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
 }
 
-function VaultSettingsMenu({
-    vaultList,
-    selectedVault,
-    setOpenEditVault,
-    setOpenAddVault,
-    setOpenDeleteVault,
-}) {
+function VaultSettingsMenu({ vaultList }) {
     const [isDefault, setIsDefault] = useState(false);
+    const selectedVault = useAtomValue(selectedVaultAtom);
     useEffect(() => {
         if (selectedVault != null && vaultList != null) {
             if (vaultList[selectedVault]['isDefault']) {
@@ -30,6 +33,10 @@ function VaultSettingsMenu({
         }
         setIsDefault(false);
     }, [selectedVault]);
+
+    const setAddVaultPopupOpen = useSetAtom(addVaultPopupOpenAtom);
+    const setEditVaultPopupOpen = useSetAtom(editVaultPopupOpenAtom);
+    const setDeleteVaultPopupOpen = useSetAtom(deleteVaultPopupOpenAtom);
 
     return (
         <Menu as='div' className='relative inline-block text-left'>
@@ -52,7 +59,7 @@ function VaultSettingsMenu({
                     <div className='py-1'>
                         <Menu.Item
                             onClick={() => {
-                                setOpenEditVault(true);
+                                setEditVaultPopupOpen(true);
                             }}
                         >
                             {({ active }) => (
@@ -68,7 +75,7 @@ function VaultSettingsMenu({
                                 </a>
                             )}
                         </Menu.Item>
-                        <Menu.Item onClick={() => setOpenAddVault(true)}>
+                        <Menu.Item onClick={() => setAddVaultPopupOpen(true)}>
                             {({ active }) => (
                                 <a
                                     href='#'
@@ -82,7 +89,7 @@ function VaultSettingsMenu({
                                 </a>
                             )}
                         </Menu.Item>
-                        {/*            <Menu.Item>
+                        {/* <Menu.Item>
               {({ active }) => (
                 <a
                   href="#"
@@ -132,7 +139,7 @@ function VaultSettingsMenu({
                 </a>
               )}
             </Menu.Item>
-          </div>*/}
+          </div> */}
                     <div className='py-1'>
                         <Menu.Item
                             onClick={() => {
@@ -175,7 +182,7 @@ function VaultSettingsMenu({
                             <Menu.Item
                                 // disabled
                                 onClick={() => {
-                                    setOpenDeleteVault(true);
+                                    setDeleteVaultPopupOpen(true);
                                 }}
                             >
                                 {({ active }) => (

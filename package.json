@@ -9,5 +9,8 @@
     "scripts": {},
     "jest": {},
     "eslintConfig": {},
-    "browserslist": {}
+    "browserslist": {},
+    "dependencies": {
+        "@radix-ui/react-radio-group": "^1.1.3"
+    }
 }

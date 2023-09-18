@@ -1,24 +1,21 @@
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 
 import { Listbox, Transition } from '@headlessui/react';
 import { ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { CheckIcon } from '@heroicons/react/24/outline';
+import { useAtom } from 'jotai';
 import { useNavigate } from 'react-router-dom';
+
+import { selectedVaultAtom } from './store';
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
 }
 
-function VaultSelectionMenu({
-    vaultListView,
-    selectedVault,
-    setSelectedVault,
-}: {
-    vaultListView: VaultList;
-    selectedVault: string;
-    setSelectedVault: (e) => void;
-}) {
+function VaultSelectionMenu({ vaultListView }: { vaultListView: VaultList }) {
     const navigate = useNavigate();
+
+    const [selectedVault, setSelectedVault] = useAtom(selectedVaultAtom);
 
     return (
         <Listbox

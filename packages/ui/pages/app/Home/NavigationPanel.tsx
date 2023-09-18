@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 
 import { useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
+import { getKeyWrappingKeyPair, decryptData } from 'lib/utils/security';
 import { NavLink } from 'react-router-dom';
 
 import { Button2 } from 'components/form/Button';
 import { Input } from 'components/form/Input';
-import { getKeyWrappingKeyPair, decryptData } from 'lib/utils/security';
 
 import VaultSelectionMenu from './VaultSelectionMenu';
 import VaultSettingsMenu from './VaultSettingsMenu';

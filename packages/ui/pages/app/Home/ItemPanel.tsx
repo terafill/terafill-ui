@@ -3,15 +3,15 @@ import { useState, useEffect } from 'react';
 import { TrashIcon, Pencil2Icon, UpdateIcon, CheckCircledIcon } from '@radix-ui/react-icons';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import toast from 'react-hot-toast';
+import { getVaultItem, createVaultItem, deleteVaultItem, updateVaultItem } from 'lib/api/item';
+import { getKeyWrappingKeyPair, decryptData } from 'lib/utils/security';
+import { toast } from 'react-hot-toast';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { useParams, useNavigate, useLocation, useOutletContext } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Button2 } from 'components/form/Button';
 import { Input } from 'components/form/Input';
-import { getVaultItem, createVaultItem, deleteVaultItem, updateVaultItem } from 'lib/api/item';
-import { getKeyWrappingKeyPair, decryptData } from 'lib/utils/security';
 
 const decryptedItemData = (itemData, keyWrappingKeyPair) => {
     const iek = keyWrappingKeyPair.private.decrypt(itemData.encryptedEncryptionKey);
@@ -201,7 +201,7 @@ const ItemPanel = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className='relative z-[0] flex h-full flex-1 flex-col items-center justify-center self-stretch overflow-hidden bg-gray-950 px-[16px] py-[32px]'
+            className='dotted-bg relative z-[0] flex h-full flex-1 flex-col items-center justify-center self-stretch overflow-hidden bg-gray-950 px-[16px] py-[32px]'
             id='right-panel'
         >
             <div className='absolute right-[24px] top-[24px] flex flex-row gap-3 self-end'>

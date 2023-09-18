@@ -1,11 +1,11 @@
-import React, { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 
 import { UpdateIcon } from '@radix-ui/react-icons';
 import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getVaults, getVaultItems } from 'lib/api/vault';
 import { getKeyWrappingKeyPair, decryptData } from 'lib/utils/security';
 import { useTokenExpiration } from 'lib/utils/tokenTools';
-import { toast, Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 import { Outlet } from 'react-router-dom';
 
 import Navbar from 'components/layout/Navbar';
@@ -183,7 +183,7 @@ const AppHome = ({ CLIENT_ENV = 'WEB' }) => {
                             </div>
                         }
                     >
-                        <Outlet context={[selectedVault, vaultListView]} />
+                        <Outlet context={[selectedVault, vaultListView, setOpenAddVaultItem]} />
                     </Suspense>
                 </div>
             </div>

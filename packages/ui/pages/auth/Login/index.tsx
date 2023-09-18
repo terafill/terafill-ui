@@ -40,7 +40,11 @@ const LoginPage = ({ CLIENT_ENV = 'WEB' }) => {
                 return;
             }
             setLoading(true);
-            const { data, error, subCode } = await loginUser(userData.email, userData.password);
+            const { data, error, subCode } = await loginUser(
+                userData.email,
+                userData.password,
+                CLIENT_ENV,
+            );
             setLoading(false);
             if (error) {
                 if (subCode === 0 || subCode === 1) {
@@ -52,8 +56,8 @@ const LoginPage = ({ CLIENT_ENV = 'WEB' }) => {
             } else {
                 setSuccess(true);
                 setTimeout(() => setSuccess(false), 3000);
-                storeAuthData(userData.email, userData.password, data.keyWrappingKey);
-                loginSuccessHook();
+                storeAuthData(userData.email, userData.password, data.keyWrappingKey, CLIENT_ENV);
+                if (CLIENT_ENV === 'PLUGIN') loginSuccessHook();
                 navigate('/app/home');
             }
         } catch (error) {

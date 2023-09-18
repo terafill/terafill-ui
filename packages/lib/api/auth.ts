@@ -92,7 +92,8 @@ const storeCookies = (key, value) => {
 
 const initiateLogin = async (
 	email: string,
-	clientPublicKey: string
+	clientPublicKey: string,
+	CLIENT_ENV: string
 ): Promise<
 	z.infer<typeof UserAuthResponse.initiateLogin.read> | httpCallResponse
 > => {
@@ -108,13 +109,19 @@ const initiateLogin = async (
 	if (httpCallResponse?.error) {
 		return httpCallResponse;
 	}
-	storeCookies("userId", httpCallResponse.data.userId);
-	storeCookies("sessionId", httpCallResponse.data.sessionId);
+	if (CLIENT_ENV == "PLUGIN") {
+		storeCookies("userId", httpCallResponse.data.userId);
+		storeCookies("sessionId", httpCallResponse.data.sessionId);
+	}
 
 	return UserAuthResponse.initiateLogin.read.parse(httpCallResponse?.data);
 };
 
-const confirmLogin = async (email: string, clientProof: string) => {
+const confirmLogin = async (
+	email: string,
+	clientProof: string,
+	CLIENT_ENV: string
+) => {
 	const httpCallResponse = await httpCall(
 		`${BASE_URL}/auth/login/confirm`,
 		"post",
@@ -127,13 +134,13 @@ const confirmLogin = async (email: string, clientProof: string) => {
 	if (httpCallResponse?.error) {
 		return httpCallResponse;
 	}
-
-	storeCookies("sessionToken", httpCallResponse.data.sessionToken);
-
+	if (CLIENT_ENV == "PLUGIN") {
+		storeCookies("sessionToken", httpCallResponse.data.sessionToken);
+	}
 	return UserAuthResponse.confirmLogin.read.parse(httpCallResponse?.data);
 };
 
-export const loginUser = async (email: string, password: string) => {
+export const loginUser = async (email: string, password: string, CLIENT_ENV: string) => {
 	try {
 		// Get salt from server
 		const saltResponse = await getSalt(email);
@@ -145,17 +152,12 @@ export const loginUser = async (email: string, password: string) => {
 		// Create SRP Client
 		const client = await getSRPClient(email, password, salt);
 		const clientPubliKey = client.computeA();
-		console.log(
-			"clientPubliKey",
-			typeof clientPubliKey,
-			clientPubliKey,
-			typeof client
-		);
 
 		// Send A to server and receive B
 		const loginResponse = await initiateLogin(
 			email,
-			Buffer.from(clientPubliKey).toString("hex")
+			Buffer.from(clientPubliKey).toString("hex"),
+			CLIENT_ENV
 		);
 
 		if (loginResponse?.error) {
@@ -170,7 +172,8 @@ export const loginUser = async (email: string, password: string) => {
 		// Share proofs and complete login
 		const confirmLoginResponse = await confirmLogin(
 			email,
-			Buffer.from(clientProof).toString("hex")
+			Buffer.from(clientProof).toString("hex"),
+			CLIENT_ENV
 		);
 
 		if (confirmLoginResponse?.error) {

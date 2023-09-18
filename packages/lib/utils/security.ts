@@ -175,12 +175,13 @@ const storeCookies = (key, value) => {
 export const storeAuthData = (
 	email: string,
 	password?: string,
-	keyWrappingKey?: string
+	keyWrappingKey?: string,
+	CLIENT_ENV?: string
 ) => {
 	console.log("We are setting storage session items!");
 	localStorage.clear();
 	localStorage.setItem("email", email);
-	storeCookies("email", email);
+	if (CLIENT_ENV === "PLUGIN") storeCookies("email", email);
 	if (password && keyWrappingKey) {
 		const hashedPassword = getHash(password, "SHA-256", null);
 		const keyWrappingKeyDecypted = forge.pki.decryptRsaPrivateKey(
@@ -191,7 +192,8 @@ export const storeAuthData = (
 			keyWrappingKeyDecypted
 		);
 		localStorage.setItem("keyWrappingKey", keyWrappingKey_pem);
-		storeCookies("keyWrappingKey", keyWrappingKey_pem);
+		if (CLIENT_ENV === "PLUGIN")
+			storeCookies("keyWrappingKey", keyWrappingKey_pem);
 
 		const keyWrappingKeyPublic = forge.pki.setRsaPublicKey(
 			keyWrappingKeyDecypted.n,
@@ -200,7 +202,8 @@ export const storeAuthData = (
 		const keyWrappingKeyPublicPem =
 			forge.pki.publicKeyToPem(keyWrappingKeyPublic);
 		localStorage.setItem("keyWrappingKeyPublic", keyWrappingKeyPublicPem);
-		storeCookies("keyWrappingKeyPublic", keyWrappingKeyPublicPem);
+		if (CLIENT_ENV === "PLUGIN")
+			storeCookies("keyWrappingKeyPublic", keyWrappingKeyPublicPem);
 	}
 };
 

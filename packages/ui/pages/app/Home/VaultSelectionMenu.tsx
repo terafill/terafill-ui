@@ -29,7 +29,7 @@ function VaultSelectionMenu({ vaultListView }: { vaultListView: VaultList }) {
                 <>
                     {vaultListView && selectedVault && vaultListView[selectedVault] ? (
                         <div className='my-2 w-11/12'>
-                            <Listbox.Button className='relative flex w-full rounded-md bg-gray-800 py-1.5 pl-3 pr-1.5 text-left text-gray-300 shadow-sm sm:text-sm sm:leading-6'>
+                            <Listbox.Button className='relative flex w-full rounded-md border-2 border-gray-800 py-1.5 pl-3 pr-1.5 text-left text-gray-300 shadow-sm sm:text-sm sm:leading-6'>
                                 <span className='block flex-1 truncate'>
                                     {vaultListView[selectedVault].name}
                                 </span>
@@ -48,7 +48,7 @@ function VaultSelectionMenu({ vaultListView }: { vaultListView: VaultList }) {
                                 leaveFrom='opacity-100'
                                 leaveTo='opacity-0'
                             >
-                                <Listbox.Options className='absolute z-10 mt-1 max-h-60 w-11/12 cursor-pointer overflow-auto rounded-md bg-gray-800 py-1 shadow-lg focus:outline-none sm:text-sm'>
+                                <Listbox.Options className='absolute z-10 mt-1 px-2 py-2 max-h-60 w-11/12 cursor-pointer overflow-auto rounded-md bg-gray-950 ring-2 ring-gray-700 py-1 shadow-lg focus:outline-none sm:text-sm'>
                                     {
                                         //eslint-disable-next-line
                                         Object.entries(vaultListView).map(([vaultId, vault]) => (
@@ -57,9 +57,9 @@ function VaultSelectionMenu({ vaultListView }: { vaultListView: VaultList }) {
                                                 className={({ active }) =>
                                                     classNames(
                                                         active
-                                                            ? 'text-gray-150 bg-gray-700'
+                                                            ? 'text-gray-150 bg-gray-800'
                                                             : 'text-gray-400',
-                                                        'relative select-none py-2 pl-3 pr-9',
+                                                        'relative select-none py-2 pl-3 pr-9 rounded-sm',
                                                     )
                                                 }
                                                 value={vault.id}

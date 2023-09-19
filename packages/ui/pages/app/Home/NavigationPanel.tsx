@@ -1,4 +1,4 @@
-import { useEffect, useState, Fragment } from 'react';
+import { useEffect, useState } from 'react';
 
 import * as RadioGroup from '@radix-ui/react-radio-group';
 import { useQueryClient } from '@tanstack/react-query';
@@ -134,7 +134,7 @@ const NavigationPanel = ({ vaultListView }) => {
                                     }}
                                 >
                                     <RadioGroup.Item
-                                        className=' outline-none'
+                                         className=' outline-none'
                                         key={itemData.id}
                                         value={itemData.id}
                                         id={itemData.id}

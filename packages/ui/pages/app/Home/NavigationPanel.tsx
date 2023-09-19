@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
 
+import { HamburgerMenuIcon, StarIcon, StarFilledIcon } from '@radix-ui/react-icons';
 import * as RadioGroup from '@radix-ui/react-radio-group';
 import { useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { getKeyWrappingKeyPair, decryptData } from 'lib/utils/security';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 import { Button2 } from 'components/form/Button';
 import { Input } from 'components/form/Input';
 
-import { addVaultItemPopupOpenAtom, selectedVaultAtom } from './store';
+import { addVaultItemPopupOpenAtom, openSidePanelAtom, selectedVaultAtom } from './store';
 import VaultSelectionMenu from './VaultSelectionMenu';
 import VaultSettingsMenu from './VaultSettingsMenu';
 
@@ -33,6 +34,7 @@ const decryptedItemData = (itemData, keyWrappingKeyPair) => {
         username: decryptData(itemData.username, iek),
         password: decryptData(itemData.password, iek),
         iek: iek,
+        isFavorite: itemData.isFavorite,
         icon: `https://cool-rose-moth.faviconkit.com/${decryptData(itemData.website, iek)}/256`,
     };
 };
@@ -72,21 +74,36 @@ const NavigationPanel = ({ vaultListView }) => {
         vaultItemList.length > 0 ? vaultItemList[0] : null,
     );
 
-    const items = [{ name: 'Item 1' }, { name: 'Item 2' }, { name: 'Item 3' }, { name: 'Item 4' }];
-
     const navigate = useNavigate();
+
+    const [openSidePanel, setOpenSidePanel] = useAtom(openSidePanelAtom);
+
+    const sortedVaultList = [...filteredVaultList].sort(
+        (a, b) => b[1].isFavorite - a[1].isFavorite,
+    );
+
     return (
         <div
             className='relative z-[1] flex w-3/12 shrink-0 grow-0 flex-col items-center justify-start border-r'
             id='navigation-panel'
         >
-            <div className='flex w-full items-center justify-around gap-2 px-2' id='vault-bar'>
+            {/* <div className='flex w-full items-center justify-around gap-2 px-2' id='vault-bar'>
                 <VaultSelectionMenu vaultListView={vaultListView} />
                 <VaultSettingsMenu vaultListView={vaultListView} />
-            </div>
-            <div className='mx-2 mb-2 flex self-stretch'>
+            </div> */}
+            <div className='flex flex-row items-center justify-around gap-2 self-stretch px-2 py-2'>
+                <div>
+                    {!openSidePanel ? (
+                        <HamburgerMenuIcon
+                            onClick={() => setOpenSidePanel(true)}
+                            className='h-7 w-7 rounded-sm p-1 hover:bg-gray-800'
+                        />
+                    ) : (
+                        ''
+                    )}
+                </div>
                 <Input
-                    className='w-full overflow-hidden'
+                    className='w-[100%] overflow-hidden'
                     type='text'
                     placeholder=' 🔎 Quick Search'
                     value={search}
@@ -101,6 +118,7 @@ const NavigationPanel = ({ vaultListView }) => {
                     setSelectedVaultItem(e);
                     navigate(`/app/home/${e}`);
                 }}
+                className='flex self-stretch px-2'
             >
                 <motion.div
                     // variants={{
@@ -116,10 +134,10 @@ const NavigationPanel = ({ vaultListView }) => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 1 }}
-                    className='z-[1] flex flex-1 flex-col items-center justify-start self-stretch overflow-y-auto bg-gray-950 px-2 py-2'
+                    className='z-[1] flex flex-1 flex-col items-center justify-start self-stretch overflow-y-auto bg-gray-950 py-2'
                     id='item-list'
                 >
-                    {filteredVaultList.map(
+                    {sortedVaultList.map(
                         ([id, itemData]) =>
                             id != 'new' && (
                                 <NavLink
@@ -127,35 +145,45 @@ const NavigationPanel = ({ vaultListView }) => {
                                     key={itemData.id}
                                     className={({ isActive }) => {
                                         const classes =
-                                            'mb-1 mt-1 rounded-lg px-[16px] outline-none [border:none]';
+                                            'mb-1 mt-1 flex self-stretch rounded-lg px-[16px] outline-none [border:none]';
                                         return isActive
                                             ? `${classes} bg-gray-800`
                                             : `${classes} hover:bg-gray-800`;
                                     }}
                                 >
                                     <RadioGroup.Item
-                                         className=' outline-none'
+                                        className='block w-full self-stretch outline-none'
                                         key={itemData.id}
                                         value={itemData.id}
                                         id={itemData.id}
                                     >
                                         <div
-                                            className='flex cursor-pointer flex-row items-center justify-start overflow-hidden rounded-lg outline-none [border:none]'
+                                            className='flex cursor-pointer flex-row items-center justify-start self-stretch overflow-hidden rounded-lg outline-none [border:none]'
                                             htmlFor={itemData.id}
                                         >
                                             <img
-                                                className='relative h-[40px] w-[40px] shrink-0 overflow-hidden object-cover rounded-sm'
+                                                className='relative h-[40px] w-[40px] shrink-0 overflow-hidden rounded-sm object-cover'
                                                 alt=''
                                                 src={itemData.icon}
                                             />
-                                            <div className='flex flex-col px-[8px] py-[8px] text-left'>
-                                                <label className='relative line-clamp-2 h-[23px] w-[230px] shrink-0 cursor-pointer overflow-hidden truncate text-xl font-bold tracking-[0.03em] text-gray-100'>
+                                            <div className='flex flex-grow flex-col px-[8px] py-[8px] text-left'>
+                                                <label className='relative line-clamp-2 shrink-0 cursor-pointer overflow-hidden truncate text-lg font-semibold tracking-[0.03em] text-gray-300'>
                                                     {itemData.title}
                                                 </label>
-                                                <label className='relative line-clamp-2 h-[23px] w-[230px] shrink-0 cursor-pointer overflow-hidden truncate text-base tracking-[0.03em] text-gray-300'>
+                                                <label className='relative line-clamp-2 shrink-0 cursor-pointer overflow-hidden truncate text-sm tracking-[0.03em] text-gray-400'>
                                                     {itemData.username}
                                                 </label>
                                             </div>
+                                            <StarFilledIcon
+                                                onClick={() => {
+                                                    console.log('Make favourite');
+                                                }}
+                                                className={`h-6 w-6 ${
+                                                    itemData?.isFavorite
+                                                        ? 'text-yellow-500'
+                                                        : 'text-gray-700'
+                                                }`}
+                                            />
                                         </div>
                                     </RadioGroup.Item>
                                 </NavLink>

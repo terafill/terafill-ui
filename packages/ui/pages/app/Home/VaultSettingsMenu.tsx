@@ -7,7 +7,7 @@ import {
     CogIcon,
     SquaresPlusIcon,
 } from '@heroicons/react/20/solid';
-import { TrashIcon } from '@radix-ui/react-icons';
+import { TrashIcon, DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { useAtomValue, useSetAtom } from 'jotai';
 
 import {
@@ -25,7 +25,7 @@ function VaultSettingsMenu({ vaultList }) {
     const [isDefault, setIsDefault] = useState(false);
     const selectedVault = useAtomValue(selectedVaultAtom);
     useEffect(() => {
-        if (selectedVault != null && vaultList != null) {
+        if (selectedVault != null && vaultList != null && vaultList.length > 0) {
             if (vaultList[selectedVault]['isDefault']) {
                 setIsDefault(true);
                 return;
@@ -41,8 +41,9 @@ function VaultSettingsMenu({ vaultList }) {
     return (
         <Menu as='div' className='relative inline-block text-left'>
             <div>
-                <Menu.Button className='inline-flex w-full justify-center rounded-md border-2 border-gray-800 bg-transparent px-2 py-2 text-sm font-normal shadow-sm'>
-                    <CogIcon className='h-5 w-5 text-gray-300' aria-hidden='true' />
+                <Menu.Button className='inline-flex w-full justify-center rounded-md bg-transparent text-sm font-normal shadow-sm'>
+                    {/* <CogIcon className='h-5 w-5 text-gray-300' aria-hidden='true' /> */}
+                    <DotsHorizontalIcon className='h-5 w-5 rounded-sm p-1 opacity-0 group-hover/vault:opacity-100' />
                 </Menu.Button>
             </div>
 
@@ -75,7 +76,7 @@ function VaultSettingsMenu({ vaultList }) {
                                 </a>
                             )}
                         </Menu.Item>
-                        <Menu.Item onClick={() => setAddVaultPopupOpen(true)}>
+                        {/* <Menu.Item onClick={() => setAddVaultPopupOpen(true)}>
                             {({ active }) => (
                                 <a
                                     href='#'
@@ -88,7 +89,7 @@ function VaultSettingsMenu({ vaultList }) {
                                     Add vault
                                 </a>
                             )}
-                        </Menu.Item>
+                        </Menu.Item> */}
                         {/* <Menu.Item>
                             {({ active }) => (
                                 <a

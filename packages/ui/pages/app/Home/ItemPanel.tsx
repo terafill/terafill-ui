@@ -10,6 +10,7 @@ import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { useParams, useNavigate, useLocation, useOutletContext } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
+import { Badge } from 'components/form/Badge';
 import { Button2 } from 'components/form/Button';
 import { Input } from 'components/form/Input';
 
@@ -267,16 +268,16 @@ const ItemPanel = () => {
                     )
                 }
             </div>
-            <div className='grid grid-cols-2 grid-rows-4 items-center justify-center justify-items-center gap-4'>
-                <div className='flex-1 self-stretch' id='iconframe'>
+            <div className='grid grid-cols-2 grid-rows-4 items-start justify-center justify-items-center gap-4'>
+                <div className='mb-4 flex-1 self-stretch' id='iconframe'>
                     <img
-                        className='h-[88px] w-[88px] overflow-hidden object-cover border-2 rounded-md border-gray-900'
+                        className='h-[88px] w-[88px] overflow-hidden rounded-md border-2 border-gray-900 object-cover'
                         alt=''
                         src={itemDataView?.icon ?? null}
                     />
                 </div>
                 <input
-                    className={`rounded-3xs relative box-border flex  w-8/12 flex-1 flex-row items-center justify-center self-stretch overflow-hidden rounded-lg bg-[transparent] px-[7px] py-0.5 text-5xl font-medium ${
+                    className={`rounded-3xs relative mb-4 box-border flex  w-8/12 flex-1 flex-row items-center justify-center self-stretch overflow-hidden rounded-lg bg-[transparent] px-[7px] py-0.5 text-5xl font-medium ${
                         itemFormDisabled ? '' : 'border-2 border-blue-100 bg-blue-50 bg-opacity-40'
                     }`}
                     value={itemDataView?.title ?? ''}
@@ -345,6 +346,50 @@ const ItemPanel = () => {
                     }}
                     disabled={itemFormDisabled}
                 />
+                <label className='text-left font-medium text-gray-400'>Tags</label>
+                {/* <Input
+                    animationKey={itemFormDisabled}
+                    className={`box-border flex w-8/12 overflow-hidden text-lg ${
+                        itemFormDisabled
+                            ? ''
+                            : ' border-1 border-gray-300 bg-gray-700 bg-opacity-40'
+                    } `}
+                    type='text'
+                    value={itemDataView?.website ?? ''}
+                    // placeholder='Website'
+                    // onChange={(e) => {
+                    //     setItemDataView({ ...itemDataView, website: e.target.value });
+                    // }}
+                    disabled={itemFormDisabled}
+                />                 */}
+                <div
+                    animationKey={itemFormDisabled}
+                    className={`box-border block w-8/12 gap-2 rounded-sm border-2 p-2 text-lg ${
+                        itemFormDisabled
+                            ? ''
+                            : ' border-1 border-gray-300 bg-gray-700 bg-opacity-40'
+                    } `}
+                >
+                    {[
+                        'Prod',
+                        'Dev',
+                        'Staging',
+                        'Secure',
+                        'Finance',
+                        'Work',
+                        'Personal',
+                        'Family',
+                    ].map((bname) => (
+                        <Badge
+                            key={bname}
+                            className='m-2 h-min text-gray-400'
+                            variant={'outline'}
+                            badgeColor='indigo'
+                        >
+                            {bname}
+                        </Badge>
+                    ))}
+                </div>
             </div>
         </motion.div>
     );

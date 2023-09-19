@@ -39,6 +39,7 @@ const decryptedItemData = (itemData, keyWrappingKeyPair) => {
         username: decryptData(itemData.username, iek),
         password: decryptData(itemData.password, iek),
         iek: iek,
+        isFavorite: itemData.isFavorite,
         icon: `https://cool-rose-moth.faviconkit.com/${decryptData(itemData.website, iek)}/256`,
     };
 };
@@ -119,7 +120,7 @@ const AppHome = ({ CLIENT_ENV = 'WEB' }) => {
 
     return (
         <div className='flex h-screen w-screen flex-col items-stretch justify-start'>
-            <Navbar navbarType='app' />
+            {/* <Navbar navbarType='app' /> */}
             <div className='flex h-full flex-row items-stretch border-t' id='app-screen'>
                 {CLIENT_ENV == 'WEB' && <SideNavbar />}
                 <div

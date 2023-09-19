@@ -1,59 +1,161 @@
-import React, { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 
-import { ChartPieIcon, HomeIcon, UsersIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
-import { NavLink } from 'react-router-dom';
+import {
+    // ChartPieIcon,
+    // HomeIcon,
+    // UsersIcon,
+    // ShieldCheckIcon,
+    QuestionMarkCircleIcon,
+    TagIcon,
+} from '@heroicons/react/24/outline';
+import * as Collapsible from '@radix-ui/react-collapsible';
+import {
+    CubeIcon,
+    TriangleRightIcon,
+    TriangleDownIcon,
+    DoubleArrowLeftIcon,
+    // DoubleArrowRightIcon,
+    AvatarIcon,
+    DotsHorizontalIcon,
+} from '@radix-ui/react-icons';
+import * as Tabs from '@radix-ui/react-tabs';
+import { motion } from 'framer-motion';
+import { useAtom } from 'jotai';
 
-const navigation = [
-    { name: 'Home', href: '/app/home', icon: HomeIcon, comingSoon: false },
-    // { name: 'Profile', href: '/app/profile', icon: UserIcon, comingSoon: false },
-    { name: 'Security', href: '/app/security', icon: ShieldCheckIcon, comingSoon: true },
-    { name: 'Sharing', href: '/app/sharing', icon: UsersIcon, comingSoon: true },
-    { name: 'Dashboard', href: '/app/dashboard', icon: ChartPieIcon, comingSoon: true },
-];
-
-function classNames(...classes) {
-    return classes.filter(Boolean).join(' ');
-}
+import { openSidePanelAtom } from 'ui/pages/app/Home/store';
+import VaultSettingsMenu from 'ui/pages/app/Home/VaultSettingsMenu';
 
 export default function SideNavbar() {
+    const [selectedVault, setSelectedVault] = useState('Default vault');
+
+    const [openVaultsMenu, setOpenVaultsMenu] = useState(true);
+    const [openTagsMenu, setOpenTagsMenu] = useState(true);
+    const [openSidePanel, setOpenSidePanel] = useAtom(openSidePanelAtom);
+
     return (
-        <>
-            <div className='flex-0 flex h-full w-24 justify-center border-r bg-black'>
-                <ul role='list' className='flex flex-1 flex-col items-center justify-around p-4'>
-                    {navigation.map((item) => (
-                        <NavLink
-                            key={item.name}
-                            to={item.href}
-                            disabled={true}
-                            className={item.comingSoon ? 'pointer-events-none' : ''}
-                        >
-                            {({ isActive }) => (
-                                <li
-                                    key={item.name}
-                                    className='flex h-24 w-24 flex-1 cursor-pointer p-2'
-                                >
-                                    <div
-                                        className={classNames(
-                                            isActive
-                                                ? 'flex flex-1 flex-col items-center justify-around bg-gray-800 text-white'
-                                                : 'flex flex-1 flex-col items-center justify-around text-gray-400 hover:bg-gray-800 hover:text-white',
-                                            'group rounded-md text-sm font-semibold',
-                                        )}
-                                    >
-                                        <item.icon className='flex-0 flex h-8 w-8' />
-                                        <p className='flex'>{item.name}</p>
-                                        {item.comingSoon && (
-                                            <p className='rounded-sm bg-black p-[2px] text-xs text-gray-500'>
-                                                coming soon
-                                            </p>
-                                        )}
-                                    </div>
-                                </li>
-                            )}
-                        </NavLink>
-                    ))}
-                </ul>
-            </div>
-        </>
+        <Collapsible.Root
+            className='group flex h-[100%]'
+            open={openSidePanel}
+            onOpenChange={setOpenSidePanel}
+        >
+            <Collapsible.Content>
+                <motion.div
+                    initial={{ opacity: 0.2 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0.2 }}
+                    transition={{ duration: 0.2 }}
+                    className='flex h-[100%] w-[100%] flex-col justify-start gap-10 border-r-2 p-4'
+                    id='side-panel'
+                >
+                    <h1 className='flex items-center justify-between gap-2 text-gray-200'>
+                        <AvatarIcon className='h-6 w-6' />
+                        Harshit Saini
+                        <Collapsible.Trigger>
+                            <DoubleArrowLeftIcon className='ml-2 h-7 w-7 rounded-sm  p-1  opacity-0 transition-opacity hover:bg-gray-800 group-hover:opacity-100' />
+                        </Collapsible.Trigger>
+                    </h1>
+                    <Tabs.Root
+                        defaultValue={selectedVault}
+                        orientation='vertical'
+                        className='flex flex-col gap-8'
+                        onValueChange={(e) => setSelectedVault(e)}
+                    >
+                        <Tabs.List aria-label='navbar tabs' className='flex flex-col gap-8'>
+                            <Collapsible.Root
+                                open={openVaultsMenu}
+                                onOpenChange={setOpenVaultsMenu}
+                            >
+                                <div className='flex flex-col gap-2' id='vaults-section'>
+                                    <Collapsible.Trigger>
+                                        <h1 className='px-2 py-1 flex items-center gap-1 rounded-sm text-gray-400 hover:bg-slate-800 hover:text-white'>
+                                            <CubeIcon className='h-4 w-4' />
+                                            Vaults
+                                            {openVaultsMenu ? (
+                                                <TriangleDownIcon />
+                                            ) : (
+                                                <TriangleRightIcon />
+                                            )}
+                                        </h1>
+                                    </Collapsible.Trigger>
+                                    <Collapsible.Content>
+                                        <div className='ml-2 flex flex-col items-start gap-1 border-l-2 pl-2'>
+                                            {['Default vault', 'vault1', 'vault2', 'vault3'].map(
+                                                (vault) => (
+                                                    <Tabs.Trigger
+                                                        key={vault}
+                                                        value={vault}
+                                                        className={`group/vault flex w-[100%] items-center justify-between rounded-sm px-2 py-1 text-left outline-none hover:bg-slate-800 hover:text-white
+                                        ${selectedVault === vault ? 'bg-slate-800 ' : ''}
+                                        `}
+                                                    >
+                                                        {vault}
+                                                        {/* <DotsHorizontalIcon className='h-5 w-5 rounded-sm p-1 opacity-0 group-hover/vault:opacity-100' /> */}
+                                                        <VaultSettingsMenu vaultList={[]} />
+                                                    </Tabs.Trigger>
+                                                ),
+                                            )}
+                                        </div>
+                                    </Collapsible.Content>
+                                </div>
+                            </Collapsible.Root>
+                            <Collapsible.Root open={openTagsMenu} onOpenChange={setOpenTagsMenu}>
+                                <div className='flex flex-col gap-2' id='tags-section'>
+                                    <Collapsible.Trigger>
+                                        <h1 className='px-2 py-1 flex items-center gap-1 rounded-sm text-gray-400 hover:bg-slate-800 hover:text-white'>
+                                            <TagIcon className='h-4 w-4' />
+                                            Tags
+                                            {openTagsMenu ? (
+                                                <TriangleDownIcon />
+                                            ) : (
+                                                <TriangleRightIcon />
+                                            )}
+                                        </h1>
+                                    </Collapsible.Trigger>
+                                    <Collapsible.Content>
+                                        <div className='ml-2 flex flex-col items-start gap-1 border-l-2 pl-2'>
+                                            {['tag1', 'prod', 'dev', 'staging'].map((vault) => (
+                                                <Tabs.Trigger
+                                                    key={vault}
+                                                    value={vault}
+                                                    className={`group/tag flex w-[100%] items-center justify-between rounded-sm px-2 py-1 text-left outline-none hover:bg-slate-800 hover:text-white
+                                    ${selectedVault === vault ? 'bg-slate-800 ' : ''}
+                                    `}
+                                                >
+                                                    {vault}
+                                                    <DotsHorizontalIcon className='h-5 w-5 rounded-sm p-1 opacity-0 group-hover/tag:opacity-100' />
+                                                </Tabs.Trigger>
+                                            ))}
+                                        </div>
+                                    </Collapsible.Content>
+                                </div>
+                            </Collapsible.Root>
+                        </Tabs.List>
+                        {/* <button onClick={()=>{$crisp.push(["do", "chat:show"]);console.log("Toggled!")}}>show support</button> */}
+                        {/* <button onClick={()=>{$crisp.push(["do", "chat:hide"]);console.log("Toggled!")}}>hide support</button> */}
+                        <button
+                            onClick={()=>{$crisp.push(["do", "chat:toggle"]);console.log("Toggled!")}}
+                            className='px-2 py-1 flex items-center gap-1 rounded-sm text-gray-400 hover:bg-slate-800 hover:text-white'
+                            >
+                                <QuestionMarkCircleIcon className='h-4 w-4'/>
+                                Support
+                        </button>
+                        {[
+                            'Default vault',
+                            'vault1',
+                            'vault2',
+                            'vault3',
+                            'tag1',
+                            'prod',
+                            'dev',
+                            'staging',
+                        ].map((vault) => (
+                            <Tabs.Content key={vault} value={vault}>
+                                {/* {vault} */}
+                            </Tabs.Content>
+                        ))}
+                    </Tabs.Root>
+                </motion.div>
+            </Collapsible.Content>
+        </Collapsible.Root>
     );
 }

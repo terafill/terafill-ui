@@ -1,200 +1,77 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import { TrashIcon, Pencil2Icon, UpdateIcon, CheckCircledIcon } from '@radix-ui/react-icons';
-import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { getVaultItem, createVaultItem, deleteVaultItem, updateVaultItem } from 'lib/api/item';
-import { getKeyWrappingKeyPair, decryptData } from 'lib/utils/security';
 import { toast } from 'react-hot-toast';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
-import { useParams, useNavigate, useLocation, useOutletContext } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
+import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
 
 import { Badge } from 'components/form/Badge';
 import { Button2 } from 'components/form/Button';
 import { Input } from 'components/form/Input';
 
-const decryptedItemData = (itemData, keyWrappingKeyPair) => {
-    const iek = keyWrappingKeyPair.private.decrypt(itemData.encryptedEncryptionKey);
-    return {
-        id: itemData.id,
-        title: decryptData(itemData.title, iek),
-        website: decryptData(itemData.website, iek),
-        username: decryptData(itemData.username, iek),
-        password: decryptData(itemData.password, iek),
-        iek: iek,
-        icon: `https://cool-rose-moth.faviconkit.com/${decryptData(itemData.website, iek)}/256`,
-    };
-};
+import useDeleteItem from './hooks/useDeleteItem';
+import useItem from './hooks/useItem';
+import useUpdateItem from './hooks/useUpdateItem';
 
 const ItemPanel = () => {
     const { id } = useParams();
     const [itemFormDisabled, setItemFormDisability] = useState(true);
-    // const [shareButtonVisible, setShareButtonVisible] = useState(true);
     const [showPassword, setPasswordVisibility] = useState(false);
     const [itemUpdating, setItemUpdating] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [updateSuccess, setUpdateSuccess] = useState(false);
 
     const navigate = useNavigate();
-    const location = useLocation();
 
     const [selectedVault] = useOutletContext<[string]>();
 
-    const queryClient = useQueryClient();
+    // Fetch item data
+    const { itemDataView, setItemDataView } = useItem(selectedVault, id);
 
-    const itemDataRaw = useQuery({
-        queryKey: ['vaults', selectedVault, 'items', id],
-        queryFn: () =>
-            getVaultItem({
-                vaultId: selectedVault,
-                id: id,
-            }),
-        suspense: true,
+    // Delete item
+    const { deleteItemMutation } = useDeleteItem({
+        selectedVault: selectedVault,
+        id: id,
+        onSuccess: () => {
+            navigate(-1);
+            toast.success('Item deleted!');
+        },
+        onError: (error) => {
+            navigate(-1);
+            toast.error(error);
+        },
     });
 
-    // let initDataEncrypted = {
-    //   id: itemDataRaw?.data?.id ?? '',
-    //   title: itemDataRaw?.data?.title ?? '',
-    //   website: itemDataRaw?.data?.website ?? '',
-    //   username: itemDataRaw?.data?.username ?? '',
-    //   password: itemDataRaw?.data?.password ?? '',
-    //   encryptedEncryptionKey: itemDataRaw?.data?.encryptedEncryptionKey ?? '',
-    // }
+    // Update item
+    const { updateItem } = useUpdateItem({
+        selectedVault: selectedVault,
+        id: id,
+        itemDataView: itemDataView,
+        onSuccess: () => {
+            setUpdateSuccess(true);
+            setTimeout(() => {
+                setEditMode(false);
+                setUpdateSuccess(false);
+            }, 3000);
+        },
+        onError: (error) => {
+            navigate(-1);
+            toast.error(error);
+        },
+    });
 
-    const [itemDataView, setItemDataView] = useState<VaultItem | null>(null);
-
-    const upsertItem = async (id) => {
+    // Modifying update item action
+    const updateItemMutation = async (id) => {
         if (!itemFormDisabled) {
             setItemUpdating(true);
-            if (id === 'new') {
-                const iek = uuidv4();
-                await createItemData.mutateAsync(
-                    {
-                        vaultId: selectedVault,
-                        title: itemDataView.title,
-                        website: itemDataView.website,
-                        password: itemDataView.password,
-                        username: itemDataView.username,
-                        iek: iek,
-                    },
-                    {
-                        onError: (error) => {
-                            toast.error(error);
-                        },
-                        onSuccess: () => {
-                            toast.success('Item created!');
-                            queryClient.invalidateQueries({
-                                queries: [
-                                    {
-                                        queryKey: ['vaults', selectedVault, 'items'],
-                                    },
-                                ],
-                            });
-                        },
-                    },
-                );
-            } else {
-                await updateItemData.mutateAsync(
-                    {
-                        vaultId: selectedVault,
-                        id: id,
-                        title: itemDataView.title,
-                        website: itemDataView.website,
-                        password: itemDataView.password,
-                        username: itemDataView.username,
-                        iek: itemDataView.iek,
-                    },
-                    {
-                        onError: (error) => {
-                            toast.error(error);
-                        },
-                        onSuccess: () => {
-                            // toast.success('Item updated!');
-                            setUpdateSuccess(true);
-                            setTimeout(() => {
-                                setEditMode(false);
-                                setUpdateSuccess(false);
-                            }, 3000);
-                            queryClient.invalidateQueries({
-                                queries: [
-                                    // change selectedVault to itemDataView.vaultId
-                                    {
-                                        queryKey: ['vaults', selectedVault, 'items'],
-                                    },
-                                ],
-                            });
-                        },
-                    },
-                );
-            }
+
+            await updateItem(id);
+
             setItemUpdating(false);
         }
         setItemFormDisability(!itemFormDisabled);
     };
-
-    const deleteItemMutation = async () => {
-        await deleteItemData.mutateAsync(
-            {
-                vaultId: selectedVault,
-                id: id,
-            },
-            {
-                onError: (error) => {
-                    toast.error(error);
-                    navigate(-1);
-                },
-                onSuccess: () => {
-                    toast.success('Item deleted!');
-                    queryClient.invalidateQueries({
-                        queries: [
-                            // change selectedVault to itemDataView.vaultId
-                            { queryKey: ['vaults', selectedVault, 'items'] },
-                        ],
-                    });
-                    navigate(-1);
-                },
-            },
-        );
-    };
-
-    useEffect(() => {
-        if (itemDataRaw.isSuccess && itemDataRaw.data) {
-            const keyWrappingKeyPair = getKeyWrappingKeyPair();
-            const itemData = decryptedItemData(itemDataRaw.data, keyWrappingKeyPair);
-            setItemDataView(itemData);
-        }
-    }, [itemDataRaw.dataUpdatedAt, location]);
-
-    useEffect(() => {
-        if (id === 'new') {
-            setItemDataView({
-                title: '',
-                icon: null,
-                password: '',
-                website: '',
-                username: '',
-                vaultId: selectedVault,
-            });
-            setItemFormDisability(false);
-            // setShareButtonVisible(false);
-        } else {
-            setItemFormDisability(true);
-            // setShareButtonVisible(true);
-        }
-    }, [location]);
-
-    const updateItemData = useMutation({
-        mutationFn: updateVaultItem,
-    });
-
-    const createItemData = useMutation({
-        mutationFn: createVaultItem,
-    });
-
-    const deleteItemData = useMutation({
-        mutationFn: deleteVaultItem,
-    });
 
     return (
         <motion.div
@@ -202,7 +79,7 @@ const ItemPanel = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className='dotted-bg relative z-[0] flex h-full flex-1 flex-col items-center justify-center self-stretch overflow-hidden bg-gray-950 px-[16px] py-[32px]'
+            className='dotted-bg relative z-[0] flex h-full flex-1 flex-col items-center justify-center self-stretch bg-gray-950 px-[16px] py-[32px]'
             id='right-panel'
         >
             <div className='absolute right-[24px] top-[24px] flex flex-row gap-3 self-end'>
@@ -253,7 +130,7 @@ const ItemPanel = () => {
                                 Success
                             </Button2>
                         ) : (
-                            <Button2 variant='ghost' onClick={() => upsertItem(id)}>
+                            <Button2 variant='ghost' onClick={() => updateItemMutation(id)}>
                                 Save
                             </Button2>
                         ))
@@ -268,8 +145,8 @@ const ItemPanel = () => {
                     )
                 }
             </div>
-            <div className='grid grid-cols-2 grid-rows-4 items-start justify-center justify-items-center gap-4'>
-                <div className='mb-4 flex-1 self-stretch' id='iconframe'>
+            <div className='mt-12 grid grid-cols-2 items-start justify-center justify-items-center space-y-20 overflow-y-auto'>
+                <div className='mb-4 flex items-center justify-center self-stretch' id='iconframe'>
                     <img
                         className='h-[88px] w-[88px] overflow-hidden rounded-md border-2 border-gray-900 object-cover'
                         alt=''
@@ -277,7 +154,7 @@ const ItemPanel = () => {
                     />
                 </div>
                 <input
-                    className={`rounded-3xs relative mb-4 box-border flex  w-8/12 flex-1 flex-row items-center justify-center self-stretch overflow-hidden rounded-lg bg-[transparent] px-[7px] py-0.5 text-5xl font-medium ${
+                    className={`rounded-3xs relative mb-4 flex w-8/12 items-center justify-center self-stretch rounded-lg bg-[transparent] px-[7px] py-0.5 text-5xl font-medium ${
                         itemFormDisabled ? '' : 'border-2 border-blue-100 bg-blue-50 bg-opacity-40'
                     }`}
                     value={itemDataView?.title ?? ''}
@@ -346,22 +223,8 @@ const ItemPanel = () => {
                     }}
                     disabled={itemFormDisabled}
                 />
+
                 <label className='text-left font-medium text-gray-400'>Tags</label>
-                {/* <Input
-                    animationKey={itemFormDisabled}
-                    className={`box-border flex w-8/12 overflow-hidden text-lg ${
-                        itemFormDisabled
-                            ? ''
-                            : ' border-1 border-gray-300 bg-gray-700 bg-opacity-40'
-                    } `}
-                    type='text'
-                    value={itemDataView?.website ?? ''}
-                    // placeholder='Website'
-                    // onChange={(e) => {
-                    //     setItemDataView({ ...itemDataView, website: e.target.value });
-                    // }}
-                    disabled={itemFormDisabled}
-                />                 */}
                 <div
                     animationKey={itemFormDisabled}
                     className={`box-border block w-8/12 gap-2 rounded-sm border-2 p-2 text-lg ${

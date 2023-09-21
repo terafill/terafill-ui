@@ -1,13 +1,6 @@
-import { Fragment, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import {
-    // ChartPieIcon,
-    // HomeIcon,
-    // UsersIcon,
-    // ShieldCheckIcon,
-    QuestionMarkCircleIcon,
-    TagIcon,
-} from '@heroicons/react/24/outline';
+import { QuestionMarkCircleIcon, TagIcon } from '@heroicons/react/24/outline';
 import * as Collapsible from '@radix-ui/react-collapsible';
 import {
     CubeIcon,
@@ -16,21 +9,32 @@ import {
     DoubleArrowLeftIcon,
     // DoubleArrowRightIcon,
     AvatarIcon,
-    DotsHorizontalIcon,
+    // DotsHorizontalIcon,
 } from '@radix-ui/react-icons';
 import * as Tabs from '@radix-ui/react-tabs';
 import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
+import { useNavigate } from 'react-router-dom';
 
-import { openSidePanelAtom } from 'ui/pages/app/Home/store';
+import { openSidePanelAtom, selectedVaultAtom } from 'ui/pages/app/Home/store';
 import VaultSettingsMenu from 'ui/pages/app/Home/VaultSettingsMenu';
 
+import useVaultList from './hooks/useVaultList';
+
 export default function SideNavbar() {
-    const [selectedVault, setSelectedVault] = useState('Default vault');
+    const [selectedVault, setSelectedVault] = useAtom(selectedVaultAtom);
 
     const [openVaultsMenu, setOpenVaultsMenu] = useState(true);
-    const [openTagsMenu, setOpenTagsMenu] = useState(true);
+    // const [openTagsMenu, setOpenTagsMenu] = useState(true);
     const [openSidePanel, setOpenSidePanel] = useAtom(openSidePanelAtom);
+
+    const vaultList = useVaultList();
+
+    const navigate = useNavigate();
+    const setupItemsView = (vaultId) => {
+        setSelectedVault(vaultId);
+        navigate(`/app/home/vault/${vaultId}`);
+    };
 
     return (
         <Collapsible.Root
@@ -58,7 +62,7 @@ export default function SideNavbar() {
                         defaultValue={selectedVault}
                         orientation='vertical'
                         className='flex flex-col gap-8'
-                        onValueChange={(e) => setSelectedVault(e)}
+                        onValueChange={(vaultId) => setupItemsView(vaultId)}
                     >
                         <Tabs.List aria-label='navbar tabs' className='flex flex-col gap-8'>
                             <Collapsible.Root
@@ -67,7 +71,7 @@ export default function SideNavbar() {
                             >
                                 <div className='flex flex-col gap-2' id='vaults-section'>
                                     <Collapsible.Trigger>
-                                        <h1 className='px-2 py-1 flex items-center gap-1 rounded-sm text-gray-400 hover:bg-slate-800 hover:text-white'>
+                                        <h1 className='flex items-center gap-1 rounded-sm px-2 py-1 text-gray-400 hover:bg-slate-800 hover:text-white'>
                                             <CubeIcon className='h-4 w-4' />
                                             Vaults
                                             {openVaultsMenu ? (
@@ -78,30 +82,34 @@ export default function SideNavbar() {
                                         </h1>
                                     </Collapsible.Trigger>
                                     <Collapsible.Content>
-                                        <div className='ml-2 flex flex-col items-start gap-1 border-l-2 pl-2'>
-                                            {['Default vault', 'vault1', 'vault2', 'vault3'].map(
-                                                (vault) => (
+                                        {vaultList?.data ? (
+                                            <div className='ml-2 flex flex-col items-start gap-1 border-l-2 pl-2'>
+                                                {vaultList.data.map((vault) => (
                                                     <Tabs.Trigger
-                                                        key={vault}
-                                                        value={vault}
+                                                        key={vault.id}
+                                                        value={vault.id}
                                                         className={`group/vault flex w-[100%] items-center justify-between rounded-sm px-2 py-1 text-left outline-none hover:bg-slate-800 hover:text-white
-                                        ${selectedVault === vault ? 'bg-slate-800 ' : ''}
+                                        ${selectedVault === vault.id ? 'bg-slate-800 ' : ''}
                                         `}
                                                     >
-                                                        {vault}
+                                                        {vault.name}
                                                         {/* <DotsHorizontalIcon className='h-5 w-5 rounded-sm p-1 opacity-0 group-hover/vault:opacity-100' /> */}
                                                         <VaultSettingsMenu vaultList={[]} />
                                                     </Tabs.Trigger>
-                                                ),
-                                            )}
-                                        </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div className='ml-2 flex flex-col items-start gap-1 border-l-2 pl-2'>
+                                                No vaults found
+                                            </div>
+                                        )}
                                     </Collapsible.Content>
                                 </div>
                             </Collapsible.Root>
-                            <Collapsible.Root open={openTagsMenu} onOpenChange={setOpenTagsMenu}>
+                            {/* <Collapsible.Root open={openTagsMenu} onOpenChange={setOpenTagsMenu}>
                                 <div className='flex flex-col gap-2' id='tags-section'>
                                     <Collapsible.Trigger>
-                                        <h1 className='px-2 py-1 flex items-center gap-1 rounded-sm text-gray-400 hover:bg-slate-800 hover:text-white'>
+                                        <h1 className='flex items-center gap-1 rounded-sm px-2 py-1 text-gray-400 hover:bg-slate-800 hover:text-white'>
                                             <TagIcon className='h-4 w-4' />
                                             Tags
                                             {openTagsMenu ? (
@@ -128,31 +136,20 @@ export default function SideNavbar() {
                                         </div>
                                     </Collapsible.Content>
                                 </div>
-                            </Collapsible.Root>
+                            </Collapsible.Root> */}
                         </Tabs.List>
                         {/* <button onClick={()=>{$crisp.push(["do", "chat:show"]);console.log("Toggled!")}}>show support</button> */}
                         {/* <button onClick={()=>{$crisp.push(["do", "chat:hide"]);console.log("Toggled!")}}>hide support</button> */}
                         <button
-                            onClick={()=>{$crisp.push(["do", "chat:toggle"]);console.log("Toggled!")}}
-                            className='px-2 py-1 flex items-center gap-1 rounded-sm text-gray-400 hover:bg-slate-800 hover:text-white'
-                            >
-                                <QuestionMarkCircleIcon className='h-4 w-4'/>
-                                Support
+                            onClick={() => {
+                                $crisp.push(['do', 'chat:toggle']);
+                                console.log('Toggled!');
+                            }}
+                            className='flex items-center gap-1 rounded-sm px-2 py-1 text-gray-400 hover:bg-slate-800 hover:text-white'
+                        >
+                            <QuestionMarkCircleIcon className='h-4 w-4' />
+                            Support
                         </button>
-                        {[
-                            'Default vault',
-                            'vault1',
-                            'vault2',
-                            'vault3',
-                            'tag1',
-                            'prod',
-                            'dev',
-                            'staging',
-                        ].map((vault) => (
-                            <Tabs.Content key={vault} value={vault}>
-                                {/* {vault} */}
-                            </Tabs.Content>
-                        ))}
                     </Tabs.Root>
                 </motion.div>
             </Collapsible.Content>

@@ -1,15 +1,18 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateVaultItem } from 'lib/api/item';
 
-const useUpdateItem = ({ selectedVault, id, itemDataView, onSuccess, onError }) => {
+const useUpdateItem = ({ selectedVault, itemDataView, onSuccess, onError }) => {
     const queryClient = useQueryClient();
 
     const updateItemData = useMutation({
         mutationFn: updateVaultItem,
     });
-    const updateItem = async (id) => {
-        await updateItemData.mutateAsync(
-            {
+    const updateItem = async (id, itemData = {}) => {
+        let vars = {
+            ...itemData,
+        };
+        if (itemDataView) {
+            vars = {
                 vaultId: selectedVault,
                 id: id,
                 title: itemDataView.title,
@@ -17,24 +20,26 @@ const useUpdateItem = ({ selectedVault, id, itemDataView, onSuccess, onError }) 
                 password: itemDataView.password,
                 username: itemDataView.username,
                 iek: itemDataView.iek,
+                isFavorite: itemDataView.isFavorite,
+                ...itemData,
+            };
+        }
+        await updateItemData.mutateAsync(vars, {
+            onError: (error) => {
+                if (onError) onError(error);
             },
-            {
-                onError: (error) => {
-                    if (onError) onError(error);
-                },
-                onSuccess: () => {
-                    if (onSuccess) onSuccess();
-                    queryClient.invalidateQueries({
-                        queries: [
-                            // change selectedVault to itemDataView.vaultId
-                            {
-                                queryKey: ['vaults', selectedVault, 'items'],
-                            },
-                        ],
-                    });
-                },
+            onSuccess: () => {
+                if (onSuccess) onSuccess(itemData);
+                queryClient.invalidateQueries({
+                    queries: [
+                        // change selectedVault to itemDataView.vaultId
+                        {
+                            queryKey: ['vaults', selectedVault, 'items'],
+                        },
+                    ],
+                });
             },
-        );
+        });
     };
 
     return { updateItem };

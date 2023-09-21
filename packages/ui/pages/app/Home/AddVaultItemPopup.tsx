@@ -69,7 +69,7 @@ export default function AddVaultItemPopup() {
                 onSuccess: (data) => {
                     toast.success('Item created!');
                     queryClient.invalidateQueries(['vaults', selectedVault, 'items']);
-                    navigate(`/app/home/${data.id}`);
+                    navigate(`/app/home/vault/${selectedVault}/item/${data.id}`);
                 },
             },
         );

@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import AppHome from 'ui/pages/app/Home/index.tsx';
 import ItemPanel from 'ui/pages/app/Home/ItemPanel';
 import ItemPanelIndex from 'ui/pages/app/Home/ItemPanelIndex';
+import ItemsView from 'ui/pages/app/Home/ItemsView';
 // Login
 import LoginPage from 'ui/pages/auth/Login';
 //Signup
@@ -45,12 +46,32 @@ const router = createBrowserRouter([
                         element: <AppHome />,
                         children: [
                             {
-                                path: ':id',
-                                element: <ItemPanel />,
+                                path: 'vault/:groupId',
+                                element: <ItemsView viewType='vault' />,
+                                children: [
+                                    {
+                                        path: 'item/:id',
+                                        element: <ItemPanel />,
+                                    },
+                                    {
+                                        index: true,
+                                        element: <ItemPanelIndex />,
+                                    },
+                                ],
                             },
                             {
-                                index: true,
-                                element: <ItemPanelIndex />,
+                                path: 'tag',
+                                element: <ItemsView viewType='tag' />,
+                                children: [
+                                    {
+                                        path: ':id',
+                                        element: <ItemPanel />,
+                                    },
+                                    {
+                                        index: true,
+                                        element: <ItemPanelIndex />,
+                                    },
+                                ],
                             },
                         ],
                     },

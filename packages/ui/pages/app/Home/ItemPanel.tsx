@@ -15,7 +15,9 @@ import useItem from './hooks/useItem';
 import useUpdateItem from './hooks/useUpdateItem';
 
 const ItemPanel = () => {
-    const { id } = useParams();
+    const { id, groupId: selectedVault } = useParams();
+    const params = useParams();
+    console.log('params', params);
     const [itemFormDisabled, setItemFormDisability] = useState(true);
     const [showPassword, setPasswordVisibility] = useState(false);
     const [itemUpdating, setItemUpdating] = useState(false);
@@ -24,10 +26,10 @@ const ItemPanel = () => {
 
     const navigate = useNavigate();
 
-    const [selectedVault] = useOutletContext<[string]>();
-
     // Fetch item data
     const { itemDataView, setItemDataView } = useItem(selectedVault, id);
+
+    console.log('ItemPanel.itemDataView', itemDataView);
 
     // Delete item
     const { deleteItemMutation } = useDeleteItem({
@@ -46,7 +48,6 @@ const ItemPanel = () => {
     // Update item
     const { updateItem } = useUpdateItem({
         selectedVault: selectedVault,
-        id: id,
         itemDataView: itemDataView,
         onSuccess: () => {
             setUpdateSuccess(true);
@@ -224,7 +225,7 @@ const ItemPanel = () => {
                     disabled={itemFormDisabled}
                 />
 
-                <label className='text-left font-medium text-gray-400'>Tags</label>
+                {/* <label className='text-left font-medium text-gray-400'>Tags</label>
                 <div
                     animationKey={itemFormDisabled}
                     className={`box-border block w-8/12 gap-2 rounded-sm border-2 p-2 text-lg ${
@@ -252,7 +253,7 @@ const ItemPanel = () => {
                             {bname}
                         </Badge>
                     ))}
-                </div>
+                </div> */}
             </div>
         </motion.div>
     );

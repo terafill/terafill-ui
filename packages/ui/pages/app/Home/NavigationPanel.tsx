@@ -1,86 +1,49 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import { HamburgerMenuIcon, StarIcon, StarFilledIcon } from '@radix-ui/react-icons';
+import { HamburgerMenuIcon, StarFilledIcon } from '@radix-ui/react-icons';
 import * as RadioGroup from '@radix-ui/react-radio-group';
-import { useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { getKeyWrappingKeyPair, decryptData } from 'lib/utils/security';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useAtom, useSetAtom } from 'jotai';
+import { toast } from 'react-hot-toast';
+import { useParams, NavLink, useNavigate } from 'react-router-dom';
 
 import { Button2 } from 'components/form/Button';
 import { Input } from 'components/form/Input';
 
-import { addVaultItemPopupOpenAtom, openSidePanelAtom, selectedVaultAtom } from './store';
-import VaultSelectionMenu from './VaultSelectionMenu';
-import VaultSettingsMenu from './VaultSettingsMenu';
+import useItemList from './hooks/useItemList';
+import useUpdateItem from './hooks/useUpdateItem';
+import { addVaultItemPopupOpenAtom, openSidePanelAtom } from './store';
 
-// interface VaultItem {
-//     vaultId: string;
-//     id?: string;
-//     iek?: string;
-//     title?: string;
-//     website?: string;
-//     password?: string;
-//     username?: string;
-// }
+const NavigationPanel = () => {
+    const { groupId: vaultId } = useParams();
 
-const decryptedItemData = (itemData, keyWrappingKeyPair) => {
-    const iek = keyWrappingKeyPair.private.decrypt(itemData.encryptedEncryptionKey);
-    return {
-        id: itemData.id,
-        title: decryptData(itemData.title, iek),
-        website: decryptData(itemData.website, iek),
-        username: decryptData(itemData.username, iek),
-        password: decryptData(itemData.password, iek),
-        iek: iek,
-        isFavorite: itemData.isFavorite,
-        icon: `https://cool-rose-moth.faviconkit.com/${decryptData(itemData.website, iek)}/256`,
-    };
-};
-
-const NavigationPanel = ({ vaultListView }) => {
     const [search, setSearch] = useState('');
-    const [itemDataListView, setItemDataListView] = useState(null);
+    const { itemList } = useItemList(search, vaultId);
 
-    const selectedVault = useAtomValue(selectedVaultAtom);
-
-    const queryClient = useQueryClient();
-    const queryState = queryClient.getQueryState(['vaults', selectedVault, 'items']);
+    const [selectedItem, setSelectedItem] = useState(null);
 
     const setAddVaultItemPopupOpen = useSetAtom(addVaultItemPopupOpenAtom);
-
-    useEffect(() => {
-        const itemListRaw = queryClient.getQueryData(['vaults', selectedVault, 'items']);
-        if (itemListRaw) {
-            const keyWrappingKeyPair = getKeyWrappingKeyPair();
-            const itemDataListDecrypted = itemListRaw.map((itemData) =>
-                decryptedItemData(itemData, keyWrappingKeyPair),
-            );
-            setItemDataListView(itemDataListDecrypted);
-        }
-    }, [selectedVault, queryState]);
-
-    const vaultItemList = Object.entries(itemDataListView ?? []);
-    const filteredVaultList = vaultItemList.filter(([id, itemData]) => {
-        return search.toLowerCase() === ''
-            ? true
-            : itemData.username.toLowerCase().includes(search) ||
-                  itemData.website.toLowerCase().includes(search) ||
-                  itemData.title.toLowerCase().includes(search);
-    });
-
-    const [selectedVaultItem, setSelectedVaultItem] = useState(
-        vaultItemList.length > 0 ? vaultItemList[0] : null,
-    );
 
     const navigate = useNavigate();
 
     const [openSidePanel, setOpenSidePanel] = useAtom(openSidePanelAtom);
 
-    const sortedVaultList = [...filteredVaultList].sort(
-        (a, b) => b[1].isFavorite - a[1].isFavorite,
-    );
+    // Update item
+    const { updateItem } = useUpdateItem({
+        selectedVault: vaultId,
+        itemDataView: null,
+        onSuccess: (itemData) => {
+            if (itemData.isFavorite)
+                toast.success('Item added to favourites');
+            else{
+                toast.success('Item removed favourites');
+            }
+        },
+        onError: (error) => {
+            navigate(-1);
+            toast.error(error);
+        },
+    });
 
     return (
         <div
@@ -113,12 +76,13 @@ const NavigationPanel = ({ vaultListView }) => {
                 />
             </div>
             <RadioGroup.Root
-                defaultValue={selectedVaultItem}
+                defaultValue={selectedItem}
                 onValueChange={(e) => {
-                    setSelectedVaultItem(e);
-                    navigate(`/app/home/${e}`);
+                    setSelectedItem(e);
+                    navigate(`item/${e}`);
                 }}
                 className='flex self-stretch px-2'
+                id='item-list'
             >
                 <motion.div
                     // variants={{
@@ -137,11 +101,11 @@ const NavigationPanel = ({ vaultListView }) => {
                     className='z-[1] flex flex-1 flex-col items-center justify-start self-stretch overflow-y-auto bg-gray-950 py-2'
                     id='item-list'
                 >
-                    {sortedVaultList.map(
+                    {itemList.map(
                         ([id, itemData]) =>
                             id != 'new' && (
                                 <NavLink
-                                    to={`${itemData.id}`}
+                                    to={`item/${itemData.id}`}
                                     key={itemData.id}
                                     className={({ isActive }) => {
                                         const classes =
@@ -175,8 +139,12 @@ const NavigationPanel = ({ vaultListView }) => {
                                                 </label>
                                             </div>
                                             <StarFilledIcon
-                                                onClick={() => {
-                                                    console.log('Make favourite');
+                                                onClick={async () => {
+                                                    const updatedItemData = {
+                                                        ...itemData,
+                                                        isFavorite: !itemData.isFavorite
+                                                    }
+                                                    await updateItem(id, updatedItemData);
                                                 }}
                                                 className={`h-6 w-6 ${
                                                     itemData?.isFavorite

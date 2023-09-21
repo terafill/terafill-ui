@@ -18,7 +18,7 @@ const decryptedItemData = (itemData, keyWrappingKeyPair) => {
     };
 };
 
-const useItems = (selectedVault, id) => {
+const useItem = (selectedVault, id) => {
     const itemDataRaw = useQuery({
         queryKey: ['vaults', selectedVault, 'items', id],
         queryFn: () =>
@@ -54,4 +54,4 @@ const useItems = (selectedVault, id) => {
     // }
 };
 
-export default useItems;
+export default useItem;

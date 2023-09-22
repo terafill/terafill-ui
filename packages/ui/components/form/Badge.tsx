@@ -5,7 +5,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from 'lib/utils/basic';
 
 const badgeVariants = cva(
-    'group inline-flex gap-2 items-center rounded-full border pl-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 overflow-x-hidden',
+    'group inline-flex gap-2 items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 overflow-x-hidden',
     {
         variants: {
             variant: {
@@ -41,16 +41,20 @@ export interface BadgeProps
     extends React.HTMLAttributes<HTMLDivElement>,
         VariantProps<typeof badgeVariants> {
     badgeColor;
+    editable
 }
 
-function Badge({ className, variant, badgeColor, ...props }: BadgeProps) {
+function Badge({ className, variant, badgeColor, editable, ...props }: BadgeProps) {
     return (
         <div className={cn(badgeVariants({ variant }), className)} {...props}>
-            <div className={cn(badgeColorClasses[badgeColor], `h-3 w-3 rounded-xl`)} />
+            {/* <div className={cn(badgeColorClasses[badgeColor], `h-3 w-3 rounded-xl`)} /> */}
             {props.children}
-            <div className='w-4 h-4 group-hover:bg-gray-700 text-center rounded-md'>
+            {
+            editable && <div className='w-4 h-4 group-hover:bg-gray-700 text-center rounded-md'>
                 <Cross2Icon />
             </div>
+            }
+
         </div>
     );
 }

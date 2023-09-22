@@ -13,6 +13,7 @@ interface VaultItemParams {
 	password?: string;
 	username?: string;
 	isFavorite?: boolean;
+	tags?: Array<string>;
 }
 
 export async function getVaultItem({
@@ -55,6 +56,7 @@ export async function updateVaultItem({
 	username,
 	iek,
 	isFavorite,
+	tags,
 }: VaultItemParams) {
 	const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}/items/${id}`;
 
@@ -73,6 +75,7 @@ export async function updateVaultItem({
 			password: encryptData(password, iek),
 			username: encryptData(username, iek),
 			isFavorite: isFavorite,
+			tags: tags,
 		},
 	};
 
@@ -94,6 +97,7 @@ export async function createVaultItem({
 	password,
 	username,
 	iek,
+	tags,
 }: VaultItemParams) {
 	const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}/items`;
 	const keyWrappingKeyPair = getKeyWrappingKeyPair();
@@ -115,6 +119,7 @@ export async function createVaultItem({
 			username: encryptData(username, iek),
 			encryptedEncryptionKey: iekEnc,
 			type: "PASSWORD",
+			tags: tags,
 		},
 	};
 

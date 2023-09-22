@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 
 import { UpdateIcon } from '@radix-ui/react-icons';
-import { Outlet, useOutletContext } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
 import NavigationPanel from './NavigationPanel';
 

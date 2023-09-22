@@ -12,12 +12,13 @@ const decryptedItemData = (itemData, keyWrappingKeyPair) => {
         password: decryptData(itemData.password, iek),
         iek: iek,
         isFavorite: itemData.isFavorite,
+        tags: itemData.tags ? itemData.tags : [],
         icon: `https://cool-rose-moth.faviconkit.com/${decryptData(itemData.website, iek)}/256`,
     };
 };
 
-const getCuratedItemList = (itemList,  searchFilter) => {
-    if (!itemList) return []
+const getCuratedItemList = (itemList, searchFilter) => {
+    if (!itemList) return [];
 
     const vaultItemList = Object.entries(itemList ?? []);
     const filteredVaultList = vaultItemList.filter(([id, itemData]) => {
@@ -32,7 +33,7 @@ const getCuratedItemList = (itemList,  searchFilter) => {
         (a, b) => b[1].isFavorite - a[1].isFavorite,
     );
 
-    return sortedVaultList
+    return sortedVaultList;
 };
 
 const useItemList = (searchFilter, vaultId?, tagId?) => {
@@ -42,13 +43,13 @@ const useItemList = (searchFilter, vaultId?, tagId?) => {
         queryKey: ['vaults', vaultId, 'items'],
         queryFn: async () => {
             const data = await getVaultItems(vaultId);
-            console.log("useQuery.vaultId+data", vaultId, data);
+            console.log('useQuery.vaultId+data', vaultId, data);
             const keyWrappingKeyPair = getKeyWrappingKeyPair();
             const itemDataListDecrypted = data.map((vaultItem) => {
                 // queryClient.setQueryData(['vaults', vaultId, 'items', vaultItem.id], vaultItem);
                 return decryptedItemData(vaultItem, keyWrappingKeyPair);
             });
-            console.log("useQuery.itemDataListDecrypted", itemDataListDecrypted);
+            console.log('useQuery.itemDataListDecrypted', itemDataListDecrypted);
             return itemDataListDecrypted;
         },
         refetchOnWindowFocus: false,

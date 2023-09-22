@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query';
 import { getVaultItem } from 'lib/api/item';
 import { getKeyWrappingKeyPair, decryptData } from 'lib/utils/security';
 
-
 const decryptedItemData = (itemData, keyWrappingKeyPair) => {
     const iek = keyWrappingKeyPair.private.decrypt(itemData.encryptedEncryptionKey);
     return {
@@ -14,6 +13,8 @@ const decryptedItemData = (itemData, keyWrappingKeyPair) => {
         username: decryptData(itemData.username, iek),
         password: decryptData(itemData.password, iek),
         iek: iek,
+        isFavorite: itemData.isFavorite,
+        tags: itemData.tags ? itemData.tags : [],
         icon: `https://cool-rose-moth.faviconkit.com/${decryptData(itemData.website, iek)}/256`,
     };
 };
@@ -29,7 +30,7 @@ const useItem = (selectedVault, id) => {
         suspense: true,
     });
 
-    const [itemDataView, setItemDataView] = useState<VaultItem | null>(null);
+    const [itemDataView, setItemDataView] = useState(null);
 
     useEffect(() => {
         if (itemDataRaw.isSuccess && itemDataRaw.data) {

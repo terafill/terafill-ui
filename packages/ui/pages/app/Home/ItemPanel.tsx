@@ -1,19 +1,38 @@
 import { useState } from 'react';
 
-import { TrashIcon, Pencil2Icon, UpdateIcon, CheckCircledIcon } from '@radix-ui/react-icons';
+import {
+    TrashIcon,
+    Pencil2Icon,
+    UpdateIcon,
+    CheckCircledIcon,
+    // PlusIcon,
+    // CaretSortIcon,
+    // CheckIcon,
+} from '@radix-ui/react-icons';
 import { motion } from 'framer-motion';
+// import { cn } from 'lib/utils/basic';
 import { toast } from 'react-hot-toast';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
-import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
-import { Badge } from 'components/form/Badge';
+// import { Badge } from 'components/form/Badge';
 import { Button2 } from 'components/form/Button';
 import { Input } from 'components/form/Input';
+// import {
+//     Command,
+//     CommandEmpty,
+//     CommandGroup,
+//     CommandInput,
+//     CommandItem,
+//     CommandSeparator,
+// } from 'ui/components/ui/command';
+// import { Popover, PopoverContent, PopoverTrigger } from 'ui/components/ui/popover';
 
 import useDeleteItem from './hooks/useDeleteItem';
 import useItem from './hooks/useItem';
 import useUpdateItem from './hooks/useUpdateItem';
 
+// import { Button2 } from '@/components/ui/button';
 const ItemPanel = () => {
     const { id, groupId: selectedVault } = useParams();
     const params = useParams();
@@ -74,12 +93,17 @@ const ItemPanel = () => {
         setItemFormDisability(!itemFormDisabled);
     };
 
+    const [openLabelsMenu, setOpenLabelsMenu] = useState(false);
+    const [value, setValue] = useState('');
+
+    const [labelSearch, setLabelSearch] = useState('');
+
     return (
         <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
+            // initial={{ opacity: 0 }}
+            // animate={{ opacity: 1 }}
+            // exit={{ opacity: 0 }}
+            // transition={{ duration: 0.5 }}
             className='dotted-bg relative z-[0] flex h-full flex-1 flex-col items-center justify-center self-stretch bg-gray-950 px-[16px] py-[32px]'
             id='right-panel'
         >
@@ -226,34 +250,102 @@ const ItemPanel = () => {
                 />
 
                 {/* <label className='text-left font-medium text-gray-400'>Tags</label>
-                <div
-                    animationKey={itemFormDisabled}
-                    className={`box-border block w-8/12 gap-2 rounded-sm border-2 p-2 text-lg ${
-                        itemFormDisabled
-                            ? ''
-                            : ' border-1 border-gray-300 bg-gray-700 bg-opacity-40'
-                    } `}
+                <Popover
+                    open={openLabelsMenu}
+                    onOpenChange={(e) => {
+                        if (!itemFormDisabled) setOpenLabelsMenu(e);
+                    }}
                 >
-                    {[
-                        'Prod',
-                        'Dev',
-                        'Staging',
-                        'Secure',
-                        'Finance',
-                        'Work',
-                        'Personal',
-                        'Family',
-                    ].map((bname) => (
-                        <Badge
-                            key={bname}
-                            className='m-2 h-min text-gray-400'
-                            variant={'outline'}
-                            badgeColor='indigo'
+                    <PopoverTrigger asChild>
+                        <div
+                            animationKey={itemFormDisabled}
+                            className={`block min-h-[40px] w-8/12 gap-2 rounded-sm border-0 p-2 text-lg ${
+                                itemFormDisabled
+                                    ? ''
+                                    : ' border-1 border-gray-300 bg-gray-700 bg-opacity-40'
+                            } `}
                         >
-                            {bname}
-                        </Badge>
-                    ))}
-                </div> */}
+                            {itemDataView?.tags?.map((bname) => (
+                                <Badge
+                                    key={bname}
+                                    className='m-2 h-min text-gray-400'
+                                    variant={'outline'}
+                                    badgeColor='indigo'
+                                    editable={!itemFormDisabled}
+                                    onClick={(e) => {
+                                        setItemDataView({
+                                            ...itemDataView,
+                                            tags: itemDataView.tags.filter(label=> label!==labelSearch),
+                                        });
+                                        e.stopPropagation();
+                                    }}
+                                >
+                                    {bname}
+                                </Badge>
+                            ))}
+                        </div>
+                    </PopoverTrigger>
+                    {!itemFormDisabled && (
+                        <PopoverContent align='start' className='w-[200px] p-0'>
+                            <Command
+                                onValueChange={(e) => {
+                                    console.log('value changed to: ', e);
+                                }}
+                                filter={(value, search) => {
+                                    console.log(value, search);
+                                    if (
+                                        value.includes(search) ||
+                                        value.includes('create new label')
+                                    )
+                                        return 1;
+                                    return 0;
+                                }}
+                            >
+                                <CommandInput
+                                    placeholder='Search label...'
+                                    className='h-9'
+                                    value={labelSearch}
+                                    onValueChange={setLabelSearch}
+                                />
+                                <CommandEmpty>No label found.</CommandEmpty>
+                                <CommandGroup>
+                                    {itemDataView?.tags?.map((label) => (
+                                        <CommandItem
+                                            key={label}
+                                            onSelect={(currentValue) => {
+                                                setValue(
+                                                    currentValue === value ? '' : currentValue,
+                                                );
+                                                // setOpenLabelsMenu(false);
+                                            }}
+                                        >
+                                            {label}
+                                            <CheckIcon
+                                                className={cn(
+                                                    'ml-auto h-4 w-4',
+                                                    value === label ? 'opacity-100' : 'opacity-0',
+                                                )}
+                                            />
+                                        </CommandItem>
+                                    ))}
+                                </CommandGroup>
+                                <CommandSeparator />
+                                <CommandGroup>
+                                    <CommandItem
+                                        onSelect={() => {
+                                            setItemDataView({
+                                                ...itemDataView,
+                                                tags: [...itemDataView.tags, labelSearch],
+                                            });
+                                        }}
+                                    >
+                                        Create new label
+                                    </CommandItem>
+                                </CommandGroup>
+                            </Command>
+                        </PopoverContent>
+                    )}
+                </Popover> */}
             </div>
         </motion.div>
     );

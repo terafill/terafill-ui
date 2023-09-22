@@ -8,7 +8,7 @@ import {
     SquaresPlusIcon,
 } from '@heroicons/react/20/solid';
 import { TrashIcon, DotsHorizontalIcon } from '@radix-ui/react-icons';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom, useAtom } from 'jotai';
 
 import {
     addVaultPopupOpenAtom,
@@ -21,27 +21,25 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
 }
 
-function VaultSettingsMenu({ vaultList }) {
+function VaultSettingsMenu({ vaultId }) {
     const [isDefault, setIsDefault] = useState(false);
-    const selectedVault = useAtomValue(selectedVaultAtom);
-    useEffect(() => {
-        if (selectedVault != null && vaultList != null && vaultList.length > 0) {
-            if (vaultList[selectedVault]['isDefault']) {
-                setIsDefault(true);
-                return;
-            }
-        }
-        setIsDefault(false);
-    }, [selectedVault]);
+    const [selectedVault, setSelectedVault] = useAtom(selectedVaultAtom);
 
-    const setAddVaultPopupOpen = useSetAtom(addVaultPopupOpenAtom);
+    // const setAddVaultPopupOpen = useSetAtom(addVaultPopupOpenAtom);
     const setEditVaultPopupOpen = useSetAtom(editVaultPopupOpenAtom);
     const setDeleteVaultPopupOpen = useSetAtom(deleteVaultPopupOpenAtom);
+
+    useEffect(() => {
+        setSelectedVault(vaultId);
+    }, [vaultId]);
 
     return (
         <Menu as='div' className='relative inline-block text-left'>
             <div>
-                <Menu.Button className='inline-flex w-full justify-center rounded-md bg-transparent text-sm font-normal shadow-sm'>
+                <Menu.Button
+                    className='inline-flex w-full justify-center rounded-md bg-transparent text-sm font-normal shadow-sm'
+                    onClick={(e) => e.stopPropagation()}
+                >
                     {/* <CogIcon className='h-5 w-5 text-gray-300' aria-hidden='true' /> */}
                     <DotsHorizontalIcon className='h-5 w-5 rounded-sm p-1 opacity-0 group-hover/vault:opacity-100' />
                 </Menu.Button>

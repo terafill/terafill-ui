@@ -94,7 +94,7 @@ export default function SideNavbar() {
                                                     >
                                                         {vault.name}
                                                         {/* <DotsHorizontalIcon className='h-5 w-5 rounded-sm p-1 opacity-0 group-hover/vault:opacity-100' /> */}
-                                                        <VaultSettingsMenu vaultList={[]} />
+                                                        <VaultSettingsMenu vaultId={vault.id} />
                                                     </Tabs.Trigger>
                                                 ))}
                                             </div>

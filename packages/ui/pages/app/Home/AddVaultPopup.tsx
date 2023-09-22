@@ -80,7 +80,7 @@ export default function AddVaultPopup() {
                     leaveTo='opacity-0'
                 >
                     <div
-                        className='fixed inset-0 bg-black bg-opacity-30 transition-opacity'
+                        className='fixed inset-0 bg-black bg-opacity-75 transition-opacity'
                         aria-hidden='true'
                     />
                 </Transition.Child>

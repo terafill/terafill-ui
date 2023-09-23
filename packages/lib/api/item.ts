@@ -4,6 +4,13 @@ import { BASE_URL, CLIENT_ID } from "config/config";
 
 import { getKeyWrappingKeyPair, encryptData } from "../utils/security";
 
+interface customItemFieldParams {
+	fieldValue: string;
+	fieldName: string;
+	id: string;
+	isTag: string;
+}
+
 interface VaultItemParams {
 	vaultId: string;
 	id?: string;
@@ -14,6 +21,7 @@ interface VaultItemParams {
 	username?: string;
 	isFavorite?: boolean;
 	tags?: Array<string>;
+	customItemFields?: Array<customItemFieldParams>;
 }
 
 export async function getVaultItem({
@@ -57,6 +65,7 @@ export async function updateVaultItem({
 	iek,
 	isFavorite,
 	tags,
+	customItemFields,
 }: VaultItemParams) {
 	const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}/items/${id}`;
 
@@ -76,6 +85,16 @@ export async function updateVaultItem({
 			username: encryptData(username, iek),
 			isFavorite: isFavorite,
 			tags: tags,
+			customItemFields: customItemFields
+				? customItemFields.map((fieldData) => {
+						if (fieldData.isTag) return fieldData;
+						return {
+							...fieldData,
+							fieldName: encryptData(fieldData.fieldName, iek),
+							fieldValue: encryptData(fieldData.fieldValue, iek),
+						};
+				  })
+				: [],
 		},
 	};
 
@@ -98,6 +117,7 @@ export async function createVaultItem({
 	username,
 	iek,
 	tags,
+	customItemFields,
 }: VaultItemParams) {
 	const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}/items`;
 	const keyWrappingKeyPair = getKeyWrappingKeyPair();
@@ -120,6 +140,16 @@ export async function createVaultItem({
 			encryptedEncryptionKey: iekEnc,
 			type: "PASSWORD",
 			tags: tags,
+			customItemFields: customItemFields
+				? customItemFields.map((fieldData) => {
+						if (fieldData.isTag) return fieldData;
+						return {
+							...fieldData,
+							fieldName: encryptData(fieldData.fieldName, iek),
+							fieldValue: encryptData(fieldData.fieldValue, iek),
+						};
+				  })
+				: [],
 		},
 	};
 

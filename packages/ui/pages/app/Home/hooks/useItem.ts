@@ -15,6 +15,16 @@ const decryptedItemData = (itemData, keyWrappingKeyPair) => {
         iek: iek,
         isFavorite: itemData.isFavorite,
         tags: itemData.tags ? itemData.tags : [],
+        customItemFields: itemData.customItemFields
+            ? itemData.customItemFields.map((fieldData) => {
+                  if (fieldData.isTag) return fieldData;
+                  return {
+                      ...fieldData,
+                      fieldName: decryptData(fieldData.fieldName, iek),
+                      fieldValue: decryptData(fieldData.fieldValue, iek),
+                  };
+              })
+            : [],
         icon: `https://cool-rose-moth.faviconkit.com/${decryptData(itemData.website, iek)}/256`,
     };
 };

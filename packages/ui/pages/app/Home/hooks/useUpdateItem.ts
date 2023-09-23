@@ -22,6 +22,7 @@ const useUpdateItem = ({ selectedVault, itemDataView, onSuccess, onError }) => {
                 iek: itemDataView.iek,
                 isFavorite: itemDataView.isFavorite,
                 tags: itemDataView.tags,
+                customItemFields: itemDataView.customItemFields,
                 ...itemData,
             };
         }

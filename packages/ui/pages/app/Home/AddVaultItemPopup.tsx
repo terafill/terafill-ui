@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef, Fragment } from 'react';
+import { useEffect, useState, useRef, Fragment } from 'react';
 
 import { Dialog, Transition } from '@headlessui/react';
-import { SquaresPlusIcon } from '@heroicons/react/20/solid';
+import { SquaresPlusIcon, MinusCircleIcon } from '@heroicons/react/20/solid';
 import { UpdateIcon, CheckCircledIcon } from '@radix-ui/react-icons';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useAtom, useAtomValue } from 'jotai';
@@ -12,12 +12,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { Button2 } from 'components/form/Button';
 import { Input } from 'components/form/Input';
+import { ScrollArea } from 'ui/components/ui/scrollarea';
 
-
-import { addVaultItemPopupOpenAtom, selectedVaultAtom } from "./store";
+import { addVaultItemPopupOpenAtom, selectedVaultAtom } from './store';
 
 export default function AddVaultItemPopup() {
-
     const selectedVault = useAtomValue(selectedVaultAtom);
 
     const initData = {
@@ -26,6 +25,7 @@ export default function AddVaultItemPopup() {
         website: '',
         password: '',
         title: '',
+        customItemFields: [],
     };
 
     const [open, setOpen] = useAtom(addVaultItemPopupOpenAtom);
@@ -56,6 +56,7 @@ export default function AddVaultItemPopup() {
                 password: itemDataView.password,
                 username: itemDataView.username,
                 iek: iek,
+                customItemFields: itemDataView.customItemFields,
             },
             {
                 onError: (error: unknown) => {
@@ -107,11 +108,8 @@ export default function AddVaultItemPopup() {
                             leaveFrom='opacity-100 translate-y-0 sm:scale-100'
                             leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
                         >
-                            <Dialog.Panel className='relative flex w-80 transform flex-col items-center justify-center gap-6 overflow-hidden rounded-lg border bg-black p-4 text-left shadow-2xl transition-all'>
-                                <div
-                                    className='flex w-5/6 flex-col items-center gap-8 text-center'
-                                    id='popup-body'
-                                >
+                            <Dialog.Panel className='relative flex w-1/4 transform flex-col items-center justify-center gap-6 overflow-hidden rounded-lg border bg-black p-4 text-left shadow-2xl transition-all'>
+                                <div className='flex flex-col gap-8' id='popup-body'>
                                     <Dialog.Title
                                         as='h3'
                                         className='w-full text-base font-semibold leading-6 text-gray-200'
@@ -121,102 +119,208 @@ export default function AddVaultItemPopup() {
                                             Add new item
                                         </div>
                                     </Dialog.Title>
-                                    <div className='relative w-full'>
-                                        {/* <label
+                                    <ScrollArea type='always'>
+                                        <div className='flex max-h-96 flex-col items-center gap-6 px-4 text-center'>
+                                            <div className='relative w-full'>
+                                                {/* <label
                                             htmlFor='title'
                                             className='absolute -top-3 left-1 inline-block rounded bg-white px-1 text-sm font-medium text-gray-700'
                                         >
                                             Title
                                         </label> */}
-                                        <Input
-                                            type='text'
-                                            name='title'
-                                            id='title'
-                                            className='shadow-smsm:text-sm w-full sm:leading-6'
-                                            placeholder='Enter title'
-                                            value={itemDataView.title}
-                                            onChange={(e) => {
-                                                setItemDataView((prevState) => ({
-                                                    ...prevState,
-                                                    title: e.target.value,
-                                                }));
-                                            }}
-                                            required
-                                            title='Please enter title'
-                                        />
-                                    </div>
-                                    <div className='relative w-full'>
-                                        {/* <label
+                                                <Input
+                                                    type='text'
+                                                    name='title'
+                                                    id='title'
+                                                    className='shadow-smsm:text-sm w-full sm:leading-6'
+                                                    placeholder='Enter title'
+                                                    value={itemDataView.title}
+                                                    onChange={(e) => {
+                                                        setItemDataView((prevState) => ({
+                                                            ...prevState,
+                                                            title: e.target.value,
+                                                        }));
+                                                    }}
+                                                    required
+                                                    title='Please enter title'
+                                                />
+                                            </div>
+                                            <div className='relative w-full'>
+                                                {/* <label
                                             htmlFor='username'
                                             className='absolute -top-3 left-1 inline-block rounded bg-white px-1 text-sm font-medium text-gray-700'
                                         >
                                             Username
                                         </label> */}
-                                        <Input
-                                            type='text'
-                                            name='username'
-                                            id='username'
-                                            className='w-full shadow-sm sm:text-sm sm:leading-6'
-                                            placeholder='Enter username'
-                                            value={itemDataView.username}
-                                            onChange={(e) => {
-                                                setItemDataView((prevState) => ({
-                                                    ...prevState,
-                                                    username: e.target.value,
-                                                }));
-                                            }}
-                                            required
-                                            title='Please enter username'
-                                        />
-                                    </div>
-                                    <div className='relative w-full'>
-                                        {/* <label
+                                                <Input
+                                                    type='text'
+                                                    name='username'
+                                                    id='username'
+                                                    className='w-full shadow-sm sm:text-sm sm:leading-6'
+                                                    placeholder='Enter username'
+                                                    value={itemDataView.username}
+                                                    onChange={(e) => {
+                                                        setItemDataView((prevState) => ({
+                                                            ...prevState,
+                                                            username: e.target.value,
+                                                        }));
+                                                    }}
+                                                    required
+                                                    title='Please enter username'
+                                                />
+                                            </div>
+                                            <div className='relative w-full'>
+                                                {/* <label
                                             htmlFor='password'
                                             className='absolute -top-3 left-1 inline-block rounded bg-white px-1 text-sm font-medium text-gray-700'
                                         >
                                             Password
                                         </label> */}
-                                        <Input
-                                            type='password'
-                                            name='password'
-                                            id='password'
-                                            className='w-full shadow-sm sm:text-sm sm:leading-6'
-                                            placeholder='Enter password'
-                                            value={itemDataView.password}
-                                            onChange={(e) => {
-                                                setItemDataView((prevState) => ({
-                                                    ...prevState,
-                                                    password: e.target.value,
-                                                }));
-                                            }}
-                                            required
-                                            title='Please enter password'
-                                        />
-                                    </div>
-                                    <div className='relative w-full'>
-                                        {/* <label
+                                                <Input
+                                                    type='password'
+                                                    name='password'
+                                                    id='password'
+                                                    className='w-full shadow-sm sm:text-sm sm:leading-6'
+                                                    placeholder='Enter password'
+                                                    value={itemDataView.password}
+                                                    onChange={(e) => {
+                                                        setItemDataView((prevState) => ({
+                                                            ...prevState,
+                                                            password: e.target.value,
+                                                        }));
+                                                    }}
+                                                    required
+                                                    title='Please enter password'
+                                                />
+                                            </div>
+                                            <div className='relative w-full'>
+                                                {/* <label
                                             htmlFor='website'
                                             className='absolute -top-3 left-1 inline-block rounded bg-white px-1 text-sm font-medium text-gray-700'
                                         >
                                             Website
                                         </label> */}
-                                        <Input
-                                            type='text'
-                                            name='website'
-                                            id='website'
-                                            className='w-full shadow-sm sm:text-sm sm:leading-6'
-                                            placeholder='Enter website'
-                                            value={itemDataView.website}
-                                            onChange={(e) => {
-                                                setItemDataView((prevState) => ({
-                                                    ...prevState,
-                                                    website: e.target.value,
-                                                }));
-                                            }}
-                                            required
-                                            title='Please enter website'
-                                        />
-                                    </div>
+                                                <Input
+                                                    type='text'
+                                                    name='website'
+                                                    id='website'
+                                                    className='w-full shadow-sm sm:text-sm sm:leading-6'
+                                                    placeholder='Enter website'
+                                                    value={itemDataView.website}
+                                                    onChange={(e) => {
+                                                        setItemDataView((prevState) => ({
+                                                            ...prevState,
+                                                            website: e.target.value,
+                                                        }));
+                                                    }}
+                                                    required
+                                                    title='Please enter website'
+                                                />
+                                            </div>
+                                            {itemDataView.customItemFields.map((fieldData) => (
+                                                <div
+                                                    key={fieldData.name}
+                                                    className='relative flex w-full flex-row items-center justify-center gap-2'
+                                                >
+                                                    <Input
+                                                        type='text'
+                                                        name={fieldData.name + 'name'}
+                                                        id={fieldData.name + 'value'}
+                                                        className='w-full shadow-sm sm:text-sm sm:leading-6'
+                                                        placeholder='Enter field name'
+                                                        value={fieldData.name}
+                                                        onChange={(e) => {
+                                                            setItemDataView((prevState) => ({
+                                                                ...prevState,
+                                                                customItemFields: [
+                                                                    ...prevState.customItemFields.filter(
+                                                                        (nfieldData) =>
+                                                                            nfieldData.id !==
+                                                                            fieldData.id,
+                                                                    ),
+                                                                    {
+                                                                        ...prevState.customItemFields.filter(
+                                                                            (nfieldData) =>
+                                                                                nfieldData.id ===
+                                                                                fieldData.id,
+                                                                        )[0],
+                                                                        fieldName: e.target.value,
+                                                                    },
+                                                                ],
+                                                            }));
+                                                        }}
+                                                        required
+                                                        title='Enter field name'
+                                                    />
+                                                    <Input
+                                                        type='text'
+                                                        name={fieldData.id + 'value'}
+                                                        id={fieldData.id + 'value'}
+                                                        className='w-full shadow-sm sm:text-sm sm:leading-6'
+                                                        placeholder='Enter field value'
+                                                        value={fieldData.value}
+                                                        onChange={(e) => {
+                                                            setItemDataView((prevState) => ({
+                                                                ...prevState,
+                                                                customItemFields: [
+                                                                    ...prevState.customItemFields.filter(
+                                                                        (nfieldData) =>
+                                                                            nfieldData.id !==
+                                                                            fieldData.id,
+                                                                    ),
+                                                                    {
+                                                                        ...prevState.customItemFields.filter(
+                                                                            (nfieldData) =>
+                                                                                nfieldData.id ===
+                                                                                fieldData.id,
+                                                                        )[0],
+                                                                        fieldValue: e.target.value,
+                                                                    },
+                                                                ],
+                                                            }));
+                                                        }}
+                                                        required
+                                                        title='Please field value'
+                                                    />
+                                                    <MinusCircleIcon
+                                                        width={50}
+                                                        height={50}
+                                                        onClick={() => {
+                                                            setItemDataView((prevState) => ({
+                                                                ...prevState,
+                                                                customItemFields: [
+                                                                    ...prevState.customItemFields.filter(
+                                                                        (nfieldData) =>
+                                                                            nfieldData.id !==
+                                                                            fieldData.id,
+                                                                    ),
+                                                                ],
+                                                            }));
+                                                        }}
+                                                    />
+                                                </div>
+                                            ))}
+                                            <Button2
+                                                onClick={() => {
+                                                    setItemDataView((prevState) => ({
+                                                        ...prevState,
+                                                        customItemFields: [
+                                                            ...prevState.customItemFields,
+                                                            {
+                                                                fieldName: '',
+                                                                fieldValue: '',
+                                                                isTag: false,
+                                                                id: uuidv4(),
+                                                            },
+                                                        ],
+                                                    }));
+                                                }}
+                                                variant='outline'
+                                            >
+                                                Add custom field
+                                            </Button2>
+                                        </div>
+                                    </ScrollArea>
                                 </div>
                                 <div
                                     className='flex w-5/6 flex-row items-center justify-center gap-2'

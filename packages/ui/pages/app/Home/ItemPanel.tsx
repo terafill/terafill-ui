@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { MinusCircleIcon } from '@heroicons/react/20/solid';
 import {
     TrashIcon,
     Pencil2Icon,
@@ -14,10 +15,12 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { useParams, useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 // import { Badge } from 'components/form/Badge';
 import { Button2 } from 'components/form/Button';
 import { Input } from 'components/form/Input';
+import { ScrollArea } from 'ui/components/ui/scrollarea';
 // import {
 //     Command,
 //     CommandEmpty,
@@ -104,10 +107,10 @@ const ItemPanel = () => {
             // animate={{ opacity: 1 }}
             // exit={{ opacity: 0 }}
             // transition={{ duration: 0.5 }}
-            className='dotted-bg relative z-[0] flex h-full flex-1 flex-col items-center justify-center self-stretch bg-gray-950 px-[16px] py-[32px]'
+            className='dotted-bg relative z-[0] flex h-full flex-1 flex-col items-center justify-center self-stretch overflow-y-auto bg-gray-950 py-[32px]'
             id='right-panel'
         >
-            <div className='absolute right-[24px] top-[24px] flex flex-row gap-3 self-end'>
+            <div className='fixed right-[24px] top-[24px] flex flex-row gap-3 self-end'>
                 {
                     // Cancel button
                     editMode && !updateSuccess && (
@@ -170,7 +173,8 @@ const ItemPanel = () => {
                     )
                 }
             </div>
-            <div className='mt-12 grid grid-cols-2 items-start justify-center justify-items-center space-y-20 overflow-y-auto'>
+            {/* <ScrollArea type='always'> */}
+            <div className='mt-12 grid grid-cols-2 items-center justify-center justify-items-center space-y-20'>
                 <div className='mb-4 flex items-center justify-center self-stretch' id='iconframe'>
                     <img
                         className='h-[88px] w-[88px] overflow-hidden rounded-md border-2 border-gray-900 object-cover'
@@ -347,6 +351,131 @@ const ItemPanel = () => {
                     )}
                 </Popover> */}
             </div>
+            <div
+                className={`mt-12 grid ${
+                    itemFormDisabled ? 'grid-cols-2' : 'grid-cols-3'
+                } items-center justify-center justify-items-center space-y-20`}
+            >
+                {itemDataView?.customItemFields?.map((fieldData) => {
+                    if (fieldData?.action !== 'DELETE') {
+                        return (
+                            <>
+                                <Input
+                                    animationKey={itemFormDisabled}
+                                    className={`box-border flex w-8/12 overflow-hidden text-lg ${
+                                        itemFormDisabled
+                                            ? ''
+                                            : ' border-1 border-gray-300 bg-gray-700 bg-opacity-40'
+                                    } `}
+                                    type='text'
+                                    value={fieldData.fieldName ?? ''}
+                                    placeholder='Enter field name'
+                                    onChange={(e) => {
+                                        setItemDataView((prevState) => ({
+                                            ...prevState,
+                                            customItemFields: [
+                                                ...prevState.customItemFields.filter(
+                                                    (nfieldData) => nfieldData.id !== fieldData.id,
+                                                ),
+                                                {
+                                                    ...prevState.customItemFields.filter(
+                                                        (nfieldData) =>
+                                                            nfieldData.id === fieldData.id,
+                                                    )[0],
+                                                    fieldName: e.target.value,
+                                                    action: fieldData.action
+                                                        ? fieldData.action
+                                                        : 'UPDATE',
+                                                },
+                                            ],
+                                        }));
+                                    }}
+                                    disabled={itemFormDisabled}
+                                />
+                                <Input
+                                    animationKey={itemFormDisabled}
+                                    className={`box-border flex w-8/12 overflow-hidden text-lg ${
+                                        itemFormDisabled
+                                            ? ''
+                                            : ' border-1 border-gray-300 bg-gray-700 bg-opacity-40'
+                                    } `}
+                                    type='text'
+                                    value={fieldData.fieldValue ?? ''}
+                                    placeholder='Enter field value'
+                                    onChange={(e) => {
+                                        setItemDataView((prevState) => ({
+                                            ...prevState,
+                                            customItemFields: [
+                                                ...prevState.customItemFields.filter(
+                                                    (nfieldData) => nfieldData.id !== fieldData.id,
+                                                ),
+                                                {
+                                                    ...prevState.customItemFields.filter(
+                                                        (nfieldData) =>
+                                                            nfieldData.id === fieldData.id,
+                                                    )[0],
+                                                    fieldValue: e.target.value,
+                                                    action: fieldData.action
+                                                        ? fieldData.action
+                                                        : 'UPDATE',
+                                                },
+                                            ],
+                                        }));
+                                    }}
+                                    disabled={itemFormDisabled}
+                                />
+                                {!itemFormDisabled && (
+                                    <MinusCircleIcon
+                                        width={30}
+                                        height={30}
+                                        onClick={() => {
+                                            setItemDataView((prevState) => ({
+                                                ...prevState,
+                                                customItemFields: [
+                                                    ...prevState.customItemFields.filter(
+                                                        (nfieldData) =>
+                                                            nfieldData.id !== fieldData.id,
+                                                    ),
+                                                    {
+                                                        ...prevState.customItemFields.filter(
+                                                            (nfieldData) =>
+                                                                nfieldData.id === fieldData.id,
+                                                        )[0],
+                                                        action: 'DELETE',
+                                                    },
+                                                ],
+                                            }));
+                                        }}
+                                    />
+                                )}
+                            </>
+                        );
+                    }
+                })}
+            </div>
+            {!itemFormDisabled && (
+                <Button2
+                    onClick={() => {
+                        setItemDataView((prevState) => ({
+                            ...prevState,
+                            customItemFields: [
+                                ...prevState.customItemFields,
+                                {
+                                    fieldName: '',
+                                    fieldValue: '',
+                                    isTag: false,
+                                    id: uuidv4(),
+                                    action: 'CREATE',
+                                },
+                            ],
+                        }));
+                    }}
+                    variant='outline'
+                >
+                    Add custom field
+                </Button2>
+            )}
+            {/* </ScrollArea> */}
         </motion.div>
     );
 };

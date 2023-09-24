@@ -8,36 +8,37 @@ import {
     CheckCircledIcon,
     // PlusIcon,
     // CaretSortIcon,
-    // CheckIcon,
+    CheckIcon,
 } from '@radix-ui/react-icons';
 import { motion } from 'framer-motion';
-// import { cn } from 'lib/utils/basic';
+import { cn } from 'lib/utils/basic';
 import { toast } from 'react-hot-toast';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { useParams, useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
-// import { Badge } from 'components/form/Badge';
+import { Badge } from 'components/form/Badge';
 import { Button2 } from 'components/form/Button';
 import { Input } from 'components/form/Input';
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandSeparator,
+} from 'ui/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from 'ui/components/ui/popover';
 import { ScrollArea } from 'ui/components/ui/scrollarea';
-// import {
-//     Command,
-//     CommandEmpty,
-//     CommandGroup,
-//     CommandInput,
-//     CommandItem,
-//     CommandSeparator,
-// } from 'ui/components/ui/command';
-// import { Popover, PopoverContent, PopoverTrigger } from 'ui/components/ui/popover';
 
 import useDeleteItem from './hooks/useDeleteItem';
 import useItem from './hooks/useItem';
+import useTagList from './hooks/useTagList';
 import useUpdateItem from './hooks/useUpdateItem';
 
 // import { Button2 } from '@/components/ui/button';
 const ItemPanel = () => {
-    const { id, groupId: selectedVault } = useParams();
+    const { id, vaultId, tagId } = useParams();
     const params = useParams();
     console.log('params', params);
     const [itemFormDisabled, setItemFormDisability] = useState(true);
@@ -46,16 +47,18 @@ const ItemPanel = () => {
     const [editMode, setEditMode] = useState(false);
     const [updateSuccess, setUpdateSuccess] = useState(false);
 
+    const tagList = useTagList();
+
     const navigate = useNavigate();
 
     // Fetch item data
-    const { itemDataView, setItemDataView } = useItem(selectedVault, id);
+    const { itemDataView, setItemDataView } = useItem(vaultId, id);
 
     console.log('ItemPanel.itemDataView', itemDataView);
 
     // Delete item
     const { deleteItemMutation } = useDeleteItem({
-        selectedVault: selectedVault,
+        selectedVault: vaultId,
         id: id,
         onSuccess: () => {
             navigate(-1);
@@ -69,7 +72,7 @@ const ItemPanel = () => {
 
     // Update item
     const { updateItem } = useUpdateItem({
-        selectedVault: selectedVault,
+        selectedVault: vaultId,
         itemDataView: itemDataView,
         onSuccess: () => {
             setUpdateSuccess(true);
@@ -253,7 +256,7 @@ const ItemPanel = () => {
                     disabled={itemFormDisabled}
                 />
 
-                {/* <label className='text-left font-medium text-gray-400'>Tags</label>
+                <label className='text-left font-medium text-gray-400'>Tags</label>
                 <Popover
                     open={openLabelsMenu}
                     onOpenChange={(e) => {
@@ -269,24 +272,53 @@ const ItemPanel = () => {
                                     : ' border-1 border-gray-300 bg-gray-700 bg-opacity-40'
                             } `}
                         >
-                            {itemDataView?.tags?.map((bname) => (
-                                <Badge
-                                    key={bname}
-                                    className='m-2 h-min text-gray-400'
-                                    variant={'outline'}
-                                    badgeColor='indigo'
-                                    editable={!itemFormDisabled}
-                                    onClick={(e) => {
-                                        setItemDataView({
-                                            ...itemDataView,
-                                            tags: itemDataView.tags.filter(label=> label!==labelSearch),
-                                        });
-                                        e.stopPropagation();
-                                    }}
-                                >
-                                    {bname}
-                                </Badge>
-                            ))}
+                            {itemDataView?.customItemFields
+                                ?.filter(
+                                    (fieldData) => fieldData.isTag && fieldData.action != 'DELETE',
+                                )
+                                .map((fieldData) => (
+                                    <Badge
+                                        key={fieldData.id}
+                                        className='m-2 h-min text-gray-400'
+                                        variant={'outline'}
+                                        badgeColor='indigo'
+                                        editable={!itemFormDisabled}
+                                        onClick={(e) => {
+                                            if (fieldData.action !== 'CREATE') {
+                                                setItemDataView((prevState) => ({
+                                                    ...prevState,
+                                                    customItemFields: [
+                                                        ...prevState.customItemFields.filter(
+                                                            (nfieldData) =>
+                                                                nfieldData.id !== fieldData.id,
+                                                        ),
+                                                        {
+                                                            ...prevState.customItemFields.filter(
+                                                                (nfieldData) =>
+                                                                    nfieldData.id === fieldData.id,
+                                                            )[0],
+                                                            action: 'DELETE',
+                                                        },
+                                                    ],
+                                                }));
+                                            } else {
+                                                setItemDataView((prevState) => ({
+                                                    ...prevState,
+                                                    customItemFields: [
+                                                        ...prevState.customItemFields.filter(
+                                                            (nfieldData) =>
+                                                                nfieldData.id !== fieldData.id,
+                                                        ),
+                                                    ],
+                                                }));
+                                            }
+
+                                            e.stopPropagation();
+                                        }}
+                                    >
+                                        {fieldData.fieldValue}
+                                    </Badge>
+                                ))}
                         </div>
                     </PopoverTrigger>
                     {!itemFormDisabled && (
@@ -313,14 +345,30 @@ const ItemPanel = () => {
                                 />
                                 <CommandEmpty>No label found.</CommandEmpty>
                                 <CommandGroup>
-                                    {itemDataView?.tags?.map((label) => (
+                                    {tagList?.data?.map((label) => (
                                         <CommandItem
                                             key={label}
-                                            onSelect={(currentValue) => {
-                                                setValue(
-                                                    currentValue === value ? '' : currentValue,
-                                                );
-                                                // setOpenLabelsMenu(false);
+                                            // onSelect={(currentValue) => {
+                                            //     setValue(
+                                            //         currentValue === value ? '' : currentValue,
+                                            //     );
+                                            //     // setOpenLabelsMenu(false);
+
+                                            // }}
+                                            onSelect={() => {
+                                                setItemDataView((prevState) => ({
+                                                    ...prevState,
+                                                    customItemFields: [
+                                                        ...prevState.customItemFields,
+                                                        {
+                                                            fieldName: 'tag',
+                                                            fieldValue: label,
+                                                            isTag: true,
+                                                            id: uuidv4(),
+                                                            action: 'CREATE',
+                                                        },
+                                                    ],
+                                                }));
                                             }}
                                         >
                                             {label}
@@ -330,6 +378,7 @@ const ItemPanel = () => {
                                                     value === label ? 'opacity-100' : 'opacity-0',
                                                 )}
                                             />
+                                            value
                                         </CommandItem>
                                     ))}
                                 </CommandGroup>
@@ -337,10 +386,19 @@ const ItemPanel = () => {
                                 <CommandGroup>
                                     <CommandItem
                                         onSelect={() => {
-                                            setItemDataView({
-                                                ...itemDataView,
-                                                tags: [...itemDataView.tags, labelSearch],
-                                            });
+                                            setItemDataView((prevState) => ({
+                                                ...prevState,
+                                                customItemFields: [
+                                                    ...prevState.customItemFields,
+                                                    {
+                                                        fieldName: 'tag',
+                                                        fieldValue: labelSearch,
+                                                        isTag: true,
+                                                        id: uuidv4(),
+                                                        action: 'CREATE',
+                                                    },
+                                                ],
+                                            }));
                                         }}
                                     >
                                         Create new label
@@ -349,7 +407,7 @@ const ItemPanel = () => {
                             </Command>
                         </PopoverContent>
                     )}
-                </Popover> */}
+                </Popover>
             </div>
             <div
                 className={`mt-12 grid ${
@@ -357,7 +415,7 @@ const ItemPanel = () => {
                 } items-center justify-center justify-items-center space-y-20`}
             >
                 {itemDataView?.customItemFields?.map((fieldData) => {
-                    if (fieldData?.action !== 'DELETE') {
+                    if (fieldData?.action !== 'DELETE' && !fieldData.isTag) {
                         return (
                             <>
                                 <Input

@@ -46,7 +46,7 @@ const AppHome = ({ CLIENT_ENV = 'WEB' }) => {
 
     return (
         <div className='flex h-screen w-screen flex-col items-stretch justify-start'>
-            {/* <Navbar navbarType='app' /> */}
+            {/*<Navbar navbarType='app' /> */}
 
             {/* <CommandDialog open={open} onOpenChange={setOpen}>
                 <CommandInput placeholder='Type a command or search...' />
@@ -61,7 +61,7 @@ const AppHome = ({ CLIENT_ENV = 'WEB' }) => {
                         <CommandItem>Select Item</CommandItem>
                         <CommandItem>Create Items</CommandItem>
                     </CommandGroup>
-                    <CommandSeparator />                    
+                    <CommandSeparator />
                     <CommandGroup heading='Misc'>
                         <CommandItem>Support</CommandItem>
                     </CommandGroup>

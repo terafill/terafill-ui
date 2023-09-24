@@ -58,6 +58,7 @@ function VaultSettingsMenu({ vaultId }) {
                     <div className='py-1'>
                         <Menu.Item
                             onClick={() => {
+                                setSelectedVault(vaultId)
                                 setEditVaultPopupOpen(true);
                             }}
                         >

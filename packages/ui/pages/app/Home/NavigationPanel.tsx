@@ -15,10 +15,10 @@ import useUpdateItem from './hooks/useUpdateItem';
 import { addVaultItemPopupOpenAtom, openSidePanelAtom } from './store';
 
 const NavigationPanel = () => {
-    const { groupId: vaultId } = useParams();
+    const { vaultId, tagId } = useParams();
 
     const [search, setSearch] = useState('');
-    const { itemList } = useItemList(search, vaultId);
+    const { itemList } = useItemList(search, vaultId, tagId);
 
     const [selectedItem, setSelectedItem] = useState(null);
 

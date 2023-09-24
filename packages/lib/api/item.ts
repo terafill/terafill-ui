@@ -189,3 +189,31 @@ export async function deleteVaultItem({ vaultId, id }: VaultItemParams) {
 		throw Error(errorMessage);
 	}
 }
+
+export async function getTagList(): Promise<object> {
+	const requestUrl = `${BASE_URL}/users/me/tags`;
+
+	const config = {
+		withCredentials: true,
+		method: "get",
+		url: requestUrl,
+		headers: {
+			"Content-Type": "application/json",
+			Accept: "application/json",
+			"client-id": CLIENT_ID,
+		},
+	};
+
+	try {
+		const response = await axios(config);
+		return response?.data || {};
+	} catch (error) {
+		if (isAxiosError(error)) {
+			const errorMessage =
+				error?.response?.data?.detail?.info ||
+				`Something went wrong: ${error}.`;
+			throw Error(errorMessage);
+		}
+		throw error;
+	}
+}

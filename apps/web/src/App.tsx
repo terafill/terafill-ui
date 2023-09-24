@@ -46,7 +46,7 @@ const router = createBrowserRouter([
                         element: <AppHome />,
                         children: [
                             {
-                                path: 'vault/:groupId',
+                                path: 'vault/:vaultId',
                                 element: <ItemsView viewType='vault' />,
                                 children: [
                                     {
@@ -60,11 +60,11 @@ const router = createBrowserRouter([
                                 ],
                             },
                             {
-                                path: 'tag',
+                                path: 'tag/:tagId',
                                 element: <ItemsView viewType='tag' />,
                                 children: [
                                     {
-                                        path: ':id',
+                                        path: 'item/:id',
                                         element: <ItemPanel />,
                                     },
                                     {

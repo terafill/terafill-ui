@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getVaultItems } from 'lib/api/vault';
+import { getVaultItems, getTagItems } from 'lib/api/vault';
 import { getKeyWrappingKeyPair, decryptData } from 'lib/utils/security';
 
 const decryptedItemData = (itemData, keyWrappingKeyPair) => {
@@ -50,21 +50,22 @@ const useItemList = (searchFilter, vaultId?, tagId?) => {
     // const queryClient = useQueryClient();
 
     const itemDataListView = useQuery({
-        queryKey: ['vaults', vaultId, 'items'],
+        queryKey: [vaultId ? 'vaults' : 'tags', vaultId ? vaultId : tagId, 'items'],
         queryFn: async () => {
-            const data = await getVaultItems(vaultId);
-            console.log('useQuery.vaultId+data', vaultId, data);
+            let data = [];
+            if (vaultId) data = await getVaultItems(vaultId);
+            else data = await getTagItems(tagId);
             const keyWrappingKeyPair = getKeyWrappingKeyPair();
-            const itemDataListDecrypted = data.map((vaultItem) => {
+            const itemDataListDecrypted = data.map((item) => {
                 // queryClient.setQueryData(['vaults', vaultId, 'items', vaultItem.id], vaultItem);
-                return decryptedItemData(vaultItem, keyWrappingKeyPair);
+                return decryptedItemData(item, keyWrappingKeyPair);
             });
             console.log('useQuery.itemDataListDecrypted', itemDataListDecrypted);
             return itemDataListDecrypted;
         },
         refetchOnWindowFocus: false,
         staleTime: 300000,
-        enabled: !!vaultId,
+        enabled: !!(vaultId||tagId),
     });
 
     const curatedItemList = getCuratedItemList(itemDataListView.data, searchFilter);

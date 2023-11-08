@@ -1,0 +1,40 @@
+{
+    "manifest_version": 3,
+    "name": "Terafill",
+    "version": "1.0",
+    "icons": {
+        "16": "Logo-mini-derived-16.png",
+        "48": "Logo-mini-derived-48.png",
+        "128": "Logo-mini-derived-128.png"
+    },
+    "action": {
+        "default_title": "Terafill: Login faster",
+        "default_popup": "index.html",
+        "default_icon": {
+            "16": "Logo-mini-derived-16.png",
+            "48": "Logo-mini-derived-48.png",
+            "128": "Logo-mini-derived-128.png"
+        }
+    },
+    "web_accessible_resources": [
+        {
+            "resources": ["Logo-mini-derived-128.png"],
+            "matches": ["<all_urls>"],
+            "extension_ids": ["*"]
+        }
+    ],
+    "permissions": ["action", "browserAction", "activeTab", "tabs", "storage", "cookies"],
+    "host_permissions": ["http://0.0.0.0:8000/"],
+    "content_scripts": [
+        {
+            "run_at": "document_idle",
+            "matches": ["<all_urls>"],
+            "js": ["content/content.js"],
+            "css": ["content/content.css"]
+        }
+    ],
+    "background": {
+        "service_worker": "background/background.js",
+        "type": "module"
+    }
+}

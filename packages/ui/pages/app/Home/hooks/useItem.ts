@@ -54,15 +54,6 @@ const useItem = (selectedVault, id) => {
         itemDataView,
         setItemDataView,
     };
-
-    // let initDataEncrypted = {
-    //   id: itemDataRaw?.data?.id ?? '',
-    //   title: itemDataRaw?.data?.title ?? '',
-    //   website: itemDataRaw?.data?.website ?? '',
-    //   username: itemDataRaw?.data?.username ?? '',
-    //   password: itemDataRaw?.data?.password ?? '',
-    //   encryptedEncryptionKey: itemDataRaw?.data?.encryptedEncryptionKey ?? '',
-    // }
 };
 
 export default useItem;

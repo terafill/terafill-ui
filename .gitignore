@@ -31,3 +31,5 @@ yarn-error.log*
 
 .nyc_output/
 instrumented/
+
+.vscode/

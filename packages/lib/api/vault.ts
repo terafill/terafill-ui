@@ -1,90 +1,38 @@
-import axios from "axios";
+import { BASE_URL } from "config/config";
 
-import { BASE_URL, CLIENT_ID } from "config/config";
+import { httpCall } from "./httpCallFacade";
 
 export async function getVaults() {
-	const requestUrl = `${BASE_URL}/users/me/vaults`;
-	const config = {
-		withCredentials: true,
-		method: "get",
-		url: requestUrl,
-		headers: {
-			"Content-Type": "application/json",
-			Accept: "application/json",
-			"client-id": CLIENT_ID,
-		},
-	};
-
-	try {
-		const response = await axios(config);
-		return response?.data || {};
-	} catch (error) {
-		const errorMessage =
-			error?.response?.data?.detail?.info ||
-			`Something went wrong: ${error}.`;
-		throw Error(errorMessage);
+	const httpCallResponse = await httpCall(
+		`${BASE_URL}/users/me/vaults`,
+		"get"
+	);
+	if (httpCallResponse?.error) {
+		return httpCallResponse;
 	}
+	return httpCallResponse?.data;
 }
 
 export async function getVaultItems(vaultId: string) {
-	const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}/items`;
-	const config = {
-		withCredentials: true,
-		method: "get",
-		url: requestUrl,
-		headers: {
-			"Content-Type": "application/json",
-			Accept: "application/json",
-			"client-id": CLIENT_ID,
-		},
-	};
-
-	try {
-		const response = await axios(config);
-		return response?.data || {};
-	} catch (error) {
-		const errorMessage =
-			error?.response?.data?.detail?.info ||
-			`Something went wrong: ${error}.`;
-		throw Error(errorMessage);
+	const httpCallResponse = await httpCall(
+		`${BASE_URL}/users/me/vaults/${vaultId}/items`,
+		"get"
+	);
+	if (httpCallResponse?.error) {
+		return httpCallResponse;
 	}
+	return httpCallResponse?.data;
 }
 
 export async function getTagItems(tagId: string) {
-	const requestUrl = `${BASE_URL}/users/me/tags/${tagId}/items`;
-	const config = {
-		withCredentials: true,
-		method: "get",
-		url: requestUrl,
-		headers: {
-			"Content-Type": "application/json",
-			Accept: "application/json",
-			"client-id": CLIENT_ID,
-		},
-	};
-
-	try {
-		const response = await axios(config);
-		return response?.data || {};
-	} catch (error) {
-		const errorMessage =
-			error?.response?.data?.detail?.info ||
-			`Something went wrong: ${error}.`;
-		throw Error(errorMessage);
+	const httpCallResponse = await httpCall(
+		`${BASE_URL}/users/me/tags/${tagId}/items`,
+		"get"
+	);
+	if (httpCallResponse?.error) {
+		return httpCallResponse;
 	}
-}
-
-export async function getDefaultVaultId() {
-	const { response } = await getVaults();
-	const defaultVault = response[0];
-	const vaultId = defaultVault.id;
-	return vaultId;
-}
-
-export async function getDefaultVaultItems() {
-	const defaultVaultId = await getDefaultVaultId();
-	const { response } = await getVaultItems(defaultVaultId);
-	return response;
+	return httpCallResponse?.data;
 }
 
 interface Vault {
@@ -94,81 +42,44 @@ interface Vault {
 }
 
 export async function updateVault({ vaultId, name, description }: Vault) {
-	const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}`;
-	const config = {
-		withCredentials: true,
-		method: "put",
-		url: requestUrl,
-		headers: {
-			"Content-Type": "application/json",
-			Accept: "application/json",
-			"client-id": CLIENT_ID,
-		},
-		data: {
+	const httpCallResponse = await httpCall(
+		`${BASE_URL}/users/me/vaults/${vaultId}`,
+		"put",
+		{},
+		{
 			name: name,
 			description: description,
-		},
-	};
-
-	try {
-		const response = await axios(config);
-		return response?.data || {};
-	} catch (error) {
-		const errorMessage =
-			error?.response?.data?.detail?.info ||
-			`Something went wrong: ${error}.`;
-		throw Error(errorMessage);
+		}
+	);
+	if (httpCallResponse?.error) {
+		return httpCallResponse;
 	}
+	return httpCallResponse?.data;
 }
 
 export async function addVault({ name, description }: Vault) {
-	const requestUrl = `${BASE_URL}/users/me/vaults`;
-	const config = {
-		withCredentials: true,
-		method: "post",
-		url: requestUrl,
-		headers: {
-			"Content-Type": "application/json",
-			Accept: "application/json",
-			"client-id": CLIENT_ID,
-		},
-		data: {
+	const httpCallResponse = await httpCall(
+		`${BASE_URL}/users/me/vaults`,
+		"post",
+		{},
+		{
 			name: name,
 			description: description,
-		},
-	};
-
-	try {
-		const response = await axios(config);
-		return response?.data || {};
-	} catch (error) {
-		const errorMessage =
-			error?.response?.data?.detail?.info ||
-			`Something went wrong: ${error}.`;
-		throw Error(errorMessage);
+		}
+	);
+	if (httpCallResponse?.error) {
+		return httpCallResponse;
 	}
+	return httpCallResponse?.data;
 }
 
 export async function deleteVault({ vaultId }: Vault) {
-	const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}`;
-	const config = {
-		withCredentials: true,
-		method: "delete",
-		url: requestUrl,
-		headers: {
-			"Content-Type": "application/json",
-			Accept: "application/json",
-			"client-id": CLIENT_ID,
-		},
-	};
-
-	try {
-		const response = await axios(config);
-		return response?.data || {};
-	} catch (error) {
-		const errorMessage =
-			error?.response?.data?.detail?.info ||
-			`Something went wrong: ${error}.`;
-		throw Error(errorMessage);
+	const httpCallResponse = await httpCall(
+		`${BASE_URL}/users/me/vaults/${vaultId}`,
+		"delete"
+	);
+	if (httpCallResponse?.error) {
+		return httpCallResponse;
 	}
+	return httpCallResponse?.data;
 }

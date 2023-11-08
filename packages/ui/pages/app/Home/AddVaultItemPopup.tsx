@@ -48,15 +48,18 @@ export default function AddVaultItemPopup() {
 
     const addVaultItemMutation = async () => {
         const iek = uuidv4();
+        const itemData = {
+            title: itemDataView.title,
+            website: itemDataView.website,
+            password: itemDataView.password,
+            username: itemDataView.username,
+            iek: iek,
+            customItemFields: itemDataView.customItemFields,
+        }
         await createItemData.mutateAsync(
             {
                 vaultId: selectedVault,
-                title: itemDataView.title,
-                website: itemDataView.website,
-                password: itemDataView.password,
-                username: itemDataView.username,
-                iek: iek,
-                customItemFields: itemDataView.customItemFields,
+                itemData: itemData
             },
             {
                 onError: (error: unknown) => {

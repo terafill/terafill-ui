@@ -1,8 +1,8 @@
-import axios, { isAxiosError } from "axios";
-
-import { BASE_URL, CLIENT_ID } from "config/config";
+import { BASE_URL } from "config/config";
 
 import { getKeyWrappingKeyPair, encryptData } from "../utils/security";
+
+import { httpCall } from "./httpCallFacade";
 
 interface customItemFieldParams {
 	fieldValue: string;
@@ -24,196 +24,94 @@ interface VaultItemParams {
 	customItemFields?: Array<customItemFieldParams>;
 }
 
-export async function getVaultItem({
-	vaultId,
-	id,
-}: VaultItemParams): Promise<object> {
-	const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}/items/${id}`;
-
-	const config = {
-		withCredentials: true,
-		method: "get",
-		url: requestUrl,
-		headers: {
-			"Content-Type": "application/json",
-			Accept: "application/json",
-			"client-id": CLIENT_ID,
-		},
-	};
-
-	try {
-		const response = await axios(config);
-		return response?.data || {};
-	} catch (error) {
-		if (isAxiosError(error)) {
-			const errorMessage =
-				error?.response?.data?.detail?.info ||
-				`Something went wrong: ${error}.`;
-			throw Error(errorMessage);
-		}
-		throw error;
+export async function getVaultItem({ vaultId, id }: VaultItemParams) {
+	const httpCallResponse = await httpCall(
+		`${BASE_URL}/users/me/vaults/${vaultId}/items/${id}`,
+		"get"
+	);
+	if (httpCallResponse?.error) {
+		return httpCallResponse;
 	}
+	return httpCallResponse?.data;
 }
+
+const encryptItemData = ({
+	title,
+	iek,
+	website,
+	password,
+	username,
+	tags,
+	customItemFields,
+}) => {
+	const keyWrappingKeyPair = getKeyWrappingKeyPair();
+	const iekEnc = keyWrappingKeyPair.public.encrypt(iek);
+	return {
+		title: encryptData(title, iek),
+		website: encryptData(website, iek),
+		password: encryptData(password, iek),
+		username: encryptData(username, iek),
+		encryptedEncryptionKey: iekEnc,
+		type: "PASSWORD",
+		tags: tags ? tags : [],
+		customItemFields: customItemFields
+			? customItemFields.map((fieldData) => {
+					if (fieldData.isTag) return fieldData;
+					return {
+						...fieldData,
+						fieldName: encryptData(fieldData.fieldName, iek),
+						fieldValue: encryptData(fieldData.fieldValue, iek),
+					};
+			  })
+			: [],
+	};
+};
 
 export async function updateVaultItem({
 	vaultId,
 	id,
-	title,
-	website,
-	password,
-	username,
-	iek,
-	isFavorite,
-	tags,
-	customItemFields,
+	itemData,
 }: VaultItemParams) {
-	const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}/items/${id}`;
-
-	const config = {
-		withCredentials: true,
-		method: "put",
-		url: requestUrl,
-		headers: {
-			"Content-Type": "application/json",
-			Accept: "application/json",
-			"client-id": CLIENT_ID,
-		},
-		data: {
-			title: encryptData(title, iek),
-			website: encryptData(website, iek),
-			password: encryptData(password, iek),
-			username: encryptData(username, iek),
-			isFavorite: isFavorite,
-			tags: tags,
-			customItemFields: customItemFields
-				? customItemFields.map((fieldData) => {
-						if (fieldData.isTag) return fieldData;
-						return {
-							...fieldData,
-							fieldName: encryptData(fieldData.fieldName, iek),
-							fieldValue: encryptData(fieldData.fieldValue, iek),
-						};
-				  })
-				: [],
-		},
-	};
-
-	try {
-		const response = await axios(config);
-		return response?.data || {};
-	} catch (error) {
-		const errorMessage =
-			error?.response?.data?.detail?.info ||
-			`Something went wrong: ${error}.`;
-		throw Error(errorMessage);
+	const httpCallResponse = await httpCall(
+		`${BASE_URL}/users/me/vaults/${vaultId}/items/${id}`,
+		"put",
+		{},
+		encryptItemData(itemData)
+	);
+	if (httpCallResponse?.error) {
+		return httpCallResponse;
 	}
+	return httpCallResponse?.data;
 }
 
-export async function createVaultItem({
-	vaultId,
-	title,
-	website,
-	password,
-	username,
-	iek,
-	tags,
-	customItemFields,
-}: VaultItemParams) {
-	const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}/items`;
-	const keyWrappingKeyPair = getKeyWrappingKeyPair();
-	const iekEnc = keyWrappingKeyPair.public.encrypt(iek);
-
-	const config = {
-		withCredentials: true,
-		method: "post",
-		url: requestUrl,
-		headers: {
-			"Content-Type": "application/json",
-			Accept: "application/json",
-			"client-id": CLIENT_ID,
-		},
-		data: {
-			title: encryptData(title, iek),
-			website: encryptData(website, iek),
-			password: encryptData(password, iek),
-			username: encryptData(username, iek),
-			encryptedEncryptionKey: iekEnc,
-			type: "PASSWORD",
-			tags: tags,
-			customItemFields: customItemFields
-				? customItemFields.map((fieldData) => {
-						if (fieldData.isTag) return fieldData;
-						return {
-							...fieldData,
-							fieldName: encryptData(fieldData.fieldName, iek),
-							fieldValue: encryptData(fieldData.fieldValue, iek),
-						};
-				  })
-				: [],
-		},
-	};
-
-	try {
-		const response = await axios(config);
-		return response?.data || {};
-	} catch (error) {
-		const errorMessage =
-			error?.response?.data?.detail?.info ||
-			`Something went wrong: ${error}.`;
-		throw Error(errorMessage);
+export async function createVaultItem({ vaultId, itemData }) {
+	const httpCallResponse = await httpCall(
+		`${BASE_URL}/users/me/vaults/${vaultId}/items`,
+		"post",
+		{},
+		encryptItemData(itemData)
+	);
+	if (httpCallResponse?.error) {
+		return httpCallResponse;
 	}
+	return httpCallResponse?.data;
 }
 
 export async function deleteVaultItem({ vaultId, id }: VaultItemParams) {
-	const requestUrl = `${BASE_URL}/users/me/vaults/${vaultId}/items/${id}`;
-	console.log(requestUrl);
-
-	const config = {
-		withCredentials: true,
-		method: "delete",
-		url: requestUrl,
-		headers: {
-			"Content-Type": "application/json",
-			Accept: "application/json",
-			"client-id": CLIENT_ID,
-		},
-	};
-
-	try {
-		const response = await axios(config);
-		return response?.data || {};
-	} catch (error) {
-		const errorMessage =
-			error?.response?.data?.detail?.info ||
-			`Something went wrong: ${error}.`;
-		throw Error(errorMessage);
+	const httpCallResponse = await httpCall(
+		`${BASE_URL}/users/me/vaults/${vaultId}/items/${id}`,
+		"delete"
+	);
+	if (httpCallResponse?.error) {
+		return httpCallResponse;
 	}
+	return httpCallResponse?.data;
 }
 
-export async function getTagList(): Promise<object> {
-	const requestUrl = `${BASE_URL}/users/me/tags`;
-
-	const config = {
-		withCredentials: true,
-		method: "get",
-		url: requestUrl,
-		headers: {
-			"Content-Type": "application/json",
-			Accept: "application/json",
-			"client-id": CLIENT_ID,
-		},
-	};
-
-	try {
-		const response = await axios(config);
-		return response?.data || {};
-	} catch (error) {
-		if (isAxiosError(error)) {
-			const errorMessage =
-				error?.response?.data?.detail?.info ||
-				`Something went wrong: ${error}.`;
-			throw Error(errorMessage);
-		}
-		throw error;
+export async function getTagList() {
+	const httpCallResponse = await httpCall(`${BASE_URL}/users/me/tags`, "get");
+	if (httpCallResponse?.error) {
+		return httpCallResponse;
 	}
+	return httpCallResponse?.data;
 }

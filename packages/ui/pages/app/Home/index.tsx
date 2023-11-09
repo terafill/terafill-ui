@@ -19,6 +19,7 @@ import { Outlet } from 'react-router-dom';
 // } from 'ui/components/ui/command';
 
 // import Navbar from 'components/layout/Navbar';
+import WarningAlert from 'components/ui/WarningAlert';
 
 import AddVaultItemPopup from './AddVaultItemPopup';
 import AddVaultPopup from './AddVaultPopup';
@@ -46,6 +47,8 @@ const AppHome = ({ CLIENT_ENV = 'WEB' }) => {
 
     return (
         <div className='flex h-screen w-screen flex-col items-stretch justify-start'>
+            <WarningAlert />
+
             {/*<Navbar navbarType='app' /> */}
 
             {/* <CommandDialog open={open} onOpenChange={setOpen}>

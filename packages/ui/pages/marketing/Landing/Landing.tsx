@@ -8,6 +8,7 @@ import { Input } from 'components/form/Input';
 import Footer from 'components/layout/Footer';
 import Navbar from 'components/layout/Navbar';
 import Logo from 'components/ui/Logo';
+import WarningAlert from "components/ui/WarningAlert";
 
 import AnimatedText from './AnimatedText';
 
@@ -18,6 +19,7 @@ const LandingPage = () => {
 
     return (
         <>
+            <WarningAlert />
             <Navbar navbarType='landing' />
             <motion.div
                 initial={{ opacity: 0 }}
